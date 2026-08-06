@@ -495,10 +495,10 @@
 <section class="hero" id="heroSection">
   <span id="hero" style="position:absolute; top:0;"></span>
   <div class="hero-media">
-    <video class="desktop" id="heroVideoDesktop" autoplay muted loop playsinline preload="auto">
+    <video class="desktop" id="heroVideoDesktop" autoplay muted playsinline preload="auto">
       <source src="assets/hero-desktop.mp4" type="video/mp4">
     </video>
-    <video class="mobile" id="heroVideoMobile" autoplay muted loop playsinline preload="auto">
+    <video class="mobile" id="heroVideoMobile" autoplay muted playsinline preload="auto">
       <source src="assets/hero-mobile.mp4" type="video/mp4">
     </video>
   </div>
@@ -749,7 +749,7 @@
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 gsap.registerPlugin(ScrollTrigger);
 
-/* ============ HERO INTRO — plays once the background video finishes its first loop ============ */
+/* ============ HERO INTRO — plays once the background video finishes (it plays only once, no loop) ============ */
 const heroSectionEl = document.getElementById('heroSection');
 const heroCtaRow = document.getElementById('heroCtaRow');
 function playHero(){
@@ -770,14 +770,7 @@ function playHero(){
     fired = true;
     playHero();
   }
-  videos.forEach(v => {
-    let lastT = 0;
-    v.addEventListener('timeupdate', () => {
-      if (v.currentTime < lastT - 0.5) ready(); // wrapped back to start → finished one full loop
-      lastT = v.currentTime;
-    });
-    v.addEventListener('ended', ready);
-  });
+  videos.forEach(v => v.addEventListener('ended', ready));
   // safety net in case autoplay is blocked and the video never actually progresses
   setTimeout(ready, 11000);
 })();
