@@ -210,6 +210,15 @@
   .hero .beams span{ background: linear-gradient(180deg, transparent, rgba(239,204,129,0.35), transparent); z-index:1; }
   .hero .wrap{ position:relative; z-index:2; width:100%; }
   .hero-inner{ max-width:740px; margin:0 auto; text-align:center; }
+  .hero-logo{ margin-bottom:26px; }
+  .hero-logo-main{
+    font-family: var(--display); font-weight:700; font-size:clamp(2.4rem,7.5vw,4.6rem);
+    letter-spacing:-0.01em; display:inline-flex; gap:.32em; line-height:1;
+  }
+  .hero-logo-sub{
+    display:block; font-family: var(--label); font-size:11px; letter-spacing:.32em;
+    text-transform:uppercase; color: rgba(255,255,255,0.55); margin-top:12px;
+  }
   .hero .eyebrow{ color: var(--gold-4); justify-content:center; }
   .hero .eyebrow::before{ background: var(--gold-4); }
   .hero h1{ font-size: clamp(2.3rem,5.6vw,4.2rem); color:#fff; margin-top:20px; perspective:800px; }
@@ -506,6 +515,10 @@
   <div class="beams"><span></span><span></span><span></span><span></span></div>
   <div class="wrap">
     <div class="hero-inner">
+      <div class="hero-logo" data-hero-el>
+        <span class="hero-logo-main"><span class="gold-text gold-shine">MC</span><span class="chrome-text">DIGITAL</span></span>
+        <span class="hero-logo-sub">Digital Growth Agency</span>
+      </div>
       <div class="eyebrow" data-hero-el>MC DIGITAL · DIGITAL GROWTH AGENCY</div>
       <h1 id="heroTitle">
         <span class="line"><span>Diseñamos</span></span>
