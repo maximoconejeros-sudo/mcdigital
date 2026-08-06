@@ -212,25 +212,39 @@
   .hero .beams span{ background: linear-gradient(180deg, transparent, rgba(239,204,129,0.35), transparent); z-index:1; }
   .hero .wrap{ position:relative; z-index:2; width:100%; }
   .hero-inner{ max-width:740px; margin:0 auto; text-align:center; }
-  .hero-logo{ margin-bottom:26px; }
+  .hero-logo{ margin-bottom:16px; }
   .hero-logo-main{
-    font-family: var(--display); font-weight:700; font-size:clamp(2.4rem,7.5vw,4.6rem);
+    font-family: var(--display); font-weight:700; font-size:clamp(2.2rem,6.5vw,3.8rem);
     letter-spacing:-0.01em; display:inline-flex; gap:.32em; line-height:1;
   }
   .hero-logo-sub{
     display:block; font-family: var(--label); font-size:11px; letter-spacing:.32em;
-    text-transform:uppercase; color: rgba(255,255,255,0.55); margin-top:12px;
+    text-transform:uppercase; color: rgba(255,255,255,0.55); margin-top:9px;
   }
   .hero .eyebrow{ color: var(--gold-4); justify-content:center; }
   .hero .eyebrow::before{ background: var(--gold-4); }
-  .hero h1{ font-size: clamp(2.3rem,5.6vw,4.2rem); color:#fff; margin-top:20px; perspective:800px; }
+  .hero h1{ font-size: clamp(2.3rem,5.6vw,4.2rem); color:#fff; margin-top:12px; perspective:800px; }
   .hero h1 .line{ display:block; overflow:hidden; padding-bottom:.08em; }
-  .hero h1 .line span{ display:inline-block; transform-origin:bottom; transform: translateY(115%) rotateX(40deg); }
-  .hero p.sub{ font-size: clamp(1rem,1.5vw,1.15rem); color: rgba(255,255,255,0.78); max-width:540px; margin:24px auto 0; }
-  .hero .cta-row{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:36px; }
+  .hero h1 .line span{
+    display:inline-block; transform-origin:bottom; transform: translateY(115%) rotateX(40deg);
+    transition: transform 1s var(--ease);
+  }
+  .hero h1 .line:nth-child(1) span{ transition-delay:.05s; }
+  .hero h1 .line:nth-child(2) span{ transition-delay:.15s; }
+  .hero h1 .line:nth-child(3) span{ transition-delay:.25s; }
+  .hero.content-in h1 .line span{ transform:none; }
+  .hero p.sub{ font-size: clamp(1rem,1.5vw,1.15rem); color: rgba(255,255,255,0.78); max-width:540px; margin:16px auto 0; }
+  .hero .cta-row{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:26px; }
 
-  /* Hero copy stays invisible until the video finishes its first play, then playHero() reveals it */
-  [data-hero-el]{ opacity:0; transform: translateY(18px); }
+  /* Hero copy stays invisible until the video finishes its first play, then playHero() reveals it —
+     driven purely by the .content-in class + CSS transitions so it never depends on a JS animation
+     library targeting the right elements at the right time. */
+  [data-hero-el]{ opacity:0; transform: translateY(18px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+  .hero-logo[data-hero-el]{ transition-delay:0s; }
+  .hero .eyebrow[data-hero-el]{ transition-delay:.35s; }
+  .hero p.sub[data-hero-el]{ transition-delay:.55s; }
+  #heroCtaRow[data-hero-el]{ transition-delay:.7s; }
+  .hero.content-in [data-hero-el]{ opacity:1; transform:none; }
 
   /* ---- CTA "ready to click" cue, played right after the copy reveals ---- */
   .cta-row.cta-ready .btn{ animation: cta-pop .7s var(--ease) both; }
@@ -768,11 +782,8 @@ gsap.registerPlugin(ScrollTrigger);
 const heroSectionEl = document.getElementById('heroSection');
 const heroCtaRow = document.getElementById('heroCtaRow');
 function playHero(){
-  heroSectionEl.classList.add('content-in');
-  const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-  tl.fromTo('.hero h1 .line span', { yPercent: 115, rotateX: 40 }, { yPercent: 0, rotateX: 0, duration: 1.1, stagger: .12 })
-    .fromTo('[data-hero-el]', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: .8, stagger: .12 }, '-=.6')
-    .add(() => { if (heroCtaRow) heroCtaRow.classList.add('cta-ready'); });
+  heroSectionEl.classList.add('content-in'); // CSS transitions (see .content-in rules) do the actual reveal
+  setTimeout(() => { if (heroCtaRow) heroCtaRow.classList.add('cta-ready'); }, 1300);
 }
 
 (function(){
