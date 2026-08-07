@@ -126,7 +126,6 @@
     border-bottom:1px solid var(--line); padding:15px 0;
   }
   header.on-video:not(.scrolled) .logo .main{ filter: brightness(1.3); }
-  header.on-video:not(.scrolled) .nav-toggle{ border-color: rgba(255,255,255,0.5); color:#fff; }
   header .wrap{ display:flex; align-items:center; justify-content:space-between; }
 
   .logo{ display:flex; flex-direction:column; line-height:1; }
@@ -156,12 +155,6 @@
   .btn-outline:hover{ border-color: var(--gold-3); background: rgba(200,154,71,0.08); }
 
   .btn-lg{ padding:17px 32px; font-size:13px; }
-  .nav-toggle{
-    display:flex; align-items:center; justify-content:center; width:40px; height:40px; border:1px solid var(--line-strong);
-  }
-  .nav-toggle span{ position:relative; width:16px; height:1px; background: currentColor; }
-  .nav-toggle span::before,.nav-toggle span::after{ content:''; position:absolute; left:0; width:16px; height:1px; background: currentColor; }
-  .nav-toggle span::before{ top:-5px; } .nav-toggle span::after{ top:5px; }
 
   /* ============ SIDE PROGRESS DOTS ============ */
   .side-dots{
@@ -370,13 +363,14 @@
     animation-delay: 0s, calc(var(--i) * -5s);
   }
   @keyframes orbit3d-facespin{ from{ transform: rotateY(0deg); } to{ transform: rotateY(-360deg); } }
-  /* Card i's position on the ring cycles front→side→back→side→front every 30s (offset by i*5s);
-     this keyframe runs on the exact same cycle so opacity/scale/shadow always match true depth —
-     bright and large when facing the camera, faint and small when around the back. */
+  /* Card i's position on the ring cycles front→side→back→side→front every 30s (offset by i*5s).
+     Front and back (0%/50%/100%) sit directly in line with the core on screen — showing a card at
+     full size there would visually collide with it — so those are the FAINT/small moments instead.
+     The card is biggest and brightest at the side positions (25%/75%), where it's clearly offset
+     from the core and reads cleanly next to it. */
   @keyframes orbit3d-depth{
-    0%,100%{ opacity:1; scale:1.05; box-shadow: 0 30px 58px -20px rgba(28,25,19,0.4); }
-    25%,75%{ opacity:.5; scale:.88; box-shadow: 0 18px 36px -18px rgba(28,25,19,0.22); }
-    50%{ opacity:.22; scale:.74; box-shadow: 0 10px 20px -14px rgba(28,25,19,0.12); }
+    0%,50%,100%{ opacity:.28; scale:.62; box-shadow: 0 10px 20px -14px rgba(28,25,19,0.12); }
+    25%,75%{ opacity:1; scale:1.08; box-shadow: 0 30px 58px -20px rgba(28,25,19,0.4); }
   }
   .orbit3d-face svg{ width:30px; height:30px; stroke: var(--gold-2); }
   .orbit3d-face span{ font-family: var(--label); font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color: var(--muted); text-align:center; padding:0 12px; }
@@ -513,14 +507,6 @@
   @keyframes wa-ping{ 0%{ transform: scale(1); opacity:.7; } 100%{ transform: scale(1.7); opacity:0; } }
   @keyframes float-bob{ 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-6px);} }
 
-  @media (max-width:860px){
-    .mobile-panel{
-      position:fixed; inset:0; background: var(--bg); z-index:99; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:26px;
-      transform: translateY(-100%); transition: transform .5s var(--ease);
-    }
-    .mobile-panel.open{ transform: translateY(0); }
-    .mobile-panel a{ font-family: var(--display); font-size:1.7rem; }
-  }
   @media (max-width:640px){ .wrap{ padding:0 22px; } section{ padding:90px 0; } }
 </style>
 </head>
@@ -535,18 +521,8 @@
       <span class="main"><span class="gold-text">MC</span><span class="chrome-text">DIGITAL</span></span>
       <span class="sub">Digital Growth Agency</span>
     </a>
-    <div style="display:flex; align-items:center; gap:12px;">
-      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú"><span></span></button>
-    </div>
   </div>
 </header>
-
-<div class="mobile-panel" id="mobilePanel">
-  <a href="#servicios">Servicios</a>
-  <a href="#proceso">Proceso</a>
-  <a href="#por-que">Por qué</a>
-  <a href="#contacto">Contacto</a>
-</div>
 
 <nav class="side-dots" id="sideDots">
   <a href="#hero" data-label="Inicio" class="active"></a>
@@ -887,12 +863,6 @@ function updateHeaderState(){
 }
 window.addEventListener('scroll', updateHeaderState, { passive:true });
 updateHeaderState();
-
-/* ============ MOBILE NAV ============ */
-const navToggle = document.getElementById('navToggle');
-const mobilePanel = document.getElementById('mobilePanel');
-navToggle.addEventListener('click', () => mobilePanel.classList.toggle('open'));
-mobilePanel.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobilePanel.classList.remove('open')));
 
 /* ============ MAGNETIC BUTTONS ============ */
 document.querySelectorAll('.btn-magnetic').forEach(btn => {
