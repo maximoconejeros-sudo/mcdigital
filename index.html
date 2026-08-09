@@ -158,24 +158,11 @@
     border-bottom:1px solid var(--line); padding:15px 0;
   }
   header.on-video:not(.scrolled) .logo .main{ filter: brightness(1.3); }
-  header.on-video:not(.scrolled) nav.links a{ color: rgba(255,255,255,0.82); }
-  header.on-video:not(.scrolled) .btn-outline{ border-color: rgba(255,255,255,0.45); color:#fff; }
   header .wrap{ display:flex; align-items:center; justify-content:space-between; }
 
   .logo{ display:flex; flex-direction:column; line-height:1; }
   .logo .main{ font-family: var(--display); font-weight:700; font-size:22px; letter-spacing:-0.01em; display:flex; gap:.35em; }
   .logo .sub{ font-family: var(--label); font-size:9px; letter-spacing:.28em; color: var(--muted-2); margin-top:5px; text-transform:uppercase; }
-
-  nav.links{ display:flex; gap:38px; }
-  nav.links a{
-    font-family: var(--label); font-size:12.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
-    color: var(--muted); position:relative; padding:4px 0; transition: color .3s;
-  }
-  nav.links a::after{
-    content:''; position:absolute; left:0; right:0; bottom:0; height:1px; background: var(--gold-3);
-    transform: scaleX(0); transform-origin:left; transition: transform .4s var(--ease);
-  }
-  nav.links a:hover::after{ transform: scaleX(1); }
 
   .btn{
     display:inline-flex; align-items:center; gap:9px; padding:13px 24px; border-radius:2px;
@@ -200,7 +187,6 @@
   .btn-outline:hover{ border-color: var(--gold-3); background: rgba(200,154,71,0.08); }
 
   .btn-lg{ padding:17px 32px; font-size:13px; }
-  .nav-toggle{ display:none; }
 
   /* ============ SIDE PROGRESS DOTS ============ */
   .side-dots{
@@ -232,7 +218,7 @@
     /* the extra safe-area-inset-bottom + buffer kills the sliver of the next section that could
        peek in on iPhone while Safari settles its toolbar / home-indicator area on first paint */
     min-height:calc(100dvh + env(safe-area-inset-bottom) + 6px);
-    display:flex; align-items:flex-end; overflow:hidden; background:#14120C;
+    display:flex; align-items:center; justify-content:center; overflow:hidden; background:#14120C;
   }
   html, body{ height:100%; }
   /* Fades away once the copy reveals, so the video's own frozen last frame doesn't clash with it.
@@ -254,8 +240,8 @@
   .hero.content-in .hero-scrim{ opacity:1; }
   .hero .beams span{ background: linear-gradient(180deg, transparent, rgba(239,204,129,0.35), transparent); z-index:1; }
   .hero .wrap{ position:relative; z-index:2; padding-bottom:90px; width:100%; }
-  .hero-inner{ max-width:740px; }
-  .hero .eyebrow{ color: var(--gold-4); }
+  .hero-inner{ max-width:740px; margin:0 auto; text-align:center; }
+  .hero .eyebrow{ color: var(--gold-4); justify-content:center; }
   .hero .eyebrow::before{ background: var(--gold-4); }
   .hero h1{ font-size: clamp(2.5rem,6.4vw,4.8rem); color:#fff; margin-top:20px; perspective:800px; }
   .hero h1 .line{ display:block; overflow:hidden; padding-bottom:.08em; }
@@ -267,21 +253,8 @@
   .hero h1 .line:nth-child(2) span{ transition-delay:.15s; }
   .hero h1 .line:nth-child(3) span{ transition-delay:.25s; }
   .hero.content-in h1 .line span{ transform:none; }
-  .hero p.sub{ font-size: clamp(1rem,1.5vw,1.15rem); color: rgba(255,255,255,0.78); max-width:540px; margin-top:24px; }
-  .hero .cta-row{ display:flex; gap:14px; flex-wrap:wrap; margin-top:36px; }
-  .availability{
-    display:inline-flex; align-items:center; gap:10px; margin-top:30px;
-    font-family: var(--label); font-size:11.5px; letter-spacing:.08em; text-transform:uppercase;
-    color: rgba(255,255,255,0.6);
-  }
-  .availability .dot{
-    width:7px; height:7px; border-radius:50%; background:#5CD98A; position:relative; flex-shrink:0;
-  }
-  .availability .dot::before{
-    content:''; position:absolute; inset:-4px; border-radius:50%; border:1px solid #5CD98A;
-    animation: avail-ping 2s ease-out infinite;
-  }
-  @keyframes avail-ping{ 0%{ transform:scale(.6); opacity:.8; } 100%{ transform:scale(1.8); opacity:0; } }
+  .hero p.sub{ font-size: clamp(1rem,1.5vw,1.15rem); color: rgba(255,255,255,0.78); max-width:540px; margin:24px auto 0; }
+  .hero .cta-row{ display:flex; gap:14px; flex-wrap:wrap; margin-top:36px; justify-content:center; }
 
   /* Hero copy stays invisible until the video finishes its first play, then playHero() reveals it —
      driven purely by the .content-in class + CSS transitions so it never depends on a JS animation
@@ -290,7 +263,6 @@
   .hero .eyebrow[data-hero-el]{ transition-delay:0s; }
   .hero p.sub[data-hero-el]{ transition-delay:.15s; }
   .hero .cta-row[data-hero-el]{ transition-delay:.3s; }
-  .availability[data-hero-el]{ transition-delay:.45s; }
   .hero.content-in [data-hero-el]{ opacity:1; transform:none; }
 
   /* ---- CTA "ready to click" cue, played right after the copy reveals ---- */
@@ -457,22 +429,6 @@
     transform: translateX(8px);
   }
 
-  .hover-preview{
-    position:fixed; top:0; left:0; width:230px; height:160px; z-index:250;
-    border-radius:6px; overflow:hidden; pointer-events:none;
-    opacity:0; transform: translate(-50%,-50%) scale(.92); transition: opacity .35s var(--ease), transform .35s var(--ease);
-    box-shadow: 0 34px 70px -20px rgba(28,25,19,0.4);
-  }
-  .hover-preview.active{ opacity:1; transform: translate(-50%,-50%) scale(1); }
-  .hover-preview .prev-bg{
-    position:absolute; inset:0; background: var(--gold-grad); background-size:220% 100%;
-    display:flex; align-items:center; justify-content:center; flex-direction:column; gap:10px;
-  }
-  .hover-preview .prev-bg svg{ width:40px; height:40px; stroke:#fff; }
-  .hover-preview .prev-bg span{
-    font-family: var(--label); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:#241B08; font-weight:700;
-  }
-  @media (max-width: 860px){ .hover-preview{ display:none; } }
   @media (max-width: 620px){
     .service-row{ flex-direction:column; align-items:flex-start; gap:16px; }
   }
@@ -856,20 +812,6 @@
   @keyframes float-bob{ 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-6px);} }
   @media (max-width:640px){ .fab-item .fab-tip{ display:none; } }
 
-  @media (max-width:860px){
-    nav.links, header .btn-outline{ display:none; }
-    .nav-toggle{ display:flex; align-items:center; justify-content:center; width:40px; height:40px; border:1px solid var(--line-strong); }
-    header.on-video:not(.scrolled) .nav-toggle{ border-color: rgba(255,255,255,0.5); color:#fff; }
-    .nav-toggle span{ position:relative; width:16px; height:1px; background: currentColor; }
-    .nav-toggle span::before,.nav-toggle span::after{ content:''; position:absolute; left:0; width:16px; height:1px; background: currentColor; }
-    .nav-toggle span::before{ top:-5px; } .nav-toggle span::after{ top:5px; }
-    .mobile-panel{
-      position:fixed; inset:0; background: var(--bg); z-index:99; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:26px;
-      transform: translateY(-100%); transition: transform .5s var(--ease);
-    }
-    .mobile-panel.open{ transform: translateY(0); }
-    .mobile-panel a{ font-family: var(--display); font-size:1.7rem; }
-  }
   @media (max-width:640px){ .wrap{ padding:0 22px; } section{ padding:90px 0; } }
 </style>
 </head>
@@ -885,28 +827,8 @@
       <span class="main"><span class="gold-text">MC</span><span class="chrome-text">DIGITAL</span></span>
       <span class="sub">Digital Growth Agency</span>
     </a>
-    <nav class="links">
-      <a href="#servicios">Servicios</a>
-      <a href="#proceso">Proceso</a>
-      <a href="#por-que">Por qué</a>
-      <a href="#faq">FAQ</a>
-      <a href="#contacto">Contacto</a>
-    </nav>
-    <div style="display:flex; align-items:center; gap:12px;">
-      <a href="#contacto" class="btn btn-outline btn-magnetic">Hablemos</a>
-      <a href="https://wa.me/17863989232" target="_blank" class="btn btn-wa btn-magnetic">WhatsApp</a>
-      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú"><span></span></button>
-    </div>
   </div>
 </header>
-
-<div class="mobile-panel" id="mobilePanel">
-  <a href="#servicios">Servicios</a>
-  <a href="#proceso">Proceso</a>
-  <a href="#por-que">Por qué</a>
-  <a href="#faq">FAQ</a>
-  <a href="#contacto">Contacto</a>
-</div>
 
 <nav class="side-dots" id="sideDots">
   <a href="#hero" data-label="Inicio" class="active"></a>
@@ -947,7 +869,6 @@
         <a href="https://wa.me/17863989232" target="_blank" class="btn btn-wa btn-lg btn-magnetic">Hablar por WhatsApp</a>
         <a href="#servicios" class="btn btn-outline btn-lg btn-magnetic" style="border-color: rgba(255,255,255,0.4); color:#fff;">Ver servicios</a>
       </div>
-      <div class="availability" data-hero-el><span class="dot"></span>Disponibles para nuevos proyectos · Miami, FL</div>
     </div>
   </div>
   <div class="scroll-cue"><span>SCROLL</span><span class="stick"></span></div>
@@ -1020,7 +941,6 @@
   </div>
 </section>
 
-<div class="hover-preview" id="hoverPreview"><div class="prev-bg" id="hoverPreviewInner"></div></div>
 
 <!-- ============ ECOSISTEMA ============ -->
 <section id="ecosistema" class="ecosystem">
@@ -1530,12 +1450,6 @@ document.addEventListener('click', (e) => {
   if (fabWrap.classList.contains('open') && !fabWrap.contains(e.target)) fabWrap.classList.remove('open');
 });
 
-/* ============ MOBILE NAV ============ */
-const navToggle = document.getElementById('navToggle');
-const mobilePanel = document.getElementById('mobilePanel');
-navToggle.addEventListener('click', () => mobilePanel.classList.toggle('open'));
-mobilePanel.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobilePanel.classList.remove('open')));
-
 /* ============ MAGNETIC BUTTONS ============ */
 document.querySelectorAll('.btn-magnetic').forEach(btn => {
   btn.addEventListener('mousemove', e => {
@@ -1547,22 +1461,6 @@ document.querySelectorAll('.btn-magnetic').forEach(btn => {
   btn.addEventListener('mouseleave', () => gsap.to(btn, { x:0, y:0, duration:.6, ease:'elastic.out(1,0.4)' }));
 });
 
-/* ============ SERVICE ROW HOVER PREVIEW ============ */
-const hoverPreview = document.getElementById('hoverPreview');
-const hoverPreviewInner = document.getElementById('hoverPreviewInner');
-const serviceList = document.getElementById('serviceList');
-if (serviceList && hoverPreview){
-  const setX = gsap.quickTo(hoverPreview, 'x', { duration: .5, ease: 'power3.out' });
-  const setY = gsap.quickTo(hoverPreview, 'y', { duration: .5, ease: 'power3.out' });
-  serviceList.addEventListener('mousemove', e => { setX(e.clientX); setY(e.clientY); });
-  serviceList.querySelectorAll('.service-row').forEach(row => {
-    row.addEventListener('mouseenter', () => {
-      hoverPreviewInner.innerHTML = row.getAttribute('data-icon') + '<span>' + row.querySelector('h3').textContent + '</span>';
-      hoverPreview.classList.add('active');
-    });
-    row.addEventListener('mouseleave', () => hoverPreview.classList.remove('active'));
-  });
-}
 
 /* ============ AMBIENT SPOTLIGHT ============ */
 [['heroSection','heroSpotlight'], ['contacto','ctaSpotlight']].forEach(([secId, spotId]) => {
