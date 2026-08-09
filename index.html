@@ -585,12 +585,18 @@
   @media (max-width: 700px){
     .showcase-arrow{ display:none; }
     /* Panels narrower than the viewport so the next/prev card peeks in at the edges — makes it obvious the row swipes */
-    .showcase-panel{ flex:0 0 86vw; width:86vw; padding:0 4vw; }
+    .showcase-panel{ flex:0 0 88vw; width:88vw; padding:0 3vw; }
     .showcase-track.no-snap{ scroll-snap-type:none; }
-    /* The narrower card leaves too little room for text next to the visual — stack them so nothing gets squeezed */
-    .mw-body{ padding:18px; gap:16px; }
+    /* At phone width a full nav bar + hero + 3 feature cards crammed into one small card reads as noise —
+       drop the chrome that doesn't carry meaning and keep only headline + visual, matching the other two panels */
+    .mw-nav, .mw-cards{ display:none; }
+    .mw-body{ padding:20px; gap:18px; }
     .mw-hero{ flex-direction:column; align-items:stretch; gap:14px; }
     .mw-hero-visual{ aspect-ratio:16/9; }
+    .mw-hero-text h4{ font-size:1.2rem; }
+    .mw-hero-text p{ font-size:.85rem; }
+    .lp-mock h4{ font-size:1.4rem; }
+    .lp-mock p{ font-size:.9rem; }
   }
 
   /* ============ PROCESO ============ */
