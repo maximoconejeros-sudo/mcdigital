@@ -1051,7 +1051,6 @@
     <div class="sec-head" data-reveal>
       <div class="eyebrow">ASÍ SE VE EN LA PRÁCTICA</div>
       <h2>Tres servicios. Un mismo negocio.</h2>
-      <p>Desliza o haz scroll para recorrer cada servicio.</p>
     </div>
   </div>
 
@@ -1598,15 +1597,17 @@ document.querySelectorAll('.btn-magnetic').forEach(btn => {
   updateDots();
 })();
 
-/* ============ SHOWCASE SWIPE HINT — nudges the track sideways once so mobile users notice it's draggable ============ */
+/* ============ SHOWCASE SWIPE HINT — nudges the track sideways so mobile users notice it's draggable.
+   Only ever peeks and springs back to panel 1 — it never advances the row on its own; re-fires each time
+   the section scrolls back into view (while still on panel 1) since a single one-shot hint is easy to miss ============ */
 (function(){
   if (reduceMotion) return;
   const track = document.getElementById('showcaseTrack');
   if (!track || !window.matchMedia('(max-width:700px)').matches) return;
-  let done = false;
+  let animating = false;
   function nudge(){
-    if (done) return;
-    done = true;
+    if (animating || track.scrollLeft > 4) return;
+    animating = true;
     track.classList.add('no-snap');
     const start = performance.now();
     const dur = 1300;
@@ -1614,12 +1615,12 @@ document.querySelectorAll('.btn-magnetic').forEach(btn => {
       const p = Math.min(1, (now - start) / dur);
       track.scrollLeft = Math.sin(p * Math.PI) * 42;
       if (p < 1){ requestAnimationFrame(step); }
-      else { track.scrollLeft = 0; track.classList.remove('no-snap'); }
+      else { track.scrollLeft = 0; track.classList.remove('no-snap'); animating = false; }
     }
     requestAnimationFrame(step);
   }
   const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { nudge(); io.disconnect(); } });
+    entries.forEach(e => { if (e.isIntersecting) nudge(); });
   }, { threshold:.45 });
   io.observe(track);
 })();
