@@ -866,6 +866,23 @@
   @media (max-width:640px){ .fab-item .fab-tip{ display:none; } }
 
   @media (max-width:640px){ .wrap{ padding:0 22px; } section{ padding:90px 0; } }
+
+  /* ============ MOBILE PERFORMANCE ============
+     "shimmer"/"chrome-shine"/"mw-visual-shift" all animate background-position, which — unlike
+     transform/opacity — can't be handled by the compositor: the browser has to repaint every
+     element using them on every single frame, forever, regardless of whether it's on screen.
+     With this many elements doing that at once it was a steady drain on phones. They're purely
+     decorative, so on mobile they're frozen to a static gradient instead of removed outright. */
+  @media (max-width:760px){
+    .gold-shine, .chrome-text, .scroll-progress, .mw-h-btn, .mw-hero-visual,
+    .device-phone .ph-header, .ph-input .send, .order-chip .oc-dot,
+    .fab-item.wa, .fab-item.ig{
+      animation: none;
+    }
+  }
+  /* Ecosystem orbit keeps rotating (transform-only, so it's cheap) but there's no reason to run it
+     while it's off-screen — paused via JS toggling this class on scroll. */
+  .orbit-wrap.paused, .orbit-wrap.paused *{ animation-play-state: paused !important; }
 </style>
 </head>
 <body>
@@ -1423,7 +1440,6 @@ function updateScrollProgress(){
   const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
   scrollProgress.style.width = pct + '%';
 }
-window.addEventListener('scroll', updateScrollProgress, { passive:true });
 updateScrollProgress();
 
 /* ============ SIDE DOTS SCROLLSPY ============ */
@@ -1437,7 +1453,6 @@ function updateSideDots(){
   }
   sideDotLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current.id));
 }
-window.addEventListener('scroll', updateSideDots, { passive:true });
 updateSideDots();
 
 /* ============ NAV STATE ============ */
@@ -1448,8 +1463,29 @@ function updateHeaderState(){
   header.classList.toggle('scrolled', window.scrollY > 40);
   header.classList.toggle('on-video', heroBottom > 80);
 }
-window.addEventListener('scroll', updateHeaderState, { passive:true });
 updateHeaderState();
+
+/* ============ SCROLL — single rAF-batched listener driving all per-scroll updates.
+   These used to be four separate scroll listeners, each reading element positions
+   independently — on mobile that meant repeated forced layout reads on every scroll
+   tick (updateSideDots alone checks 9 sections), which is what was causing the jank
+   felt while scrolling through any part of the page. Batching to one read/write pass
+   per animation frame fixes that. (updateProcessFill is defined further down but is
+   safe to reference here — function declarations are hoisted.) ============ */
+let scrollFrameQueued = false;
+function onScrollFrame(){
+  updateScrollProgress();
+  updateSideDots();
+  updateHeaderState();
+  updateProcessFill();
+  scrollFrameQueued = false;
+}
+window.addEventListener('scroll', () => {
+  if (!scrollFrameQueued){
+    scrollFrameQueued = true;
+    requestAnimationFrame(onScrollFrame);
+  }
+}, { passive:true });
 
 /* ============ COMPARE SLIDER (antes/después) ============ */
 (function(){
@@ -1661,6 +1697,16 @@ document.querySelectorAll('[data-count]').forEach(el => {
   obs.observe(el);
 });
 
+/* ============ ECOSYSTEM ORBIT — pause its rotation while off-screen ============ */
+(function(){
+  const orbitWrap = document.querySelector('.orbit-wrap');
+  if (!orbitWrap || reduceMotion) return;
+  const orbitObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => orbitWrap.classList.toggle('paused', !entry.isIntersecting));
+  }, { threshold: 0 });
+  orbitObs.observe(orbitWrap);
+})();
+
 /* ============ PROCESS LINE FILL ============ */
 const processList = document.getElementById('processList');
 const processFill = document.getElementById('processFill');
@@ -1679,7 +1725,6 @@ function updateProcessFill(){
   const pct = total > 0 ? (visible / total) * 100 : 0;
   processFill.style.height = Math.min(pct, 100) + '%';
 }
-window.addEventListener('scroll', updateProcessFill, { passive:true });
 window.addEventListener('resize', updateProcessFill);
 updateProcessFill();
 
@@ -1704,6 +1749,7 @@ function spawnEmber(){
     flicker: Math.random() * Math.PI * 2
   };
 }
+let embersRunning = false;
 function drawEmbers(){
   ectx.clearRect(0,0,EW,EH);
   for (const e of embers){
@@ -1715,11 +1761,26 @@ function drawEmbers(){
     ectx.fill();
     if (e.y < -20) Object.assign(e, spawnEmber(), { y: EH + 10 });
   }
-  if (!reduceMotion) requestAnimationFrame(drawEmbers);
+  if (embersRunning) requestAnimationFrame(drawEmbers);
 }
 resizeEmbers();
 window.addEventListener('resize', resizeEmbers);
-drawEmbers();
+/* This canvas used to animate forever from page load regardless of scroll position — up to 90
+   particles redrawn every frame, permanently competing with everything else for main-thread time.
+   Now it only runs while actually on screen. */
+if (!reduceMotion){
+  const emberObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !embersRunning){
+        embersRunning = true;
+        drawEmbers();
+      } else if (!entry.isIntersecting){
+        embersRunning = false;
+      }
+    });
+  }, { threshold: 0 });
+  emberObs.observe(emberCanvas);
+}
 
 </script>
 </body>
