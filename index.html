@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>MC Digital — Digital Growth Agency</title>
 <meta name="description" content="MC Digital: landing pages, páginas web completas y agentes de WhatsApp con IA para hacer crecer tu negocio.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23221E17'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='30' font-weight='700' fill='%23C79A3E' text-anchor='middle'%3EMC%3C/text%3E%3C/svg%3E">
@@ -224,14 +224,34 @@
   @media (max-width: 1080px){ .side-dots{ display:none; } }
 
   /* ============ HERO ============ */
-  .hero{ position:relative; height:100svh; min-height:660px; display:flex; align-items:flex-end; overflow:hidden; background:#14120C; }
-  .hero-media{ position:absolute; inset:-6% -6%; z-index:0; will-change:transform; }
-  .hero-media img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; animation: kenburns 24s ease-in-out infinite alternate; }
-  @keyframes kenburns{ from{ transform: scale(1) translate(0,0); } to{ transform: scale(1.08) translate(-1%,-1%); } }
+  .hero{
+    position:relative;
+    min-height:660px;
+    min-height:-webkit-fill-available;
+    min-height:100svh;
+    /* the extra safe-area-inset-bottom + buffer kills the sliver of the next section that could
+       peek in on iPhone while Safari settles its toolbar / home-indicator area on first paint */
+    min-height:calc(100dvh + env(safe-area-inset-bottom) + 6px);
+    display:flex; align-items:flex-end; overflow:hidden; background:#14120C;
+  }
+  html, body{ height:100%; }
+  /* Fades away once the copy reveals, so the video's own frozen last frame doesn't clash with it.
+     inset:-6% keeps the extra bleed the existing scroll parallax (see HERO PARALLAX in the script) needs. */
+  .hero-media{ position:absolute; inset:-6% -6%; z-index:0; will-change:transform; transition: opacity 1.3s var(--ease); }
+  .hero.content-in .hero-media{ opacity:0; }
+  .hero-media video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .hero-media video.mobile{ display:none; }
+  @media (max-width:760px){
+    .hero-media video.desktop{ display:none; }
+    .hero-media video.mobile{ display:block; }
+  }
+  /* Starts barely-there so the video plays clean; deepens once the hero copy is revealed */
   .hero-scrim{
     position:absolute; inset:0; z-index:1;
     background: linear-gradient(to top, rgba(18,15,9,0.94) 0%, rgba(18,15,9,0.6) 30%, rgba(18,15,9,0.18) 58%, rgba(18,15,9,0.4) 100%);
+    opacity:.22; transition: opacity 1.2s var(--ease);
   }
+  .hero.content-in .hero-scrim{ opacity:1; }
   .hero .beams span{ background: linear-gradient(180deg, transparent, rgba(239,204,129,0.35), transparent); z-index:1; }
   .hero .wrap{ position:relative; z-index:2; padding-bottom:90px; width:100%; }
   .hero-inner{ max-width:740px; }
@@ -239,7 +259,14 @@
   .hero .eyebrow::before{ background: var(--gold-4); }
   .hero h1{ font-size: clamp(2.5rem,6.4vw,4.8rem); color:#fff; margin-top:20px; perspective:800px; }
   .hero h1 .line{ display:block; overflow:hidden; padding-bottom:.08em; }
-  .hero h1 .line span{ display:inline-block; transform-origin:bottom; }
+  .hero h1 .line span{
+    display:inline-block; transform-origin:bottom; transform: translateY(115%) rotateX(40deg);
+    transition: transform 1s var(--ease);
+  }
+  .hero h1 .line:nth-child(1) span{ transition-delay:.05s; }
+  .hero h1 .line:nth-child(2) span{ transition-delay:.15s; }
+  .hero h1 .line:nth-child(3) span{ transition-delay:.25s; }
+  .hero.content-in h1 .line span{ transform:none; }
   .hero p.sub{ font-size: clamp(1rem,1.5vw,1.15rem); color: rgba(255,255,255,0.78); max-width:540px; margin-top:24px; }
   .hero .cta-row{ display:flex; gap:14px; flex-wrap:wrap; margin-top:36px; }
   .availability{
@@ -256,10 +283,40 @@
   }
   @keyframes avail-ping{ 0%{ transform:scale(.6); opacity:.8; } 100%{ transform:scale(1.8); opacity:0; } }
 
+  /* Hero copy stays invisible until the video finishes its first play, then playHero() reveals it —
+     driven purely by the .content-in class + CSS transitions so it never depends on a JS animation
+     library targeting the right elements at the right time. */
+  [data-hero-el]{ opacity:0; transform: translateY(18px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+  .hero .eyebrow[data-hero-el]{ transition-delay:0s; }
+  .hero p.sub[data-hero-el]{ transition-delay:.15s; }
+  .hero .cta-row[data-hero-el]{ transition-delay:.3s; }
+  .availability[data-hero-el]{ transition-delay:.45s; }
+  .hero.content-in [data-hero-el]{ opacity:1; transform:none; }
+
+  /* ---- CTA "ready to click" cue, played right after the copy reveals ---- */
+  .cta-row.cta-ready .btn{ animation: cta-pop .7s var(--ease) both; }
+  .cta-row.cta-ready .btn:nth-child(2){ animation-delay:.12s; }
+  @keyframes cta-pop{ 0%{ transform:scale(1); } 32%{ transform:scale(1.09); } 62%{ transform:scale(.97); } 100%{ transform:scale(1); } }
+  .cta-row.cta-ready .btn::after{
+    content:''; position:absolute; inset:-3px; border-radius:2px; pointer-events:none;
+    border:1.5px solid rgba(239,204,129,.85); opacity:0;
+    animation: cta-ping 2.1s var(--ease) .5s 3;
+  }
+  .cta-row.cta-ready .btn:nth-child(2)::after{ animation-delay:.72s; }
+  @keyframes cta-ping{ 0%{ opacity:.85; transform:scale(1); } 100%{ opacity:0; transform:scale(1.2); } }
+  @media (prefers-reduced-motion: reduce){
+    .cta-row.cta-ready .btn{ animation:none; } .cta-row.cta-ready .btn::after{ animation:none; }
+    [data-hero-el]{ opacity:1; transform:none; }
+    .hero h1 .line span{ transform:none; }
+    .hero-scrim{ opacity:1; }
+  }
+
   .scroll-cue{
     position:absolute; bottom:34px; right:32px; z-index:2; display:flex; flex-direction:column; align-items:center; gap:8px;
     color: rgba(255,255,255,0.55); font-family: var(--label); font-size:10px; letter-spacing:.2em;
+    opacity:0; transition: opacity 1s var(--ease) .3s;
   }
+  .hero.content-in .scroll-cue{ opacity:1; }
   .scroll-cue .stick{ width:1px; height:34px; background: linear-gradient(rgba(255,255,255,0.5),transparent); position:relative; overflow:hidden; }
   .scroll-cue .stick::after{ content:''; position:absolute; top:-100%; left:0; right:0; height:100%; background: linear-gradient(var(--gold-4),transparent); animation: drip 1.8s ease-in-out infinite; }
   @keyframes drip{ 50%{ top:100%; } 100%{ top:100%; } }
@@ -867,12 +924,12 @@
 <section class="hero" id="heroSection">
   <span id="hero" style="position:absolute; top:0;"></span>
   <div class="hero-media">
-    <!-- 🔧 ESPACIO RESERVADO PARA VIDEO
-         Sustituye la imagen por tu video de marca:
-         <video autoplay muted loop playsinline poster="assets/mc-digital-poster.png">
-           <source src="assets/tu-video.mp4" type="video/mp4">
-         </video> -->
-    <img src="assets/mc-digital-poster.png" alt="MC Digital">
+    <video class="desktop" id="heroVideoDesktop" autoplay muted playsinline preload="auto">
+      <source src="assets/hero-desktop.mp4" type="video/mp4">
+    </video>
+    <video class="mobile" id="heroVideoMobile" autoplay muted playsinline preload="auto">
+      <source src="assets/hero-mobile.mp4" type="video/mp4">
+    </video>
   </div>
   <div class="hero-scrim"></div>
   <div class="spotlight" id="heroSpotlight"></div>
@@ -1335,13 +1392,28 @@
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
-/* ============ HERO INTRO ============ */
+/* ============ HERO INTRO — plays once the background video finishes (it plays only once, no loop) ============ */
+const heroSectionEl = document.getElementById('heroSection');
 function playHero(){
-  const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-  tl.from('.hero h1 .line span', { yPercent: 115, rotateX: 40, duration: 1.1, stagger: .12 })
-    .from('[data-hero-el]', { opacity: 0, y: 18, duration: .8, stagger: .12 }, '-=.6');
+  heroSectionEl.classList.add('content-in'); // CSS transitions (see .content-in rules) do the actual reveal
+  const heroCtaRow = document.querySelector('.hero .cta-row');
+  setTimeout(() => { if (heroCtaRow) heroCtaRow.classList.add('cta-ready'); }, 1300);
 }
-playHero();
+
+(function(){
+  if (reduceMotion){ playHero(); return; }
+  const videos = [document.getElementById('heroVideoDesktop'), document.getElementById('heroVideoMobile')].filter(Boolean);
+  if (!videos.length){ playHero(); return; }
+  let fired = false;
+  function ready(){
+    if (fired) return;
+    fired = true;
+    playHero();
+  }
+  videos.forEach(v => v.addEventListener('ended', ready));
+  // safety net in case autoplay is blocked and the video never actually progresses
+  setTimeout(ready, 11000);
+})();
 
 /* ============ SCROLL PROGRESS BAR ============ */
 const scrollProgress = document.getElementById('scrollProgress');
