@@ -452,7 +452,7 @@
   .showcase .sec-head{ margin-bottom:56px; }
   .showcase-pin{ position:relative; padding-bottom:34px; }
   .showcase-track{
-    display:flex; padding: 10px 0 30px; align-items:flex-start;
+    display:flex; padding: 10px 0 30px; align-items:stretch;
     overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
     scrollbar-width:none;
   }
@@ -462,6 +462,9 @@
     display:flex; justify-content:center; padding: 0 8vw;
   }
   .showcase-panel-inner{ width:100%; max-width:600px; display:flex; flex-direction:column; gap:22px; }
+  /* Keeps the label/title pinned to the same spot across panels while the mockup card centers in whatever
+     vertical room is left — otherwise the shortest panel (Landing Pages) leaves a big dead gap under its card */
+  .sp-stage{ flex:1; display:flex; align-items:center; justify-content:center; min-height:0; }
   .showcase-panel .sp-label{ font-family: var(--label); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color: var(--gold-2); }
   .showcase-panel .sp-title{ font-family: var(--display); font-size: clamp(1.3rem,2.4vw,1.7rem); font-weight:500; }
   .showcase-panel .sp-desc{ color: var(--muted); font-size:.92rem; max-width:440px; }
@@ -584,6 +587,10 @@
     /* Panels narrower than the viewport so the next/prev card peeks in at the edges — makes it obvious the row swipes */
     .showcase-panel{ flex:0 0 86vw; width:86vw; padding:0 4vw; }
     .showcase-track.no-snap{ scroll-snap-type:none; }
+    /* The narrower card leaves too little room for text next to the visual — stack them so nothing gets squeezed */
+    .mw-body{ padding:18px; gap:16px; }
+    .mw-hero{ flex-direction:column; align-items:stretch; gap:14px; }
+    .mw-hero-visual{ aspect-ratio:16/9; }
   }
 
   /* ============ PROCESO ============ */
@@ -1028,6 +1035,7 @@
        <div class="showcase-panel-inner">
         <span class="sp-label">01 · Landing Pages</span>
         <h3 class="sp-title">Una sola pantalla, directa al grano, pensada para convertir</h3>
+        <div class="sp-stage">
         <div class="device-frame">
           <div class="db-bar"><span></span><span></span><span></span></div>
           <div class="mw-body lp-mock">
@@ -1037,6 +1045,7 @@
             <span class="mw-h-btn">Reservar ahora</span>
           </div>
         </div>
+        </div>
        </div>
       </div>
 
@@ -1044,6 +1053,7 @@
        <div class="showcase-panel-inner">
         <span class="sp-label">02 · Página Web Completa</span>
         <h3 class="sp-title">Una web que se ve tan bien como tu negocio funciona</h3>
+        <div class="sp-stage">
         <div class="device-frame">
           <div class="db-bar"><span></span><span></span><span></span></div>
           <div class="mw-body">
@@ -1067,6 +1077,7 @@
             </div>
           </div>
         </div>
+        </div>
        </div>
       </div>
 
@@ -1074,6 +1085,7 @@
        <div class="showcase-panel-inner">
         <span class="sp-label">03 · WhatsApp IA</span>
         <h3 class="sp-title">Un agente que responde como tú lo harías, 24/7</h3>
+        <div class="sp-stage">
         <div class="device-phone">
           <div class="ph-status">
             <span>9:41</span>
@@ -1090,6 +1102,7 @@
             <div class="typing"><span></span><span></span><span></span></div>
           </div>
           <div class="ph-input"><div class="field"></div><div class="send"></div></div>
+        </div>
         </div>
        </div>
       </div>
