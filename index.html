@@ -238,6 +238,20 @@
     opacity:.22; transition: opacity 1.2s var(--ease);
   }
   .hero.content-in .hero-scrim{ opacity:1; }
+  /* Shown only if the browser blocks the muted autoplay (common in some in-app webviews) so playback never dead-ends */
+  .hero-tap-play{
+    position:absolute; inset:0; z-index:2; display:flex; align-items:center; justify-content:center;
+    background: rgba(15,13,8,0.28); cursor:pointer; opacity:0; pointer-events:none; transition: opacity .4s var(--ease);
+  }
+  .hero-tap-play.show{ opacity:1; pointer-events:auto; }
+  .hero-tap-play .tap-circle{
+    width:76px; height:76px; border-radius:50%; background: rgba(255,255,255,0.14); backdrop-filter: blur(6px);
+    border:1.5px solid rgba(255,255,255,0.55); display:flex; align-items:center; justify-content:center;
+    transition: transform .3s var(--ease), background .3s;
+  }
+  .hero-tap-play:hover .tap-circle{ transform:scale(1.07); background: rgba(255,255,255,0.22); }
+  .hero-tap-play svg{ width:26px; height:26px; fill:#fff; margin-left:4px; }
+  .hero.content-in .hero-tap-play{ display:none; }
   .hero .beams span{ background: linear-gradient(180deg, transparent, rgba(239,204,129,0.35), transparent); z-index:1; }
   .hero .wrap{ position:relative; z-index:2; padding-bottom:90px; width:100%; }
   .hero-inner{ max-width:740px; margin:0 auto; text-align:center; }
@@ -466,15 +480,20 @@
   .mw-nav{ display:flex; align-items:center; justify-content:space-between; }
   .mw-logo{ width:20px; height:20px; border-radius:4px; background: var(--gold-grad); background-size:200% 100%; animation: shimmer 6s linear infinite; }
   .mw-links{ display:flex; gap:14px; }
-  .mw-links span{ width:26px; height:6px; border-radius:3px; background: var(--line-strong); }
-  .mw-cta{ width:52px; height:16px; border-radius:8px; background: var(--ink); }
+  .mw-links span{ font-family: var(--label); font-size:9.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color: var(--muted); }
+  .mw-cta{
+    display:inline-flex; align-items:center; padding:5px 14px; border-radius:8px; background: var(--ink);
+    font-family: var(--label); font-size:9.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:#fff;
+  }
   .mw-hero{ display:flex; gap:20px; align-items:center; }
-  .mw-hero-text{ flex:1.1; display:flex; flex-direction:column; gap:9px; }
-  .mw-h-line{ height:15px; border-radius:3px; background: var(--ink); width:100%; }
-  .mw-h-line.w80{ width:78%; }
-  .mw-h-sub{ height:7px; border-radius:3px; background: var(--line-strong); width:90%; margin-top:5px; }
-  .mw-h-sub.w60{ width:58%; }
-  .mw-h-btn{ width:74px; height:22px; border-radius:11px; background: var(--gold-grad); background-size:200% 100%; animation: shimmer 6s linear infinite; margin-top:8px; }
+  .mw-hero-text{ flex:1.1; display:flex; flex-direction:column; gap:8px; }
+  .mw-hero-text h4{ font-family: var(--display); font-weight:700; font-size:1.05rem; line-height:1.22; color: var(--ink); margin:0; }
+  .mw-hero-text p{ font-size:.78rem; line-height:1.45; color: var(--muted); margin:0; }
+  .mw-h-btn{
+    display:inline-flex; align-items:center; justify-content:center; width:fit-content; padding:9px 18px; border-radius:11px;
+    background: var(--gold-grad); background-size:200% 100%; animation: shimmer 6s linear infinite; margin-top:6px;
+    font-family: var(--label); font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#241B08;
+  }
   .mw-hero-visual{
     flex:1; aspect-ratio:1/0.9; border-radius:10px; position:relative; overflow:hidden;
     background: linear-gradient(135deg, var(--gold-5), var(--gold-4) 45%, var(--gold-3) 100%);
@@ -487,18 +506,17 @@
   .mw-hero-visual::after{ width:26%; height:26%; bottom:14%; right:16%; background: rgba(36,27,8,0.14); }
   @keyframes mw-visual-shift{ 0%,100%{ background-position:0% 0%; } 50%{ background-position:100% 100%; } }
   .mw-cards{ display:flex; gap:14px; margin-top:4px; }
-  .mw-card{ flex:1; border:1px solid var(--line); border-radius:8px; padding:14px; display:flex; flex-direction:column; gap:8px; }
+  .mw-card{ flex:1; border:1px solid var(--line); border-radius:8px; padding:14px; display:flex; flex-direction:column; gap:5px; }
   .mw-card-icon{ width:22px; height:22px; border-radius:6px; background: var(--gold-4); display:block; }
-  .mw-card-line{ height:7px; border-radius:3px; background: var(--ink); opacity:.85; width:80%; }
-  .mw-card-line.w70{ width:60%; background: var(--line-strong); opacity:1; height:6px; }
+  .mw-card h5{ font-family: var(--display); font-weight:700; font-size:.8rem; color: var(--ink); margin:2px 0 0; }
+  .mw-card p{ font-size:.68rem; line-height:1.4; color: var(--muted); margin:0; }
 
   /* ---------- LANDING PAGE MOCKUP (minimal, single screen) ---------- */
-  .lp-mock{ display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:14px; padding: 46px 30px; min-height:280px; }
+  .lp-mock{ display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:10px; padding: 46px 30px; min-height:280px; }
   .lp-mock .lp-dot{ width:36px; height:36px; border-radius:9px; background: var(--gold-grad); background-size:200% 100%; animation: shimmer 6s linear infinite; margin-bottom:6px; }
-  .lp-mock .mw-h-line{ width:78%; }
-  .lp-mock .mw-h-line.w80{ width:56%; }
-  .lp-mock .mw-h-sub{ width:58%; margin-top:8px; }
-  .lp-mock .mw-h-btn{ width:132px; height:26px; margin-top:14px; }
+  .lp-mock h4{ font-family: var(--display); font-weight:700; font-size:1.3rem; color: var(--ink); margin:0; }
+  .lp-mock p{ font-size:.85rem; line-height:1.5; color: var(--muted); max-width:320px; margin:0; }
+  .lp-mock .mw-h-btn{ padding:11px 26px; border-radius:22px; font-size:11px; margin-top:8px; }
 
   /* ---------- PHONE / WHATSAPP MOCKUP ---------- */
   .device-phone{ width:240px; margin:0 auto; background:#fff; border-radius:32px; border:7px solid var(--ink); overflow:hidden; box-shadow: 0 46px 90px -34px rgba(28,25,19,0.34); animation: mockup-float 6.5s ease-in-out infinite; animation-delay:.4s; }
@@ -561,7 +579,12 @@
   .showcase-dots button{ width:8px; height:8px; border-radius:50%; background: var(--line-strong); transition: background .3s, transform .3s; cursor:pointer; }
   .showcase-dots button.active{ background: var(--gold-3); transform: scale(1.4); }
   @media (max-width: 1180px){ .showcase-arrow{ width:42px; height:42px; } .showcase-arrow.prev{ left:14px; } .showcase-arrow.next{ right:14px; } }
-  @media (max-width: 700px){ .showcase-arrow{ display:none; } }
+  @media (max-width: 700px){
+    .showcase-arrow{ display:none; }
+    /* Panels narrower than the viewport so the next/prev card peeks in at the edges — makes it obvious the row swipes */
+    .showcase-panel{ flex:0 0 86vw; width:86vw; padding:0 4vw; }
+    .showcase-track.no-snap{ scroll-snap-type:none; }
+  }
 
   /* ============ PROCESO ============ */
   .process-section{ background: var(--bg-deep); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
@@ -854,6 +877,9 @@
     </video>
   </div>
   <div class="hero-scrim"></div>
+  <div class="hero-tap-play" id="heroTapPlay" aria-label="Reproducir video" role="button">
+    <span class="tap-circle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+  </div>
   <div class="spotlight" id="heroSpotlight"></div>
   <div class="beams"><span></span><span></span><span></span><span></span></div>
   <div class="wrap">
@@ -1006,10 +1032,9 @@
           <div class="db-bar"><span></span><span></span><span></span></div>
           <div class="mw-body lp-mock">
             <div class="lp-dot"></div>
-            <div class="mw-h-line"></div>
-            <div class="mw-h-line w80"></div>
-            <div class="mw-h-sub"></div>
-            <div class="mw-h-btn"></div>
+            <h4>Café Aurora</h4>
+            <p>Reserva tu mesa en segundos, directo desde tu celular.</p>
+            <span class="mw-h-btn">Reservar ahora</span>
           </div>
         </div>
        </div>
@@ -1024,23 +1049,21 @@
           <div class="mw-body">
             <div class="mw-nav">
               <div class="mw-logo"></div>
-              <div class="mw-links"><span></span><span></span><span></span></div>
-              <div class="mw-cta"></div>
+              <div class="mw-links"><span>Servicios</span><span>Nosotros</span><span>Contacto</span></div>
+              <span class="mw-cta">Empezar</span>
             </div>
             <div class="mw-hero">
               <div class="mw-hero-text">
-                <div class="mw-h-line"></div>
-                <div class="mw-h-line w80"></div>
-                <div class="mw-h-sub"></div>
-                <div class="mw-h-sub w60"></div>
-                <div class="mw-h-btn"></div>
+                <h4>Diseñamos espacios que enamoran</h4>
+                <p>Interiorismo residencial y comercial en toda la ciudad.</p>
+                <span class="mw-h-btn">Ver proyectos</span>
               </div>
               <div class="mw-hero-visual"></div>
             </div>
             <div class="mw-cards">
-              <div class="mw-card"><span class="mw-card-icon"></span><div class="mw-card-line"></div><div class="mw-card-line w70"></div></div>
-              <div class="mw-card"><span class="mw-card-icon"></span><div class="mw-card-line"></div><div class="mw-card-line w70"></div></div>
-              <div class="mw-card"><span class="mw-card-icon"></span><div class="mw-card-line"></div><div class="mw-card-line w70"></div></div>
+              <div class="mw-card"><span class="mw-card-icon"></span><h5>Diseño a medida</h5><p>Cada proyecto es único.</p></div>
+              <div class="mw-card"><span class="mw-card-icon"></span><h5>Entrega rápida</h5><p>Resultados en semanas.</p></div>
+              <div class="mw-card"><span class="mw-card-icon"></span><h5>Garantía total</h5><p>Calidad asegurada.</p></div>
             </div>
           </div>
         </div>
@@ -1312,6 +1335,28 @@
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
+/* ============ HERO VIDEO PLAY — some in-app browsers ignore the autoplay attribute and need an explicit
+   .play() call; if that's blocked too (rare, needs a real tap), show a tap-to-play control so it never dead-ends ============ */
+(function(){
+  const tapPlay = document.getElementById('heroTapPlay');
+  const heroVideos = [document.getElementById('heroVideoDesktop'), document.getElementById('heroVideoMobile')].filter(Boolean);
+  if (!heroVideos.length) return;
+  function activeVideo(){
+    return heroVideos.find(v => getComputedStyle(v).display !== 'none') || heroVideos[0];
+  }
+  function tryPlay(){
+    const p = activeVideo().play();
+    if (p && typeof p.catch === 'function'){
+      p.catch(() => { tapPlay?.classList.add('show'); });
+    }
+  }
+  tryPlay();
+  tapPlay?.addEventListener('click', () => {
+    heroVideos.forEach(v => v.play().catch(() => {}));
+    tapPlay.classList.remove('show');
+  });
+})();
+
 /* ============ HERO INTRO — plays once the background video finishes (it plays only once, no loop) ============ */
 const heroSectionEl = document.getElementById('heroSection');
 function playHero(){
@@ -1510,6 +1555,32 @@ document.querySelectorAll('.btn-magnetic').forEach(btn => {
   dotsEls.forEach((b,i) => b.addEventListener('click', () => goTo(i)));
   track.addEventListener('scroll', () => { clearTimeout(track._sT); track._sT = setTimeout(updateDots, 80); }, { passive:true });
   updateDots();
+})();
+
+/* ============ SHOWCASE SWIPE HINT — nudges the track sideways once so mobile users notice it's draggable ============ */
+(function(){
+  if (reduceMotion) return;
+  const track = document.getElementById('showcaseTrack');
+  if (!track || !window.matchMedia('(max-width:700px)').matches) return;
+  let done = false;
+  function nudge(){
+    if (done) return;
+    done = true;
+    track.classList.add('no-snap');
+    const start = performance.now();
+    const dur = 1300;
+    function step(now){
+      const p = Math.min(1, (now - start) / dur);
+      track.scrollLeft = Math.sin(p * Math.PI) * 42;
+      if (p < 1){ requestAnimationFrame(step); }
+      else { track.scrollLeft = 0; track.classList.remove('no-snap'); }
+    }
+    requestAnimationFrame(step);
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { nudge(); io.disconnect(); } });
+  }, { threshold:.45 });
+  io.observe(track);
 })();
 
 /* ============ HERO PARALLAX ============ */
