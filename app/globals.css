@@ -7,6 +7,20 @@
   --color-accent: #c89b3c;
   --color-line: rgba(244, 242, 236, 0.14);
 
+  /* Warm/light system — Expertise onward per the creative reset. The site
+   * stops being black-dominated past the Hero; these sit alongside (not
+   * instead of) the dark tokens above, which the not-yet-rebuilt acts
+   * (Work/Philosophy/Contact) still use. */
+  --color-black: #090909;
+  --color-graphite-dark: #242422;
+  --color-graphite: #555550;
+  --color-graphite-light: #b8b8b3;
+  --color-silver: #d8d8d4;
+  --color-warm-white: #f4f1ea;
+  --color-soft-white: #fafaf8;
+  --color-gold: #c8a04a;
+  --color-champagne-gold: #e1c47a;
+
   --font-display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
   --font-mono: "Space Mono", "SFMono-Regular", Menlo, monospace;
 
