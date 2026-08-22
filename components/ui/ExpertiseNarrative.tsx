@@ -261,7 +261,7 @@ export default function ExpertiseNarrative({ ready }: { ready: boolean }) {
             className={styles.navRow}
             style={{
               opacity: 0,
-              top: `calc(${68 + i * 40}px)`,
+              top: `calc(clamp(90px, 13vh, 150px) + ${40 + i * 40}px)`,
             }}
           >
             {row.map((n) => (

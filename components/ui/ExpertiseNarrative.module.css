@@ -58,7 +58,10 @@
 
 .navRow {
   position: absolute;
-  top: clamp(28px, 5vh, 60px);
+  /* sits below the real fixed Navigation bar (which occupies the same
+   * clamp(28px,5vh,60px) band) so this decorative mockup nav never
+   * overlaps the site's actual menu */
+  top: clamp(90px, 13vh, 150px);
   right: var(--nav-pad);
   display: flex;
   gap: clamp(20px, 2.6vw, 34px);

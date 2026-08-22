@@ -64,7 +64,11 @@ export default function FinalSculpture() {
     );
 
     const p = scrollState.act9Progress;
-    const reveal = THREE.MathUtils.smoothstep(p, 0.15, 0.62);
+    // ramps up faster than the old black-background curve: against the
+    // warm-white/champagne frame, a long stretch at partial opacity reads
+    // as pale/washed-out gray instead of a glow, so it needs to reach a
+    // solid, high opacity well before the copy finishes revealing
+    const reveal = THREE.MathUtils.smoothstep(p, 0.1, 0.4);
 
     scaleRef.current = THREE.MathUtils.damp(
       scaleRef.current,
@@ -73,9 +77,7 @@ export default function FinalSculpture() {
       delta
     );
     group.current.scale.setScalar(scaleRef.current);
-    // capped below full opacity — a soft backlit presence behind the copy,
-    // not a solid gold wall competing with it
-    material.opacity = THREE.MathUtils.damp(material.opacity, reveal * 0.78, 2.4, delta);
+    material.opacity = THREE.MathUtils.damp(material.opacity, reveal * 0.96, 2.4, delta);
   });
 
   return (
