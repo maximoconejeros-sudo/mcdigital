@@ -25,11 +25,22 @@ interface Refs {
   glow: HTMLDivElement | null;
   shadow: HTMLDivElement | null;
   brandName: HTMLDivElement | null;
-  brandSub: HTMLDivElement | null;
+  closingHeadline: HTMLDivElement | null;
   brandLocation: HTMLDivElement | null;
   brandServices: HTMLDivElement | null;
+  closingLine: HTMLDivElement | null;
+  closingCta: HTMLAnchorElement | null;
   goldLine: HTMLDivElement | null;
 }
+
+// ivory -> black, interpolated by hand (not a CSS transition) so it can be
+// scrubbed to scroll position exactly like everything else in this act
+const BG_IVORY: [number, number, number] = [244, 241, 234];
+const BG_BLACK: [number, number, number] = [9, 9, 9];
+const lerpColor = (a: [number, number, number], b: [number, number, number], t: number) =>
+  `rgb(${Math.round(a[0] + (b[0] - a[0]) * t)}, ${Math.round(a[1] + (b[1] - a[1]) * t)}, ${Math.round(
+    a[2] + (b[2] - a[2]) * t
+  )})`;
 
 /**
  * Act VII — Contact, closing in three beats within one continuous scroll:
@@ -64,9 +75,11 @@ export default function FinalNarrative({
     glow: null,
     shadow: null,
     brandName: null,
-    brandSub: null,
+    closingHeadline: null,
     brandLocation: null,
     brandServices: null,
+    closingLine: null,
+    closingCta: null,
     goldLine: null,
   });
   const wasActive = useRef(false);
@@ -142,9 +155,13 @@ export default function FinalNarrative({
 
         // closing brand moment — the monogram (WebGL) drifts back to
         // center and the camera pulls back as this rises; consumed by
-        // FinalSculpture/FinalCameraRig every frame
+        // FinalSculpture/FinalCameraRig every frame. It holds alone, with
+        // no text over it, before collapsing smaller to make room below.
         const brandT = bandIn(p, 0.44, 0.56);
         scrollState.act9BrandT = brandT;
+
+        const collapseT = bandIn(p, 0.58, 0.68);
+        scrollState.act9CollapseT = collapseT;
 
         // base translate(-50%,-50%) centers each on its own left/top anchor
         // (set in CSS) — included here too since this overwrites the whole
@@ -153,24 +170,47 @@ export default function FinalNarrative({
         if (r.glow) r.glow.style.transform = `translate(-50%, -50%) translateX(${glowShift}%)`;
         if (r.shadow) r.shadow.style.transform = `translate(-50%, -50%) translateX(${glowShift}%)`;
 
-        const finalFadeT = bandIn(p, 0.95, 1);
+        const finalFadeT = bandIn(p, 0.97, 1);
         const brandMul = 1 - finalFadeT;
+        // the closing copy clears before the background finishes going to
+        // black, so nothing dark-on-ivory ever reads dark-on-black
+        const textOutT = bandIn(p, 0.86, 0.91);
+        const textMul = brandMul * (1 - textOutT);
 
-        const brandNameT = bandIn(p, 0.5, 0.56) * brandMul;
+        const brandNameT = bandIn(p, 0.62, 0.67) * textMul;
         if (r.brandName) {
           r.brandName.style.opacity = String(brandNameT);
           r.brandName.style.transform = `translateY(${(1 - brandNameT) * 12}px)`;
         }
-        const brandSubT = bandIn(p, 0.53, 0.59) * brandMul;
-        if (r.brandSub) r.brandSub.style.opacity = String(brandSubT);
-        const brandLocationT = bandIn(p, 0.56, 0.62) * brandMul;
+        const closingHeadlineT = bandIn(p, 0.65, 0.72) * textMul;
+        if (r.closingHeadline) {
+          r.closingHeadline.style.opacity = String(closingHeadlineT);
+          r.closingHeadline.style.transform = `translateY(${(1 - closingHeadlineT) * 16}px)`;
+        }
+        const brandLocationT = bandIn(p, 0.71, 0.77) * textMul;
         if (r.brandLocation) r.brandLocation.style.opacity = String(brandLocationT);
-        const brandServicesT = bandIn(p, 0.59, 0.65) * brandMul;
+        const brandServicesT = bandIn(p, 0.75, 0.8) * textMul;
         if (r.brandServices) r.brandServices.style.opacity = String(brandServicesT);
+        const closingLineT = bandIn(p, 0.78, 0.82) * textMul;
+        if (r.closingLine) {
+          r.closingLine.style.opacity = String(closingLineT);
+          r.closingLine.style.transform = `scaleX(${closingLineT})`;
+        }
+        const closingCtaT = bandIn(p, 0.8, 0.86) * textMul;
+        if (r.closingCta) {
+          r.closingCta.style.opacity = String(closingCtaT);
+          r.closingCta.style.transform = `translateY(${(1 - closingCtaT) * 14}px)`;
+          r.closingCta.style.pointerEvents = closingCtaT > 0.5 ? "auto" : "none";
+        }
 
-        // the gold line that hands off to the footer — grows from center,
-        // then the whole layer fades to reveal the real footer beneath
-        const goldLineT = bandIn(p, 0.88, 0.97);
+        // the gradual ivory -> black walk into the footer — interpolated,
+        // never an instant cut
+        const bgT = bandIn(p, 0.87, 0.97);
+        if (layer.current) layer.current.style.backgroundColor = lerpColor(BG_IVORY, BG_BLACK, bgT);
+
+        // a last gold accent line on the now-dark frame, right before the
+        // handoff fade reveals the (already black) footer beneath
+        const goldLineT = bandIn(p, 0.91, 0.96);
         if (r.goldLine) {
           r.goldLine.style.opacity = String(goldLineT * brandMul);
           r.goldLine.style.transform = `translateX(-50%) scaleX(${goldLineT})`;
@@ -269,8 +309,9 @@ export default function FinalNarrative({
           </a>
         </div>
 
-        {/* the closing brand moment — the site's final shot, held once the
-            CTA content has cleared and the monogram has recentered */}
+        {/* the closing brand moment — the site's final shot. The monogram
+            (WebGL) holds alone first, then lifts and settles smaller; only
+            then does this copy appear, entirely below it — never over it. */}
         <div className={styles.brandBlock}>
           <div
             ref={(el) => {
@@ -283,12 +324,12 @@ export default function FinalNarrative({
           </div>
           <div
             ref={(el) => {
-              refs.current.brandSub = el;
+              refs.current.closingHeadline = el;
             }}
-            className={styles.brandSub}
+            className={styles.closingHeadline}
             style={{ opacity: 0 }}
           >
-            Digital growth studio
+            Built for what&rsquo;s next.
           </div>
           <div
             ref={(el) => {
@@ -297,7 +338,7 @@ export default function FinalNarrative({
             className={styles.brandLocation}
             style={{ opacity: 0 }}
           >
-            Santiago — Miami
+            and designed to be remembered.
           </div>
           <div
             ref={(el) => {
@@ -306,8 +347,33 @@ export default function FinalNarrative({
             className={styles.brandServices}
             style={{ opacity: 0 }}
           >
-            Web · Landing Pages · AI &amp; Automation
+            Santiago ↔ Miami
           </div>
+          <div
+            ref={(el) => {
+              refs.current.closingLine = el;
+            }}
+            className={styles.closingLine}
+            aria-hidden
+          />
+          <a
+            ref={(el) => {
+              refs.current.closingCta = el;
+            }}
+            className={styles.closingCta}
+            href={CONTACT.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-cursor="Escríbenos"
+            style={{ opacity: 0, pointerEvents: "none" }}
+          >
+            <span className={styles.closingCtaText}>
+              <span className={styles.closingCtaBase} aria-hidden>
+                ¿Tienes una idea? Hablemos&nbsp;↗
+              </span>
+              <span className={styles.closingCtaGold}>¿Tienes una idea? Hablemos&nbsp;↗</span>
+            </span>
+          </a>
         </div>
 
         <div

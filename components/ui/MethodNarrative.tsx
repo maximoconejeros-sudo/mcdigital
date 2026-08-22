@@ -5,12 +5,11 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { scrollState } from "@/lib/animation/scroll-store";
 import {
-  METHOD_INTRO_LABEL,
-  METHOD_STATEMENT_SMALL,
-  METHOD_STATEMENT_MAIN,
-  METHOD_STATEMENT_EMPHASIS,
-  METHOD_STEPS,
-  DISCOVER_WORDS,
+  PROCESS_INTRO_LABEL,
+  PROCESS_HEADLINE,
+  PROCESS_EMPHASIS,
+  PROCESS_STAGES,
+  DISCOVER_FRAGMENTS,
   HUMAN_MOMENT_LABEL,
   HUMAN_MOMENT_HEADLINE,
   HUMAN_MOMENT_COPY,
@@ -32,87 +31,65 @@ const wordEnvelope = (
   outEnd: number
 ) => Math.min(bandIn(p, inStart, inEnd), 1 - bandIn(p, outStart, outEnd));
 
-// DISCOVER: where each keyword starts, scattered and tilted
-const SCATTER = [
-  { top: 10, left: 58, rotate: -6 },
-  { top: 26, left: 80, rotate: 4 },
-  { top: 52, left: 12, rotate: 5 },
-  { top: 66, left: 68, rotate: -4 },
-  { top: 6, left: 20, rotate: 3 },
-  { top: 40, left: 44, rotate: -5 },
-  { top: 78, left: 28, rotate: 6 },
-  { top: 58, left: 88, rotate: -3 },
-];
-// DEFINE: the same words, settled into an organized vertical list
-const GRID = DISCOVER_WORDS.map((_, i) => ({
-  top: 10 + i * 10.5,
-  left: 6,
-  rotate: 0,
-}));
+const STAGE_COUNT = PROCESS_STAGES.length;
+const STAGE_SPAN = 0.68 / STAGE_COUNT;
+const STAGE_START = 0.08;
+// [inStart, inEnd, outStart, outEnd] per stage — each hands off to the next
+const STAGE_BANDS: [number, number, number, number][] = PROCESS_STAGES.map((_, i) => {
+  const s = STAGE_START + i * STAGE_SPAN;
+  return [s, s + STAGE_SPAN * 0.25, s + STAGE_SPAN, s + STAGE_SPAN * 1.25];
+});
 
-// BUILD: four component blocks, each entering from a different edge
-const BLOCK_FROM = [
-  { x: 0, y: -60 },
-  { x: 60, y: 0 },
-  { x: -60, y: 0 },
-  { x: 0, y: 60 },
+// DISCOVER/DEFINE: three fragments scatter, then align onto one axis
+const FRAG_SCATTER = [
+  { top: 22, left: 62, rotate: -5 },
+  { top: 55, left: 82, rotate: 4 },
+  { top: 74, left: 58, rotate: -3 },
 ];
-const BLOCK_TO = [
-  { top: 8, left: 8 },
-  { top: 8, left: 54 },
-  { top: 54, left: 8 },
-  { top: 54, left: 54 },
+const FRAG_ALIGNED = [
+  { top: 46, left: 60, rotate: 0 },
+  { top: 46, left: 72, rotate: 0 },
+  { top: 46, left: 84, rotate: 0 },
 ];
 
-// EVOLVE: small satellite dots that keep drifting once the system is "alive"
+// DESIGN/BUILD: four interface elements assembling into a small card
+const IFACE_FROM = [
+  { x: -40, y: -30 },
+  { x: 40, y: -20 },
+  { x: -30, y: 30 },
+  { x: 30, y: 30 },
+];
+const IFACE_TO = [
+  { top: 12, left: 58 },
+  { top: 12, left: 78 },
+  { top: 30, left: 58 },
+  { top: 55, left: 58 },
+];
+
 const DOTS = [
-  { top: 4, left: 10 },
-  { top: 92, left: 18 },
-  { top: 14, left: 94 },
-  { top: 86, left: 88 },
-  { top: 50, left: 2 },
+  { top: 10, left: 56 },
+  { top: 85, left: 60 },
+  { top: 20, left: 94 },
+  { top: 80, left: 90 },
 ];
 
-const BG_STOPS: { at: number; color: string }[] = [
-  { at: 0.76, color: "#242422" },
-  { at: 0.88, color: "#f4f1ea" },
-];
-
-function sampleBg(p: number): string {
-  if (p <= BG_STOPS[0].at) return BG_STOPS[0].color;
-  if (p >= BG_STOPS[1].at) return BG_STOPS[1].color;
-  const t = smooth(
-    clamp01((p - BG_STOPS[0].at) / (BG_STOPS[1].at - BG_STOPS[0].at))
-  );
-  return gsap.utils.interpolate(BG_STOPS[0].color, BG_STOPS[1].color, t);
+interface StageRefs {
+  number: HTMLDivElement | null;
+  name: HTMLDivElement | null;
+  copy: HTMLParagraphElement | null;
 }
-
-// [stepStart, stepEnd] highlight window per rail item, matches the stage bands below
-const STEP_BANDS: [number, number][] = [
-  [0.1, 0.2],
-  [0.2, 0.3],
-  [0.3, 0.4],
-  [0.4, 0.5],
-  [0.5, 0.58],
-  [0.58, 0.68],
-  [0.68, 0.78],
-];
 
 interface Refs {
   introLabel: HTMLDivElement | null;
-  introSmall: HTMLDivElement | null;
-  introMain: HTMLDivElement | null;
+  introHeadline: HTMLDivElement | null;
   introEmphasis: HTMLDivElement | null;
-  rail: HTMLDivElement | null;
-  railItems: (HTMLSpanElement | null)[];
-  stage: HTMLDivElement | null;
-  words: (HTMLSpanElement | null)[];
-  guideV: HTMLDivElement | null;
-  guideH: HTMLDivElement | null;
-  designPanel: HTMLDivElement | null;
-  blocks: (HTMLDivElement | null)[];
+  stages: StageRefs[];
+  fragments: (HTMLSpanElement | null)[];
+  ifaceEls: (HTMLDivElement | null)[];
   bubble: HTMLDivElement | null;
   dots: (HTMLDivElement | null)[];
+  progressLine: HTMLDivElement | null;
+  progressNums: (HTMLSpanElement | null)[];
   humanLabel: HTMLDivElement | null;
   humanHeadline: HTMLDivElement | null;
   humanCopy: HTMLParagraphElement | null;
@@ -120,33 +97,31 @@ interface Refs {
 }
 
 /**
- * Act VI — "Method." Replaces the old timeline/circles process section: the
- * seven steps (Discover -> Evolve) are not a list, they're one composition
- * that keeps physically transforming — keywords scatter then organize,
- * a layout assembles, component blocks lock into a grid, a conversation
- * connects into it, the whole thing launches to fill the frame, then small
- * elements keep drifting to signal ongoing evolution. Closes on a human
- * moment: the background warms from graphite to warm-white as the copy
- * turns from process to people.
+ * Act VI — "Process." Deleted entirely and rebuilt per V10: no left rail
+ * list, no bordered floating-word square. A horizontal cinematic sequence
+ * instead — one numbered stage (01 Descubrir -> 07 Evolucionar) dominates
+ * the full viewport at a time, huge name + copy, with a small visual
+ * behind it that's appropriate to that specific stage (fragments
+ * gathering, aligning to an axis, an interface assembling, a chat
+ * attaching, the whole thing launching, satellites drifting). A gold
+ * progress line at the bottom tracks which stage is active. Closes on the
+ * same human-moment beat as before — preserved, not part of what V10
+ * flagged as broken.
  */
 export default function MethodNarrative({ ready }: { ready: boolean }) {
   const spacer = useRef<HTMLDivElement>(null);
   const layer = useRef<HTMLDivElement>(null);
   const refs = useRef<Refs>({
     introLabel: null,
-    introSmall: null,
-    introMain: null,
+    introHeadline: null,
     introEmphasis: null,
-    rail: null,
-    railItems: METHOD_STEPS.map(() => null),
-    stage: null,
-    words: DISCOVER_WORDS.map(() => null),
-    guideV: null,
-    guideH: null,
-    designPanel: null,
-    blocks: BLOCK_TO.map(() => null),
+    stages: PROCESS_STAGES.map(() => ({ number: null, name: null, copy: null })),
+    fragments: DISCOVER_FRAGMENTS.map(() => null),
+    ifaceEls: IFACE_TO.map(() => null),
     bubble: null,
     dots: DOTS.map(() => null),
+    progressLine: null,
+    progressNums: PROCESS_STAGES.map(() => null),
     humanLabel: null,
     humanHeadline: null,
     humanCopy: null,
@@ -166,7 +141,7 @@ export default function MethodNarrative({ ready }: { ready: boolean }) {
         const p = self.progress;
         const r = refs.current;
 
-        scrollState.navTheme = p > 0.78 ? "light" : "graphite";
+        scrollState.navTheme = p > 0.9 ? "light" : "graphite";
 
         if (self.isActive !== wasActive.current) {
           wasActive.current = self.isActive;
@@ -178,132 +153,113 @@ export default function MethodNarrative({ ready }: { ready: boolean }) {
           }
         }
 
-        if (layer.current) layer.current.style.background = sampleBg(p);
-
-        // intro — three-part statement (small claim -> large statement ->
-        // gold serif emphasis), staggered, so the section states its own
-        // meaning before the construction sequence begins
-        const introT = wordEnvelope(p, 0.0, 0.03, 0.08, 0.1);
+        // intro
+        const introT = wordEnvelope(p, 0.0, 0.03, 0.07, STAGE_START);
         if (r.introLabel) r.introLabel.style.opacity = String(introT);
-        const smallT = wordEnvelope(p, 0.0, 0.03, 0.08, 0.1);
-        if (r.introSmall) {
-          r.introSmall.style.opacity = String(smallT);
-          r.introSmall.style.transform = `translateY(${(1 - smallT) * 14}px)`;
+        if (r.introHeadline) {
+          r.introHeadline.style.opacity = String(introT);
+          r.introHeadline.style.transform = `translateY(${(1 - introT) * 16}px)`;
         }
-        const mainT = wordEnvelope(p, 0.015, 0.045, 0.08, 0.1);
-        if (r.introMain) {
-          r.introMain.style.opacity = String(mainT);
-          r.introMain.style.transform = `translateY(${(1 - mainT) * 16}px)`;
-        }
-        const emphT = wordEnvelope(p, 0.03, 0.06, 0.08, 0.1);
-        if (r.introEmphasis) {
-          r.introEmphasis.style.opacity = String(emphT);
-          r.introEmphasis.style.transform = `translateY(${(1 - emphT) * 14}px)`;
-        }
+        if (r.introEmphasis) r.introEmphasis.style.opacity = String(introT);
 
-        // rail — visible from just after intro until the human moment
-        const railT = wordEnvelope(p, 0.07, 0.11, 0.78, 0.82);
-        if (r.rail) r.rail.style.opacity = String(railT);
-        METHOD_STEPS.forEach((_, i) => {
-          const el = r.railItems[i];
+        // progress line — one continuous gold fill, active number gold
+        const progressT = wordEnvelope(p, 0.05, STAGE_START, 0.86, 0.9);
+        if (r.progressLine) {
+          r.progressLine.style.opacity = String(progressT);
+          const fillT = clamp01((p - STAGE_START) / (0.86 - STAGE_START));
+          r.progressLine.style.setProperty("--fill", String(fillT));
+        }
+        PROCESS_STAGES.forEach((_, i) => {
+          const el = r.progressNums[i];
           if (!el) return;
-          const [s, e] = STEP_BANDS[i];
-          const active = bandIn(p, s, Math.min(s + 0.02, e));
-          el.style.color = active > 0.5 || p > e ? "var(--color-champagne-gold)" : "var(--color-graphite-light)";
-          el.style.opacity = String(0.55 + active * 0.45);
+          const [s] = STAGE_BANDS[i];
+          const active = bandIn(p, s, s + 0.02);
+          el.style.color = active > 0.5 || p > s ? "var(--color-champagne-gold)" : "var(--color-graphite-light)";
         });
 
-        // stage — an invisible positioning area, not a visible card: no
-        // border/fill of its own, just launches (scales) mid-way
-        const stageT = wordEnvelope(p, 0.09, 0.13, 0.76, 0.8);
-        if (r.stage) {
-          r.stage.style.opacity = String(stageT);
-          const launch = bandIn(p, 0.58, 0.68);
-          const scale = 1 + launch * 0.55;
-          r.stage.style.transform = `translateY(-50%) scale(${scale})`;
-        }
+        // each stage: number/name/copy envelope
+        PROCESS_STAGES.forEach((_, i) => {
+          const sr = r.stages[i];
+          const [inS, inE, outS, outE] = STAGE_BANDS[i];
+          const t = wordEnvelope(p, inS, inE, outS, outE);
+          if (sr.number) sr.number.style.opacity = String(t * 0.08);
+          if (sr.name) {
+            sr.name.style.opacity = String(t);
+            sr.name.style.transform = `translateY(${(1 - t) * 16}px)`;
+          }
+          if (sr.copy) sr.copy.style.opacity = String(t);
+        });
 
-        // DISCOVER -> DEFINE: words scatter in, then settle onto a grid
-        const wordsInT = bandIn(p, 0.1, 0.14);
-        const organizeT = bandIn(p, 0.2, 0.29);
-        const wordsOutT = 1 - bandIn(p, 0.29, 0.33);
-        DISCOVER_WORDS.forEach((_, i) => {
-          const el = r.words[i];
+        // DISCOVER(0) -> DEFINE(1): fragments scatter in, then align
+        const discoverT = bandIn(p, STAGE_BANDS[0][0], STAGE_BANDS[0][1]);
+        const defineT = bandIn(p, STAGE_BANDS[1][0], STAGE_BANDS[1][0] + STAGE_SPAN * 0.6);
+        const fragOutT = 1 - bandIn(p, STAGE_BANDS[1][2], STAGE_BANDS[1][3]);
+        DISCOVER_FRAGMENTS.forEach((_, i) => {
+          const el = r.fragments[i];
           if (!el) return;
-          const from = SCATTER[i];
-          const to = GRID[i];
-          const top = from.top + (to.top - from.top) * organizeT;
-          const left = from.left + (to.left - from.left) * organizeT;
-          const rotate = from.rotate * (1 - organizeT);
+          const from = FRAG_SCATTER[i];
+          const to = FRAG_ALIGNED[i];
+          const top = from.top + (to.top - from.top) * defineT;
+          const left = from.left + (to.left - from.left) * defineT;
+          const rotate = from.rotate * (1 - defineT);
           el.style.top = `${top}%`;
           el.style.left = `${left}%`;
           el.style.transform = `rotate(${rotate}deg)`;
-          el.style.opacity = String(wordsInT * wordsOutT);
+          el.style.opacity = String(discoverT * fragOutT);
         });
 
-        // DEFINE: a vertical guide + horizontal baseline appear — the
-        // "common grid" the scattered fragments are organizing onto,
-        // standing in for the container this section used to be
-        const guideT = wordEnvelope(p, 0.18, 0.24, 0.3, 0.35);
-        if (r.guideV) {
-          r.guideV.style.opacity = String(guideT * 0.6);
-          r.guideV.style.transform = `scaleY(${guideT})`;
-        }
-        if (r.guideH) {
-          r.guideH.style.opacity = String(guideT * 0.6);
-          r.guideH.style.transform = `scaleX(${guideT})`;
-        }
-
-        // DESIGN: headline + image hierarchy crossfades in
-        const designT = wordEnvelope(p, 0.3, 0.35, 0.39, 0.42);
-        if (r.designPanel) {
-          r.designPanel.style.opacity = String(designT);
-          r.designPanel.style.transform = `scale(${0.94 + designT * 0.06})`;
-        }
-
-        // BUILD: four blocks slide in from their edges and lock into a grid
-        const buildT = bandIn(p, 0.4, 0.49);
-        const buildOutT = 1 - bandIn(p, 0.68, 0.74);
-        BLOCK_TO.forEach((pos, i) => {
-          const el = r.blocks[i];
+        // DESIGN(2)/BUILD(3): interface elements assemble
+        const designT = bandIn(p, STAGE_BANDS[2][0], STAGE_BANDS[2][1]);
+        const buildT = bandIn(p, STAGE_BANDS[3][0], STAGE_BANDS[3][0] + STAGE_SPAN * 0.6);
+        const ifaceOutT = 1 - bandIn(p, 0.86, 0.9);
+        IFACE_TO.forEach((pos, i) => {
+          const el = r.ifaceEls[i];
           if (!el) return;
-          const from = BLOCK_FROM[i];
+          const from = IFACE_FROM[i];
           const dx = from.x * (1 - buildT);
           const dy = from.y * (1 - buildT);
           el.style.top = `${pos.top}%`;
           el.style.left = `${pos.left}%`;
           el.style.transform = `translate(${dx}%, ${dy}%)`;
-          el.style.opacity = String(bandIn(p, 0.4, 0.44) * buildOutT);
+          el.style.opacity = String(designT * ifaceOutT);
         });
 
-        // CONNECT: a conversation slides in and docks against the grid
-        const connectT = wordEnvelope(p, 0.5, 0.56, 0.68, 0.73);
+        // CONNECT(4): chat bubble attaches
+        const connectT = bandIn(p, STAGE_BANDS[4][0], STAGE_BANDS[4][1]) * ifaceOutT;
         if (r.bubble) {
           r.bubble.style.opacity = String(connectT);
-          r.bubble.style.transform = `translateX(${(1 - connectT) * 12}%)`;
+          r.bubble.style.transform = `translateX(${(1 - connectT) * 10}%)`;
         }
 
-        // EVOLVE: satellite dots keep gently drifting — never fully still
-        const evolveT = wordEnvelope(p, 0.68, 0.72, 0.99, 1);
+        // LAUNCH(5): the assembled interface pulses/glows
+        const launchT = bandIn(p, STAGE_BANDS[5][0], STAGE_BANDS[5][0] + STAGE_SPAN * 0.6);
+        IFACE_TO.forEach((_, i) => {
+          const el = r.ifaceEls[i];
+          if (!el || launchT <= 0) return;
+          el.style.filter = `drop-shadow(0 0 ${launchT * 14}px rgba(225,196,122,${launchT * 0.5}))`;
+        });
+
+        // EVOLVE(6): satellites drift
+        const evolveT = bandIn(p, STAGE_BANDS[6][0], STAGE_BANDS[6][0] + STAGE_SPAN * 0.6) * ifaceOutT;
         DOTS.forEach((_, i) => {
           const el = r.dots[i];
           if (!el) return;
-          const wobble = Math.sin(p * 40 + i * 1.7) * 3;
+          const wobble = Math.sin(p * 50 + i * 1.8) * 4;
           el.style.opacity = String(evolveT);
-          el.style.transform = `translate(${wobble}%, ${wobble * -0.6}%) scale(${0.8 + evolveT * 0.4})`;
+          el.style.transform = `translate(${wobble}%, ${wobble * -0.6}%)`;
         });
 
         // human moment
-        const humanLabelT = wordEnvelope(p, 0.8, 0.85, 0.97, 1);
+        const humanLabelT = wordEnvelope(p, 0.88, 0.92, 0.98, 1);
         if (r.humanLabel) r.humanLabel.style.opacity = String(humanLabelT);
-        const humanHeadT = bandIn(p, 0.83, 0.9);
+        const humanHeadT = bandIn(p, 0.9, 0.95);
         if (r.humanHeadline) {
           r.humanHeadline.style.opacity = String(humanHeadT);
           r.humanHeadline.style.transform = `translateY(${(1 - humanHeadT) * 18}px)`;
         }
-        const humanCopyT = bandIn(p, 0.87, 0.94);
+        const humanCopyT = bandIn(p, 0.93, 0.98);
         if (r.humanCopy) r.humanCopy.style.opacity = String(humanCopyT);
-        const humanImageT = bandIn(p, 0.82, 0.92);
+        const humanImageT = bandIn(p, 0.89, 0.96);
         if (r.humanImage) {
           r.humanImage.style.opacity = String(humanImageT);
           r.humanImage.style.clipPath = `inset(0 0 ${(1 - humanImageT) * 100}% 0)`;
@@ -318,136 +274,79 @@ export default function MethodNarrative({ ready }: { ready: boolean }) {
     <>
       <div ref={spacer} className={styles.spacer} />
       <div ref={layer} className={styles.layer} style={{ opacity: 0 }}>
-        <div
-          ref={(el) => {
-            refs.current.introLabel = el;
-          }}
-          className={styles.introLabel}
-          style={{ opacity: 0 }}
-        >
-          {METHOD_INTRO_LABEL}
+        <div ref={(el) => { refs.current.introLabel = el; }} className={styles.introLabel} style={{ opacity: 0 }}>
+          {PROCESS_INTRO_LABEL}
         </div>
         <div className={styles.introBlock}>
-          <div
-            ref={(el) => {
-              refs.current.introSmall = el;
-            }}
-            className={styles.introSmall}
-            style={{ opacity: 0 }}
-          >
-            {METHOD_STATEMENT_SMALL}
-          </div>
-          <div
-            ref={(el) => {
-              refs.current.introMain = el;
-            }}
-            className={styles.introMain}
-            style={{ opacity: 0 }}
-          >
-            {METHOD_STATEMENT_MAIN[0]}
+          <div ref={(el) => { refs.current.introHeadline = el; }} className={styles.introHeadline} style={{ opacity: 0 }}>
+            {PROCESS_HEADLINE[0]}
             <br />
-            {METHOD_STATEMENT_MAIN[1]}
+            {PROCESS_HEADLINE[1]}
           </div>
-          <div
-            ref={(el) => {
-              refs.current.introEmphasis = el;
-            }}
-            className={styles.introEmphasis}
-            style={{ opacity: 0 }}
-          >
-            {METHOD_STATEMENT_EMPHASIS}
+          <div ref={(el) => { refs.current.introEmphasis = el; }} className={styles.introEmphasis} style={{ opacity: 0 }}>
+            {PROCESS_EMPHASIS}
           </div>
         </div>
 
-        <div ref={(el) => { refs.current.rail = el; }} className={styles.rail} style={{ opacity: 0 }}>
-          {METHOD_STEPS.map((step, i) => (
-            <span
-              key={step.key}
+        {PROCESS_STAGES.map((stage, i) => (
+          <div key={stage.key} className={styles.stage}>
+            <div
               ref={(el) => {
-                refs.current.railItems[i] = el;
+                refs.current.stages[i].number = el;
               }}
-              className={styles.railItem}
+              className={styles.stageNumber}
             >
-              {step.label}
-            </span>
-          ))}
-        </div>
-
-        <div
-          ref={(el) => {
-            refs.current.stage = el;
-          }}
-          className={styles.stage}
-          style={{ opacity: 0 }}
-        >
-          <div
-            ref={(el) => {
-              refs.current.guideV = el;
-            }}
-            className={styles.guideV}
-            aria-hidden
-          />
-          <div
-            ref={(el) => {
-              refs.current.guideH = el;
-            }}
-            className={styles.guideH}
-            aria-hidden
-          />
-          {DISCOVER_WORDS.map((word, i) => (
-            <span
-              key={word}
+              {stage.number}
+            </div>
+            <div
               ref={(el) => {
-                refs.current.words[i] = el;
+                refs.current.stages[i].name = el;
               }}
-              className={styles.word}
+              className={styles.stageName}
               style={{ opacity: 0 }}
             >
-              {word}
+              {stage.name}.
+            </div>
+            <p
+              ref={(el) => {
+                refs.current.stages[i].copy = el;
+              }}
+              className={styles.stageCopy}
+              style={{ opacity: 0 }}
+            >
+              {stage.copy}
+            </p>
+          </div>
+        ))}
+
+        <div className={styles.visual}>
+          {DISCOVER_FRAGMENTS.map((frag, i) => (
+            <span
+              key={frag}
+              ref={(el) => {
+                refs.current.fragments[i] = el;
+              }}
+              className={styles.fragment}
+              style={{ opacity: 0 }}
+            >
+              {frag}
             </span>
           ))}
 
-          <div
-            ref={(el) => {
-              refs.current.designPanel = el;
-            }}
-            className={styles.designPanel}
-            style={{ opacity: 0 }}
-          >
-            <div className={styles.designImage} />
-            <div className={styles.designText}>
-              <div className={styles.designBar} />
-              <div className={styles.designBar} />
-              <div className={styles.designBarShort} />
-            </div>
-          </div>
-
-          {BLOCK_TO.map((_, i) => (
+          {IFACE_TO.map((_, i) => (
             <div
               key={i}
               ref={(el) => {
-                refs.current.blocks[i] = el;
+                refs.current.ifaceEls[i] = el;
               }}
-              className={styles.block}
+              className={i === 0 ? styles.ifaceImage : i === 3 ? styles.ifaceBarShort : styles.ifaceBar}
               style={{ opacity: 0 }}
             />
           ))}
 
-          <div
-            ref={(el) => {
-              refs.current.bubble = el;
-            }}
-            className={styles.bubble}
-            style={{ opacity: 0 }}
-          >
-            <div className={styles.bubbleLine}>
-              <span className={styles.bubbleWhoClient}>Cliente</span>
-              <span className={styles.bubbleText}>Hola.</span>
-            </div>
-            <div className={styles.bubbleLine}>
-              <span className={styles.bubbleWho}>MC AI</span>
-              <span className={styles.bubbleText}>¿Cómo puedo ayudarte?</span>
-            </div>
+          <div ref={(el) => { refs.current.bubble = el; }} className={styles.bubble} style={{ opacity: 0 }}>
+            <span className={styles.bubbleWho}>MC AI</span>
+            <span className={styles.bubbleText}>Conectado.</span>
           </div>
 
           {DOTS.map((pos, i) => (
@@ -462,6 +361,25 @@ export default function MethodNarrative({ ready }: { ready: boolean }) {
           ))}
         </div>
 
+        <div ref={(el) => { refs.current.progressLine = el; }} className={styles.progressRow} style={{ opacity: 0 }}>
+          <div className={styles.progressTrack}>
+            <div className={styles.progressFill} />
+          </div>
+          <div className={styles.progressNums}>
+            {PROCESS_STAGES.map((stage, i) => (
+              <span
+                key={stage.key}
+                ref={(el) => {
+                  refs.current.progressNums[i] = el;
+                }}
+                className={styles.progressNum}
+              >
+                {stage.number}
+              </span>
+            ))}
+          </div>
+        </div>
+
         <div className={styles.human}>
           <div
             ref={(el) => {
@@ -472,33 +390,15 @@ export default function MethodNarrative({ ready }: { ready: boolean }) {
             data-asset={HUMAN_MOMENT_IMAGE_SLOT.replace(/\.\w+$/, "")}
           />
           <div className={styles.humanText}>
-            <div
-              ref={(el) => {
-                refs.current.humanLabel = el;
-              }}
-              className={styles.humanLabel}
-              style={{ opacity: 0 }}
-            >
+            <div ref={(el) => { refs.current.humanLabel = el; }} className={styles.humanLabel} style={{ opacity: 0 }}>
               {HUMAN_MOMENT_LABEL}
             </div>
-            <div
-              ref={(el) => {
-                refs.current.humanHeadline = el;
-              }}
-              className={styles.humanHeadline}
-              style={{ opacity: 0 }}
-            >
+            <div ref={(el) => { refs.current.humanHeadline = el; }} className={styles.humanHeadline} style={{ opacity: 0 }}>
               {HUMAN_MOMENT_HEADLINE[0]}
               <br />
               {HUMAN_MOMENT_HEADLINE[1]}
             </div>
-            <p
-              ref={(el) => {
-                refs.current.humanCopy = el;
-              }}
-              className={styles.humanCopy}
-              style={{ opacity: 0 }}
-            >
+            <p ref={(el) => { refs.current.humanCopy = el; }} className={styles.humanCopy} style={{ opacity: 0 }}>
               {HUMAN_MOMENT_COPY}
             </p>
           </div>

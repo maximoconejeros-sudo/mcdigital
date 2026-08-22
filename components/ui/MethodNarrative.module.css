@@ -1,6 +1,6 @@
 .spacer {
   position: relative;
-  height: 620vh;
+  height: 700vh;
   width: 100%;
   background: var(--color-graphite-dark);
 }
@@ -10,8 +10,21 @@
   inset: 0;
   z-index: 20;
   pointer-events: none;
-  background: var(--color-graphite-dark);
   overflow: hidden;
+  background: radial-gradient(ellipse 60% 55% at 50% 46%, rgba(225, 196, 122, 0.06), transparent 68%),
+    var(--color-graphite-dark);
+}
+
+/* soft vertical gold reflection — the only background detail besides the
+ * radial glow, per V10: no giant word, no global grid */
+.layer::after {
+  content: "";
+  position: absolute;
+  top: -10%;
+  left: 44%;
+  width: 1px;
+  height: 120%;
+  background: linear-gradient(180deg, transparent 0%, rgba(225, 196, 122, 0.12) 45%, transparent 90%);
 }
 
 .introLabel {
@@ -39,17 +52,7 @@
   padding: 0 var(--nav-pad);
 }
 
-.introSmall {
-  font-family: var(--font-mono);
-  font-size: clamp(12px, 1.1vw, 15px);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-graphite-light);
-  margin-bottom: clamp(10px, 1.6vw, 18px);
-  will-change: opacity, transform;
-}
-
-.introMain {
+.introHeadline {
   font-family: var(--font-display);
   font-weight: 700;
   text-transform: uppercase;
@@ -70,127 +73,111 @@
   will-change: opacity, transform;
 }
 
-.rail {
+/* one stage occupies the full frame at a time; text lives in the left
+ * ~52%, the shared .visual area (below) owns the right side */
+.stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 0 0 var(--nav-pad);
+  width: min(50vw, 640px);
+}
+
+.stageNumber {
   position: absolute;
   top: 50%;
   left: var(--nav-pad);
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: clamp(10px, 1.6vh, 18px);
+  transform: translateY(-58%);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(9rem, 22vw, 19rem);
+  line-height: 1;
+  color: var(--color-champagne-gold);
+  pointer-events: none;
+  will-change: opacity;
+  z-index: -1;
+}
+
+.stageName {
+  position: relative;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  font-size: clamp(2.4rem, 6vw, 5rem);
+  line-height: 1.02;
+  color: var(--color-soft-white);
+  will-change: opacity, transform;
+}
+
+.stageCopy {
+  position: relative;
+  margin-top: clamp(14px, 1.8vw, 22px);
+  max-width: 34ch;
+  font-family: var(--font-display);
+  font-size: clamp(14px, 1.1vw, 17px);
+  line-height: 1.5;
+  color: var(--color-graphite-light);
   will-change: opacity;
 }
 
-.railItem {
-  font-family: var(--font-mono);
-  font-size: clamp(11px, 0.95vw, 13px);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-graphite-light);
-  transition: color 0.2s ease;
-  will-change: opacity, color;
-}
-
-/* V9: no visible card/container — this is purely a positioning area for
- * the construction sequence, occupying roughly the right 65-70% of the
- * viewport. No border, no fill; the guide lines below are the only
- * structure that appears, and only during DEFINE. */
-.stage {
+/* shared right-side positioning field for the per-stage visual system —
+ * no border, no fill: only the fragments/elements below give it shape */
+.visual {
   position: absolute;
   top: 50%;
-  right: 5%;
-  width: min(46vw, 600px);
-  height: min(58vh, 560px);
-  will-change: opacity, transform;
+  right: 6%;
+  width: min(40vw, 520px);
+  height: min(52vh, 480px);
+  transform: translateY(-50%);
 }
 
-.guideV {
-  position: absolute;
-  top: 0;
-  left: 8%;
-  width: 1px;
-  height: 100%;
-  background: var(--color-champagne-gold);
-  transform-origin: top;
-  transform: scaleY(0);
-  opacity: 0;
-  will-change: opacity, transform;
-}
-
-.guideH {
-  position: absolute;
-  top: 62%;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background: var(--color-champagne-gold);
-  transform-origin: left;
-  transform: scaleX(0);
-  opacity: 0;
-  will-change: opacity, transform;
-}
-
-.word {
+.fragment {
   position: absolute;
   font-family: var(--font-mono);
-  font-size: clamp(12px, 1vw, 14px);
-  letter-spacing: 0.04em;
+  font-size: clamp(11px, 0.95vw, 13px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--color-warm-white);
   white-space: nowrap;
   will-change: top, left, transform, opacity;
 }
 
-.designPanel {
+.ifaceImage {
   position: absolute;
-  inset: 8%;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(10px, 1.6vh, 18px);
-  will-change: opacity, transform;
-}
-
-.designImage {
-  flex: 1;
+  width: 34%;
+  height: 30%;
   background: linear-gradient(155deg, #e1c47a 0%, #6b5a34 60%, #242422 130%);
   border-radius: 2px;
+  will-change: top, left, transform, opacity, filter;
 }
 
-.designText {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.designBar {
+.ifaceBar {
+  position: absolute;
+  width: 30%;
   height: 8px;
-  width: 100%;
   background: var(--color-graphite-light);
   border-radius: 2px;
-  opacity: 0.5;
+  opacity: 0.6;
+  will-change: top, left, transform, opacity, filter;
 }
 
-.designBarShort {
+.ifaceBarShort {
+  position: absolute;
+  width: 16%;
   height: 8px;
-  width: 55%;
   background: var(--color-champagne-gold);
   border-radius: 2px;
-}
-
-.block {
-  position: absolute;
-  width: 38%;
-  height: 38%;
-  background: var(--color-graphite);
-  border: 1px solid var(--color-champagne-gold);
-  border-radius: 2px;
-  will-change: top, left, transform, opacity;
+  will-change: top, left, transform, opacity, filter;
 }
 
 .bubble {
   position: absolute;
-  right: -6%;
-  bottom: 8%;
-  max-width: 62%;
+  right: 2%;
+  bottom: 6%;
+  max-width: 60%;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -201,31 +188,17 @@
   will-change: opacity, transform;
 }
 
-.bubbleLine {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
-
 .bubbleWho {
   font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-champagne-gold);
-  flex-shrink: 0;
-}
-
-.bubbleWhoClient {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-graphite-light);
-  flex-shrink: 0;
 }
 
 .bubbleText {
+  display: block;
+  margin-top: 3px;
   font-family: var(--font-display);
   font-size: clamp(12px, 1vw, 14px);
   color: var(--color-warm-white);
@@ -239,6 +212,42 @@
   background: var(--color-champagne-gold);
   box-shadow: 0 0 10px var(--color-champagne-gold);
   will-change: opacity, transform;
+}
+
+.progressRow {
+  position: absolute;
+  left: var(--nav-pad);
+  right: var(--nav-pad);
+  bottom: clamp(28px, 5vh, 48px);
+  will-change: opacity;
+}
+
+.progressTrack {
+  position: relative;
+  height: 1px;
+  width: 100%;
+  background: rgba(216, 216, 212, 0.16);
+}
+
+.progressFill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--fill, 0) * 100%);
+  background: var(--color-champagne-gold);
+}
+
+.progressNums {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.progressNum {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--color-graphite-light);
+  transition: color 0.25s ease;
 }
 
 .human {
@@ -268,7 +277,7 @@
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-champagne-gold);
   margin-bottom: clamp(12px, 1.6vh, 20px);
   will-change: opacity;
 }
@@ -280,7 +289,7 @@
   letter-spacing: -0.02em;
   font-size: clamp(1.8rem, 3.4vw, 3.2rem);
   line-height: 1.1;
-  color: var(--color-graphite-dark);
+  color: var(--color-soft-white);
   will-change: opacity, transform;
 }
 
@@ -289,32 +298,42 @@
   font-family: var(--font-display);
   font-size: clamp(14px, 1.1vw, 17px);
   line-height: 1.5;
-  color: var(--color-graphite);
+  color: var(--color-graphite-light);
   will-change: opacity;
 }
 
 @media (max-width: 860px) {
-  .introMain {
+  .introHeadline {
     font-size: clamp(1.7rem, 8vw, 2.6rem);
   }
   .introEmphasis {
     font-size: clamp(1.3rem, 6vw, 1.8rem);
   }
-  .rail {
-    display: none;
-  }
   .stage {
-    /* width 80vw centered in a full-width parent: (100 - 80) / 2 = 10vw
-     * each side. JS always drives transform (translateY(-50%) scale(...)),
-     * so centering has to come from the box offset, not a CSS transform
-     * that JS would otherwise overwrite. */
-    right: 10vw;
-    width: 80vw;
-    height: 44vh;
+    width: 82vw;
+    padding-left: var(--nav-pad);
+  }
+  .stageNumber {
+    font-size: clamp(6rem, 32vw, 11rem);
+  }
+  .stageName {
+    font-size: clamp(1.9rem, 9vw, 2.8rem);
+  }
+  .visual {
+    top: auto;
+    bottom: 6%;
+    right: 8vw;
+    left: 8vw;
+    width: auto;
+    height: 26vh;
+    transform: none;
   }
   .bubble {
     right: 0;
-    max-width: 80%;
+    max-width: 90%;
+  }
+  .progressNums {
+    display: none;
   }
   .human {
     flex-direction: column;

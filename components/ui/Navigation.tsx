@@ -20,6 +20,7 @@ const LINKS = ["Servicios", "Capacidades", "Nosotros", "Contacto"];
  */
 export default function Navigation({ play }: { play: boolean }) {
   const root = useRef<HTMLElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -39,11 +40,18 @@ export default function Navigation({ play }: { play: boolean }) {
 
   useEffect(() => {
     let raf = 0;
-    let last = "";
+    let lastTheme = "";
+    let lastProgress = -1;
     const loop = () => {
-      if (root.current && scrollState.navTheme !== last) {
-        last = scrollState.navTheme;
-        root.current.dataset.theme = last;
+      if (root.current && scrollState.navTheme !== lastTheme) {
+        lastTheme = scrollState.navTheme;
+        root.current.dataset.theme = lastTheme;
+      }
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      if (progressRef.current && progress !== lastProgress) {
+        lastProgress = progress;
+        progressRef.current.style.transform = `scaleX(${progress})`;
       }
       raf = requestAnimationFrame(loop);
     };
@@ -117,6 +125,8 @@ export default function Navigation({ play }: { play: boolean }) {
           ))}
         </ul>
       </div>
+
+      <div ref={progressRef} className={styles.progress} aria-hidden />
     </nav>
   );
 }

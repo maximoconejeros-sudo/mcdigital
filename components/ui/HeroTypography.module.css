@@ -27,7 +27,9 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  max-width: min(54vw, 760px);
+  /* the hero's left territory ends at ~51vw — the MC sculpture owns
+   * everything to the right of that, never behind this column */
+  max-width: min(40vw, 580px);
 }
 
 .smallStatement {

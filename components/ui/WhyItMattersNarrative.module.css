@@ -33,30 +33,6 @@
   will-change: opacity, transform;
 }
 
-.gridLines {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.gridLines span {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: rgba(9, 9, 9, 0.08);
-}
-
-.gridLines span:nth-child(1) {
-  left: 25%;
-}
-.gridLines span:nth-child(2) {
-  left: 50%;
-}
-.gridLines span:nth-child(3) {
-  left: 75%;
-}
-
 .metaLabel {
   position: absolute;
   top: clamp(90px, 13vh, 150px);

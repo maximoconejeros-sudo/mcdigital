@@ -32,12 +32,10 @@ const wordEnvelope = (
 const WORD_STEP_LABELS = ["01 / ATENCIÓN", "02 / INTERÉS", "03 / ACCIÓN"];
 
 interface Refs {
-  openPhrase: HTMLDivElement | null;
   cursorDot: HTMLDivElement | null;
   baseline: HTMLDivElement | null;
   words: (HTMLDivElement | null)[];
   stepLabels: (HTMLSpanElement | null)[];
-  gridLines: HTMLDivElement | null;
   navRow: HTMLDivElement | null;
   imagePanel: HTMLDivElement | null;
   closing: HTMLParagraphElement | null;
@@ -64,12 +62,10 @@ export default function ExpertiseNarrative({ ready }: { ready: boolean }) {
   const spacer = useRef<HTMLDivElement>(null);
   const layer = useRef<HTMLDivElement>(null);
   const refs = useRef<Refs>({
-    openPhrase: null,
     cursorDot: null,
     baseline: null,
     words: [null, null, null],
     stepLabels: [null, null, null],
-    gridLines: null,
     navRow: null,
     imagePanel: null,
     closing: null,
@@ -107,17 +103,14 @@ export default function ExpertiseNarrative({ ready }: { ready: boolean }) {
         const p = self.progress;
         const r = refs.current;
 
-        // --- BUILD: Start with an idea -> empty canvas -> Attention/Interest/Action
-        const openT = wordEnvelope(p, 0.01, 0.06, 0.08, 0.11);
-        if (r.openPhrase) {
-          r.openPhrase.style.opacity = String(openT);
-          r.openPhrase.style.transform = `translateY(${(1 - openT) * 12}px)`;
-        }
-
-        const cursorT = wordEnvelope(p, 0.1, 0.13, 0.17, 0.2);
+        // --- BUILD: no empty waiting screen — the composition (nav, cursor,
+        // baseline, image panel) is already assembling from the very start,
+        // so ATTENTION/INTEREST/ACTION arrives as the labeled centerpiece of
+        // an already-active scene rather than the only thing on screen
+        const cursorT = wordEnvelope(p, 0.02, 0.05, 0.36, 0.4);
         if (r.cursorDot) r.cursorDot.style.opacity = String(cursorT);
 
-        const baseT = bandIn(p, 0.12, 0.16);
+        const baseT = bandIn(p, 0.04, 0.08);
         if (r.baseline) r.baseline.style.transform = `scaleX(${baseT})`;
 
         const wordBands: [number, number, number, number][] = [
@@ -139,26 +132,20 @@ export default function ExpertiseNarrative({ ready }: { ready: boolean }) {
           if (label) label.style.opacity = String(t);
         });
 
-        // present from the very start of the act (not just once ATTENTION
-        // arrives) so the opening "start with an idea" beat already has
-        // structural texture instead of sitting on flat warm-white
-        const gridT = bandIn(p, 0.0, 0.06);
-        if (r.gridLines) r.gridLines.style.opacity = String(gridT * 0.5);
-
-        const navT = bandIn(p, 0.2, 0.25);
+        const navT = bandIn(p, 0.03, 0.08);
         if (r.navRow) {
           r.navRow.style.opacity = String(navT);
           r.navRow.style.transform = `translateY(${(1 - navT) * -10}px)`;
         }
 
-        const imageT = bandIn(p, 0.28, 0.37);
+        const imageT = bandIn(p, 0.08, 0.16);
         if (r.imagePanel) {
           r.imagePanel.style.opacity = String(imageT);
         }
         // the panel keeps growing through the web-expansion beat too — one
         // continuous shape, not a reset — so it's computed across the
-        // whole 0.28-0.95 span rather than settling at 0.37
-        const imageGrowT = bandIn(p, 0.28, 0.95);
+        // whole 0.08-0.95 span rather than settling early
+        const imageGrowT = bandIn(p, 0.08, 0.95);
         if (r.imagePanel) {
           r.imagePanel.style.clipPath = `polygon(${100 - imageGrowT * 62}% 0, 100% 0, 100% 100%, ${100 - imageGrowT * 46}% 100%)`;
         }
@@ -226,30 +213,6 @@ export default function ExpertiseNarrative({ ready }: { ready: boolean }) {
     <>
       <div ref={spacer} className={styles.spacer} />
       <div ref={layer} className={styles.layer} style={{ opacity: 0 }}>
-        <div
-          ref={(el) => {
-            refs.current.openPhrase = el;
-          }}
-          className={styles.openPhrase}
-          style={{ opacity: 0 }}
-        >
-          Start with
-          <br />
-          an idea.
-        </div>
-
-        <div
-          ref={(el) => {
-            refs.current.gridLines = el;
-          }}
-          className={styles.gridLines}
-          style={{ opacity: 0 }}
-        >
-          <span />
-          <span />
-          <span />
-        </div>
-
         <div
           ref={(el) => {
             refs.current.navRow = el;

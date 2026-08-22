@@ -50,6 +50,7 @@ export default function FinalSculpture() {
     const t = state.clock.elapsedTime;
     const p = scrollState.act9Progress;
     const brandT = scrollState.act9BrandT;
+    const collapseT = scrollState.act9CollapseT;
 
     // resolves to exactly 0 well before the scene finishes revealing, then
     // holds — the visitor gets an elegant turn on the way in, never a
@@ -87,14 +88,21 @@ export default function FinalSculpture() {
       2.4,
       delta
     );
-    group.current.scale.setScalar(scaleRef.current);
+    // collapse: once the brand moment has held on its own, the monogram
+    // lifts and settles to 72% of that resting scale so the closing copy
+    // can appear below it — never a second composition fighting for the
+    // same space
+    const collapseScale = THREE.MathUtils.lerp(1, 0.72, collapseT);
+    group.current.scale.setScalar(scaleRef.current * collapseScale);
     material.opacity = THREE.MathUtils.damp(material.opacity, reveal * 0.96, 2.4, delta);
 
     // closing brand moment: drifts from its cropped, right-of-frame
     // position back to dead center as the camera pulls away — the final
-    // brand shot, not a permanently off-center composition
+    // brand shot, not a permanently off-center composition — then lifts
+    // further up-frame as collapseT rises, opening the lower half of the
+    // viewport for the closing copy
     const targetX = THREE.MathUtils.lerp(1.5, 0, brandT);
-    const targetY = THREE.MathUtils.lerp(-0.15, 0, brandT);
+    const targetY = THREE.MathUtils.lerp(-0.15, 0, brandT) + THREE.MathUtils.lerp(0, 0.3, collapseT);
     posRef.current.x = THREE.MathUtils.damp(posRef.current.x, targetX, 2, delta);
     posRef.current.y = THREE.MathUtils.damp(posRef.current.y, targetY, 2, delta);
     group.current.position.x = posRef.current.x;

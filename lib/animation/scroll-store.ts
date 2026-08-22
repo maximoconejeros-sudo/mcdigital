@@ -10,6 +10,10 @@ export const scrollState = {
   /** 0..1 progress through the closing brand moment — MC recentering,
    * camera pulling back — after the CTA content has cleared */
   act9BrandT: 0,
+  /** 0..1 — after the brand moment holds, the monogram lifts and settles
+   * smaller (scale 1 -> 0.72) to make room for the closing copy that
+   * appears below it, never over it */
+  act9CollapseT: 0,
   /** 0..1 — final handoff fade to the footer; 1 means the whole Act IX
    * Canvas + DOM layer should be fully invisible (footer showing through) */
   act9FadeT: 0,

@@ -5,12 +5,16 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { scrollState } from "@/lib/animation/scroll-store";
 import {
-  CONVERSATIONS,
-  WHATSAPP_STEPS,
-  INTELLIGENCE_HEADLINE,
-  INTELLIGENCE_EMPHASIS,
-  INTELLIGENCE_SUB,
-  WHATSAPP_SUB,
+  AI_HEADLINE,
+  AI_EMPHASIS,
+  AI_BODY,
+  AI_STATUS,
+  CAPABILITIES,
+  CHAT_MESSAGES,
+  SYSTEM_PANEL_LABEL,
+  SYSTEM_PANEL_ROWS,
+  CLOSING_HEADLINE,
+  CLOSING_EMPHASIS,
 } from "@/lib/content/intelligence";
 import styles from "./IntelligenceNarrative.module.css";
 
@@ -20,68 +24,67 @@ const smooth = (t: number) => t * t * (3 - 2 * t);
 const clamp01 = (t: number) => gsap.utils.clamp(0, 1, t);
 const bandIn = (p: number, start: number, end: number) =>
   smooth(clamp01((p - start) / (end - start)));
+const wordEnvelope = (
+  p: number,
+  inStart: number,
+  inEnd: number,
+  outStart: number,
+  outEnd: number
+) => Math.min(bandIn(p, inStart, inEnd), 1 - bandIn(p, outStart, outEnd));
 
-interface ConvRefs {
+interface MessageRefs {
   root: HTMLDivElement | null;
-  lines: (HTMLDivElement | null)[];
-  label: HTMLSpanElement | null;
 }
 
 interface Refs {
   badge: HTMLDivElement | null;
-  conversations: ConvRefs[];
-  steps: (HTMLSpanElement | null)[];
-  arrows: (HTMLSpanElement | null)[];
-  whatsappSub: HTMLParagraphElement | null;
-  headline: HTMLHeadingElement | null;
-  sub: HTMLParagraphElement | null;
+  leftHeadline: HTMLHeadingElement | null;
+  leftEmphasis: HTMLDivElement | null;
+  leftBody: HTMLParagraphElement | null;
+  capabilities: (HTMLSpanElement | null)[];
+  capabilityLine: HTMLDivElement | null;
+  phone: HTMLDivElement | null;
+  messageList: HTMLDivElement | null;
+  messages: MessageRefs[];
+  typing: (HTMLDivElement | null)[];
+  systemPanel: HTMLDivElement | null;
+  systemRows: (HTMLDivElement | null)[];
+  closingHeadline: HTMLHeadingElement | null;
+  closingEmphasis: HTMLDivElement | null;
 }
 
-// each conversation gets its own dominance window [riseStart, riseEnd,
-// recedeStart, recedeEnd] — sequential, not simultaneous: only one is ever
-// at full scale/opacity/focus at a time. After its window it settles to a
-// dim, blurred, smaller "background" state (never fully gone) rather than
-// disappearing, until the final outward push clears the stage entirely.
-const DOM_BANDS: [number, number, number, number][] = [
-  [0.02, 0.08, 0.16, 0.22],
-  [0.22, 0.28, 0.4, 0.46],
-  [0.4, 0.46, 0.62, 0.68],
+// each message's own reveal band [start, end]; typing indicators sit in
+// the gap right before each MC AI reply
+const MESSAGE_BANDS: [number, number][] = [
+  [0.1, 0.15],
+  [0.18, 0.24],
+  [0.26, 0.3],
+  [0.33, 0.4],
+  [0.42, 0.46],
+  [0.49, 0.55],
 ];
-const LINE_BANDS: [number, number][][] = [
-  [
-    [0.02, 0.07],
-    [0.1, 0.15],
-  ],
-  [
-    [0.22, 0.27],
-    [0.3, 0.35],
-  ],
-  [
-    [0.4, 0.45],
-    [0.48, 0.53],
-  ],
+const TYPING_BANDS: [number, number][] = [
+  [0.15, 0.18],
+  [0.3, 0.33],
+  [0.46, 0.49],
 ];
-// where each receded conversation drifts once the final push clears the
-// stage for the headline — conv0 further upper-left, conv1 upper-right,
-// conv2 lower-left, per V9's explicit exit directions
-const OUTWARD = [
-  { x: -70, y: -50 },
-  { x: 70, y: -40 },
-  { x: -50, y: 55 },
-];
-const RECEDE_FLOOR = 0.3;
+// which message reveal unlocks each of the first three capabilities on the
+// left process line — a typing indicator precedes each of these MC AI
+// replies. DERIVA has no chat message of its own — it activates with the
+// system panel (lead handed off), so it's looked up separately below.
+const CAPABILITY_AT_MESSAGE = [1, 3, 5];
+const DERIVA_BAND_START = 0.58;
 
 /**
- * Act III — "Intelligence." The digital environment becomes alive: three
- * conversations take turns being the dominant, sharp, full-scale focus —
- * never simultaneously competing — each settling into a smaller, blurred,
- * dimmed "background" state (not gone) once its turn passes. A gold pulse
- * on each MC AI line stands in for "response sent" (no particles, no
- * network graphic). The WhatsApp automation flow (mensaje -> calificación
- * -> respuesta -> acción) appears attached to the third conversation as it
- * holds focus. Before the closing statement reveals, all three are pushed
- * further outward and dimmed well below reading contrast, so the headline
- * always has a completely clean zone — no text or conversation behind it.
+ * Act III — "Intelligence." One premium WhatsApp-style chat experience —
+ * not scattered floating conversations. Left: what the agent does, plus a
+ * capability line (Responde/Califica/Agenda/Deriva) that lights up in sync
+ * with the conversation on the right. The conversation builds message by
+ * message with typing indicators between replies; a small system panel
+ * (lead detected / intención / horario / estado) appears beside it once
+ * qualified. At the end the phone shifts right and a closing statement
+ * takes the vacated space — the phone stays visible, nothing scatters
+ * behind the headline.
  */
 export default function IntelligenceNarrative({
   ready,
@@ -92,16 +95,19 @@ export default function IntelligenceNarrative({
   const layer = useRef<HTMLDivElement>(null);
   const refs = useRef<Refs>({
     badge: null,
-    conversations: CONVERSATIONS.map(() => ({
-      root: null,
-      lines: [null, null],
-      label: null,
-    })),
-    steps: WHATSAPP_STEPS.map(() => null),
-    arrows: WHATSAPP_STEPS.map(() => null),
-    whatsappSub: null,
-    headline: null,
-    sub: null,
+    leftHeadline: null,
+    leftEmphasis: null,
+    leftBody: null,
+    capabilities: CAPABILITIES.map(() => null),
+    capabilityLine: null,
+    phone: null,
+    messageList: null,
+    messages: CHAT_MESSAGES.map(() => ({ root: null })),
+    typing: TYPING_BANDS.map(() => null),
+    systemPanel: null,
+    systemRows: SYSTEM_PANEL_ROWS.map(() => null),
+    closingHeadline: null,
+    closingEmphasis: null,
   });
   const wasActive = useRef(false);
 
@@ -128,84 +134,83 @@ export default function IntelligenceNarrative({
         const p = self.progress;
         const r = refs.current;
 
-        const badgeT = bandIn(p, 0.0, 0.04);
+        const exitT = bandIn(p, 0.68, 0.76);
+
+        const badgeT = bandIn(p, 0.0, 0.04) * (1 - exitT);
         if (r.badge) r.badge.style.opacity = String(badgeT);
 
-        // final outward push — clears the whole stage before the headline,
-        // per V9: no conversation may still be legible behind the statement
-        const pushT = bandIn(p, 0.72, 0.8);
-        const endRecedeT = bandIn(p, 0.85, 1);
+        const leftT = bandIn(p, 0.02, 0.08) * (1 - exitT);
+        if (r.leftHeadline) {
+          r.leftHeadline.style.opacity = String(leftT);
+          r.leftHeadline.style.transform = `translateY(${(1 - leftT) * 16}px)`;
+        }
+        if (r.leftEmphasis) r.leftEmphasis.style.opacity = String(leftT);
+        const bodyT = bandIn(p, 0.05, 0.1) * (1 - exitT);
+        if (r.leftBody) r.leftBody.style.opacity = String(bodyT);
 
-        CONVERSATIONS.forEach((conv, ci) => {
-          const cr = r.conversations[ci];
-          if (!cr) return;
-          const [inS, inE, outS, outE] = DOM_BANDS[ci];
-          const lineBands = LINE_BANDS[ci];
-
-          const rise = bandIn(p, inS, inE);
-          const fall = bandIn(p, outS, outE);
-          // 1 while this conversation holds focus, settling to a dim
-          // RECEDE_FLOOR afterward rather than vanishing
-          const opacity = rise * (1 - fall * (1 - RECEDE_FLOOR)) * (1 - pushT * 0.5) * (1 - endRecedeT * 0.4);
-          // 1 only during this conversation's own dominant hold — drives
-          // sharpness/scale so exactly one conversation is ever in focus
-          const dominance = rise * (1 - fall);
-
-          cr.lines.forEach((el, li) => {
-            if (!el) return;
-            const [s, e] = lineBands[li];
-            const t = bandIn(p, s, e);
-            el.style.opacity = String(t);
-            el.style.transform = `translateY(${(1 - t) * 10}px)`;
-          });
-          if (cr.label) cr.label.style.opacity = String(bandIn(p, lineBands[0][0], lineBands[0][1]));
-
-          if (cr.root) {
-            const scale = gsap.utils.interpolate(conv.style.scale, 1, dominance) * (1 - endRecedeT * 0.1);
-            const blur = conv.style.blur * (1 - dominance);
-            const drift = -22 * fall; // settles slightly left/back once its turn passes
-            const outX = OUTWARD[ci].x * pushT;
-            const outY = OUTWARD[ci].y * pushT;
-            cr.root.style.transform = `translate(${drift + outX}px, ${outY}px) scale(${scale})`;
-            cr.root.style.filter = blur > 0.01 ? `blur(${blur}px)` : "none";
-            cr.root.style.opacity = String(opacity);
-          }
+        const lineT = bandIn(p, 0.06, 0.1) * (1 - exitT);
+        if (r.capabilityLine) r.capabilityLine.style.opacity = String(lineT);
+        CAPABILITIES.forEach((_, i) => {
+          const el = r.capabilities[i];
+          if (!el) return;
+          const msgIdx = CAPABILITY_AT_MESSAGE[i];
+          const s = msgIdx !== undefined ? MESSAGE_BANDS[msgIdx][0] : DERIVA_BAND_START;
+          const active = bandIn(p, s, s + 0.02);
+          el.style.color = active > 0.5 || p > s ? "var(--color-champagne-gold)" : "var(--color-graphite-light)";
+          el.style.opacity = String(0.55 + active * 0.45);
         });
 
-        // the process flow is attached to conversation 3 (WhatsApp) as it
-        // holds focus — each arrow only appears once both steps around it
-        // are visible, so it always reads as a real connected sequence
-        const stepStart = 0.56;
-        const stepWidth = 0.03;
-        WHATSAPP_STEPS.forEach((_, i) => {
-          const el = r.steps[i];
-          const s = stepStart + i * stepWidth;
-          const t = bandIn(p, s, s + stepWidth);
-          if (el) el.style.opacity = String(t);
-          const arrow = r.arrows[i];
-          if (arrow) {
-            const next = bandIn(p, s + stepWidth, s + stepWidth * 2);
-            arrow.style.opacity = String(Math.min(t, next + 0.15));
+        const phoneT = bandIn(p, 0.06, 0.11);
+        // shifts right and settles slightly smaller for the closing beat
+        const exitShift = exitT * 14;
+        const exitScale = 1 - exitT * 0.08;
+        if (r.phone) {
+          r.phone.style.opacity = String(phoneT);
+          r.phone.style.transform = `translateX(${exitShift}%) scale(${exitScale})`;
+        }
+
+        let visibleCount = 0;
+        CHAT_MESSAGES.forEach((_, i) => {
+          const mr = r.messages[i];
+          const [s, e] = MESSAGE_BANDS[i];
+          const t = bandIn(p, s, e);
+          if (t > 0.5) visibleCount = i + 1;
+          if (mr.root) {
+            mr.root.style.opacity = String(t);
+            mr.root.style.transform = `translateY(${(1 - t) * 10}px)`;
           }
         });
-
-        const whatsappSubT = bandIn(p, 0.68, 0.74);
-        if (r.whatsappSub) {
-          r.whatsappSub.style.opacity = String(whatsappSubT * (1 - pushT));
-          r.whatsappSub.style.transform = `translateY(${(1 - whatsappSubT) * 10}px)`;
+        // auto-scroll once more than 3 messages have accumulated —
+        // approximates a real chat window scrolling to the latest message
+        if (r.messageList) {
+          const scrollSteps = Math.max(0, visibleCount - 3);
+          r.messageList.style.transform = `translateY(${-scrollSteps * 74}px)`;
         }
 
-        const headlineT = bandIn(p, 0.8, 0.9);
-        if (r.headline) {
-          r.headline.style.opacity = String(headlineT);
-          r.headline.style.transform = `translateY(${(1 - headlineT) * 16}px)`;
-        }
+        TYPING_BANDS.forEach(([s, e], i) => {
+          const el = r.typing[i];
+          if (!el) return;
+          el.style.opacity = String(wordEnvelope(p, s, s + 0.01, e - 0.01, e));
+        });
 
-        const subT = bandIn(p, 0.86, 0.93);
-        if (r.sub) {
-          r.sub.style.opacity = String(subT);
-          r.sub.style.transform = `translateY(${(1 - subT) * 10}px)`;
+        const systemT = wordEnvelope(p, 0.56, 0.62, 0.68, 0.74);
+        if (r.systemPanel) {
+          r.systemPanel.style.opacity = String(systemT);
+          r.systemPanel.style.transform = `translateX(${(1 - systemT) * 12}px)`;
         }
+        SYSTEM_PANEL_ROWS.forEach((_, i) => {
+          const el = r.systemRows[i];
+          if (!el) return;
+          el.style.opacity = String(wordEnvelope(p, 0.58 + i * 0.02, 0.62 + i * 0.02, 0.68, 0.74));
+        });
+
+        const closingT = bandIn(p, 0.78, 0.9);
+        if (r.closingHeadline) {
+          r.closingHeadline.style.opacity = String(closingT);
+          r.closingHeadline.style.transform = `translateY(${(1 - closingT) * 20}px)`;
+        }
+        const closingEmphT = bandIn(p, 0.84, 0.94);
+        if (r.closingEmphasis) r.closingEmphasis.style.opacity = String(closingEmphT);
       },
     });
 
@@ -216,123 +221,173 @@ export default function IntelligenceNarrative({
     <>
       <div ref={spacer} className={styles.spacer} />
       <div ref={layer} className={styles.layer} style={{ opacity: 0 }}>
-        <div className={styles.bgGrid} aria-hidden>
-          <span />
-          <span />
-          <span />
-        </div>
-        <div className={styles.bgWord} aria-hidden>
-          Conecta
-        </div>
-
         <div ref={(el) => { refs.current.badge = el; }} className={styles.badge} style={{ opacity: 0 }}>
           <span className={styles.badgeDot} />
-          Active / 24H
+          {AI_STATUS}
         </div>
 
-        {CONVERSATIONS.map((conv, ci) => (
-          <div
-            key={ci}
+        <div className={styles.left}>
+          <h2
             ref={(el) => {
-              refs.current.conversations[ci].root = el;
+              refs.current.leftHeadline = el;
             }}
-            className={styles.conversation}
-            style={{
-              top: conv.style.top,
-              bottom: conv.style.bottom,
-              left: conv.style.left,
-              right: conv.style.right,
-              filter: conv.style.blur ? `blur(${conv.style.blur}px)` : undefined,
-              opacity: 0,
-            }}
+            className={styles.leftHeadline}
+            style={{ opacity: 0 }}
           >
-            {conv.whatsapp && (
-              <span
-                ref={(el) => {
-                  refs.current.conversations[ci].label = el;
-                }}
-                className={styles.whatsappLabel}
-                style={{ opacity: 0 }}
-              >
-                WhatsApp
+            {AI_HEADLINE[0]}
+            <br />
+            {AI_HEADLINE[1]}
+          </h2>
+          <div
+            ref={(el) => {
+              refs.current.leftEmphasis = el;
+            }}
+            className={styles.leftEmphasis}
+            style={{ opacity: 0 }}
+          >
+            {AI_EMPHASIS}
+          </div>
+          <p
+            ref={(el) => {
+              refs.current.leftBody = el;
+            }}
+            className={styles.leftBody}
+            style={{ opacity: 0 }}
+          >
+            {AI_BODY}
+          </p>
+
+          <div
+            ref={(el) => {
+              refs.current.capabilityLine = el;
+            }}
+            className={styles.capabilityLine}
+            style={{ opacity: 0 }}
+          >
+            {CAPABILITIES.map((cap, i) => (
+              <span key={cap} className={styles.capabilityGroup}>
+                <span
+                  ref={(el) => {
+                    refs.current.capabilities[i] = el;
+                  }}
+                  className={styles.capability}
+                >
+                  {cap}
+                </span>
+                {i < CAPABILITIES.length - 1 && (
+                  <span className={styles.capabilityArrow} aria-hidden>
+                    →
+                  </span>
+                )}
               </span>
-            )}
-            {conv.lines.map((line, li) => (
+            ))}
+          </div>
+        </div>
+
+        <div className={styles.phoneOuter}>
+        <div
+          ref={(el) => {
+            refs.current.phone = el;
+          }}
+          className={styles.phone}
+          style={{ opacity: 0 }}
+        >
+          <div className={styles.phoneHeader}>
+            <span className={styles.phoneHeaderName}>MC AI</span>
+            <span className={styles.phoneHeaderStatus}>
+              <span className={styles.badgeDot} /> disponible
+            </span>
+          </div>
+
+          <div className={styles.phoneWindow}>
+            <div
+              ref={(el) => {
+                refs.current.messageList = el;
+              }}
+              className={styles.messageList}
+            >
+              {CHAT_MESSAGES.map((msg, i) => {
+                const typingIdx = CAPABILITY_AT_MESSAGE.indexOf(i);
+                return (
+                <div key={i} className={styles.messageSlot}>
+                  {typingIdx >= 0 && (
+                    <div
+                      ref={(el) => {
+                        refs.current.typing[typingIdx] = el;
+                      }}
+                      className={styles.typingIndicator}
+                      style={{ opacity: 0 }}
+                    >
+                      <span />
+                      <span />
+                      <span />
+                    </div>
+                  )}
+                  <div
+                    ref={(el) => {
+                      refs.current.messages[i].root = el;
+                    }}
+                    className={`${styles.message} ${msg.who === "MC AI" ? styles.messageAI : styles.messageClient}`}
+                    style={{ opacity: 0 }}
+                  >
+                    {msg.lines.map((line, li) => (
+                      <span key={li} className={styles.messageLine}>
+                        {line}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div
+            ref={(el) => {
+              refs.current.systemPanel = el;
+            }}
+            className={styles.systemPanel}
+            style={{ opacity: 0 }}
+          >
+            <span className={styles.systemLabel}>{SYSTEM_PANEL_LABEL}</span>
+            {SYSTEM_PANEL_ROWS.map(([key, value], i) => (
               <div
-                key={li}
+                key={key}
                 ref={(el) => {
-                  refs.current.conversations[ci].lines[li] = el;
+                  refs.current.systemRows[i] = el;
                 }}
-                className={`${styles.line} ${line.who === "MC AI" ? styles.lineAI : styles.lineClient}`}
+                className={styles.systemRow}
                 style={{ opacity: 0 }}
               >
-                <span className={styles.who}>{line.who}</span>
-                <span className={styles.text}>{line.text}</span>
+                <span className={styles.systemKey}>{key}</span>
+                <span className={styles.systemValue}>{value}</span>
               </div>
             ))}
           </div>
-        ))}
-
-        <div className={styles.stepsRow}>
-          {WHATSAPP_STEPS.map((step, i) => (
-            <span key={step} className={styles.stepGroup}>
-              <span
-                ref={(el) => {
-                  refs.current.steps[i] = el;
-                }}
-                className={styles.step}
-                style={{ opacity: 0 }}
-              >
-                {step}
-              </span>
-              {i < WHATSAPP_STEPS.length - 1 && (
-                <span
-                  ref={(el) => {
-                    refs.current.arrows[i] = el;
-                  }}
-                  className={styles.stepArrow}
-                  style={{ opacity: 0 }}
-                  aria-hidden
-                >
-                  →
-                </span>
-              )}
-            </span>
-          ))}
+        </div>
         </div>
 
-        <p
-          ref={(el) => {
-            refs.current.whatsappSub = el;
-          }}
-          className={styles.whatsappSub}
-          style={{ opacity: 0 }}
-        >
-          {WHATSAPP_SUB}
-        </p>
-
-        <div className={styles.footer}>
+        <div className={styles.closing}>
           <h2
             ref={(el) => {
-              refs.current.headline = el;
+              refs.current.closingHeadline = el;
             }}
-            className={styles.headline}
+            className={styles.closingHeadline}
             style={{ opacity: 0 }}
           >
-            {INTELLIGENCE_HEADLINE[0]}
+            {CLOSING_HEADLINE[0]}
             <br />
-            {INTELLIGENCE_HEADLINE[1]}{" "}
-            <em className={styles.emphasis}>{INTELLIGENCE_EMPHASIS}</em>
+            {CLOSING_HEADLINE[1]}
           </h2>
-          <p
+          <div
             ref={(el) => {
-              refs.current.sub = el;
+              refs.current.closingEmphasis = el;
             }}
-            className={styles.sub}
+            className={styles.closingEmphasis}
             style={{ opacity: 0 }}
           >
-            {INTELLIGENCE_SUB}
-          </p>
+            {CLOSING_EMPHASIS}
+          </div>
         </div>
       </div>
     </>

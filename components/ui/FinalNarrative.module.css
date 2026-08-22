@@ -18,6 +18,7 @@
   overflow: hidden;
   padding: 0 var(--nav-pad);
   max-width: 62%;
+  background-color: var(--color-warm-white);
 }
 
 /* replaces the old particle field — sophisticated, very subtle, warm
@@ -144,7 +145,11 @@
 }
 
 /* the closing brand moment — fixed + centered across the full viewport,
- * deliberately escaping .layer's own 62%-wide left-aligned column */
+ * deliberately escaping .layer's own 62%-wide left-aligned column. The
+ * monogram (WebGL, in front of this in paint order) holds alone in the
+ * upper frame first; this copy only ever occupies the lower half, entered
+ * via padding-top rather than vertical centering so it never competes for
+ * the same space as the MC above it. */
 .brandBlock {
   position: fixed;
   inset: 0;
@@ -152,7 +157,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: min(60vh, 620px);
   text-align: center;
   pointer-events: none;
 }
@@ -166,8 +172,29 @@
   will-change: opacity, transform;
 }
 
-.brandSub {
-  margin-top: clamp(6px, 1vw, 10px);
+.closingHeadline {
+  margin-top: clamp(14px, 2vw, 20px);
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  font-size: clamp(1.8rem, 4.4vw, 3.4rem);
+  line-height: 1.05;
+  color: var(--color-graphite-dark);
+  will-change: opacity, transform;
+}
+
+.brandLocation {
+  margin-top: clamp(14px, 2vw, 20px);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+  color: var(--color-gold);
+  will-change: opacity;
+}
+
+.brandServices {
+  margin-top: clamp(18px, 2.6vw, 28px);
   font-family: var(--font-mono);
   font-size: clamp(11px, 0.9vw, 13px);
   letter-spacing: 0.16em;
@@ -176,23 +203,53 @@
   will-change: opacity;
 }
 
-.brandLocation {
-  margin-top: clamp(20px, 3vw, 32px);
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: clamp(1.1rem, 1.8vw, 1.5rem);
-  color: var(--color-graphite-dark);
-  will-change: opacity;
+.closingLine {
+  margin-top: clamp(24px, 3.4vw, 36px);
+  width: min(120px, 14vw);
+  height: 1px;
+  background: var(--color-gold);
+  transform-origin: center;
+  transform: scaleX(0);
+  will-change: opacity, transform;
 }
 
-.brandServices {
-  margin-top: clamp(10px, 1.6vw, 16px);
-  font-family: var(--font-mono);
-  font-size: clamp(10px, 0.85vw, 12px);
-  letter-spacing: 0.12em;
+.closingCta {
+  margin-top: clamp(20px, 3vw, 30px);
+  pointer-events: auto;
+  will-change: opacity, transform;
+}
+
+.closingCtaText {
+  position: relative;
+  display: inline-block;
+}
+
+.closingCtaBase,
+.closingCtaGold {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 600;
   text-transform: uppercase;
-  color: var(--color-graphite-light);
-  will-change: opacity;
+  letter-spacing: 0.02em;
+  font-size: clamp(14px, 1.3vw, 18px);
+  white-space: nowrap;
+}
+
+.closingCtaBase {
+  color: var(--color-graphite-dark);
+}
+
+.closingCtaGold {
+  position: absolute;
+  inset: 0;
+  color: var(--color-gold);
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.5s var(--ease-out);
+}
+
+.closingCta:hover .closingCtaGold,
+.closingCta:focus-visible .closingCtaGold {
+  clip-path: inset(0 0 0 0);
 }
 
 .goldLine {
@@ -227,5 +284,14 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
+  }
+  .brandBlock {
+    padding-top: min(52vh, 480px);
+    padding-left: 8vw;
+    padding-right: 8vw;
+  }
+  .closingCtaBase,
+  .closingCtaGold {
+    white-space: normal;
   }
 }

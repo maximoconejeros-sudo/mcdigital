@@ -9,6 +9,14 @@ import { pointerState, scrollState } from "@/lib/animation/scroll-store";
 
 const rotTarget = new THREE.Vector2(0, 0);
 
+// V10: the sculpture must sit clearly right of the headline column, not
+// behind it — pushing this through camera look-at alone hit sharply
+// diminishing (then inverting) returns, so the object itself carries most
+// of the shift in world space instead, which is linear and predictable.
+// It settles back to 0 well before the aperture dolly (t=0.4+) needs the
+// object back on-axis with the fixed camera path.
+const HERO_OFFSET_X = 3.0;
+
 export default function MSculpture() {
   const group = useRef<THREE.Group>(null);
   const { mGeo, cGeo } = useMemo(() => createMCGeometries(), []);
@@ -46,6 +54,16 @@ export default function MSculpture() {
     group.current.rotation.x = THREE.MathUtils.damp(
       group.current.rotation.x,
       rotTarget.x * 0.6 * settle,
+      2.2,
+      delta
+    );
+
+    // hero composition push — settles back to 0 by p=0.35, well ahead of
+    // the aperture dolly, so the rest of the scroll sequence is unaffected
+    const offsetSettle = THREE.MathUtils.smoothstep(p, 0.15, 0.35);
+    group.current.position.x = THREE.MathUtils.damp(
+      group.current.position.x,
+      HERO_OFFSET_X * (1 - offsetSettle),
       2.2,
       delta
     );

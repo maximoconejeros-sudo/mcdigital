@@ -177,11 +177,6 @@ export default function WhyItMattersNarrative({
     <>
       <div ref={spacer} className={styles.spacer} />
       <div ref={layer} className={styles.layer} style={{ opacity: 0 }}>
-        <div className={styles.gridLines} aria-hidden>
-          <span />
-          <span />
-          <span />
-        </div>
 
         <div className={styles.metaLabel}>Por qué importa</div>
 

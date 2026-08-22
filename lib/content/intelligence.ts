@@ -1,53 +1,38 @@
-export interface ConversationLine {
+export interface ChatMessage {
   who: "Cliente" | "MC AI";
-  text: string;
+  lines: string[];
 }
 
-export interface Conversation {
-  lines: ConversationLine[];
-  style: {
-    top?: string;
-    bottom?: string;
-    left?: string;
-    right?: string;
-    scale: number;
-    blur: number;
-  };
-  whatsapp?: boolean;
-}
+export const AI_HEADLINE = ["Agente de", "WhatsApp"];
+export const AI_EMPHASIS = "personalizado para tu negocio.";
+export const AI_BODY =
+  "Responde consultas, califica clientes, entrega información y mantiene conversaciones activas incluso cuando tú no estás.";
+export const AI_STATUS = "Activo 24/7";
 
-export const CONVERSATIONS: Conversation[] = [
+export const CAPABILITIES = ["Responde", "Califica", "Agenda", "Deriva"];
+
+export const CHAT_MESSAGES: ChatMessage[] = [
+  { who: "Cliente", lines: ["Hola 👋", "¿Tienen disponibilidad mañana?"] },
+  { who: "MC AI", lines: ["¡Hola! Sí.", "¿Para qué horario estás buscando?"] },
+  { who: "Cliente", lines: ["Después de las 17:00."] },
   {
-    style: { top: "16%", left: "8%", scale: 1, blur: 0 },
+    who: "MC AI",
     lines: [
-      { who: "Cliente", text: "¿Tienen disponibilidad?" },
-      { who: "MC AI", text: "Sí. ¿Para qué fecha?" },
+      "Perfecto.",
+      "Tenemos disponibilidad a las 17:30 y 18:15.",
+      "¿Quieres que te reserve uno?",
     ],
   },
-  {
-    style: { top: "44%", right: "9%", scale: 0.82, blur: 0.6 },
-    lines: [
-      { who: "Cliente", text: "Quiero cotizar." },
-      { who: "MC AI", text: "Claro. Cuéntame qué necesitas." },
-    ],
-  },
-  {
-    style: { bottom: "16%", left: "12%", scale: 0.9, blur: 0 },
-    whatsapp: true,
-    lines: [
-      { who: "Cliente", text: "¿Cuál es el horario?" },
-      { who: "MC AI", text: "Te ayudo." },
-    ],
-  },
+  { who: "Cliente", lines: ["17:30 👍"] },
+  { who: "MC AI", lines: ["Listo.", "Tu solicitud quedó registrada."] },
 ];
 
-export const WHATSAPP_STEPS = ["Mensaje", "Calificación", "Respuesta", "Acción"];
+export const SYSTEM_PANEL_LABEL = "Lead detectado";
+export const SYSTEM_PANEL_ROWS: [string, string][] = [
+  ["Intención", "Reserva"],
+  ["Horario", "17:30"],
+  ["Estado", "Calificado"],
+];
 
-export const INTELLIGENCE_HEADLINE = ["Tu negocio", "sigue hablando."];
-export const INTELLIGENCE_EMPHASIS = "incluso cuando no estás";
-
-export const INTELLIGENCE_SUB =
-  "Agentes de IA y automatizaciones diseñados para responder, orientar y mantener conversaciones activas.";
-
-export const WHATSAPP_SUB =
-  "Tu negocio sigue conversando incluso cuando tú no estás.";
+export const CLOSING_HEADLINE = ["Tu negocio", "sigue hablando."];
+export const CLOSING_EMPHASIS = "incluso cuando no estás";
