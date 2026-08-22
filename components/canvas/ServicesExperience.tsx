@@ -6,6 +6,7 @@ import ServicesCameraRig from "@/components/canvas/ServicesCameraRig";
 import BrowserAssembly from "@/components/canvas/services/BrowserAssembly";
 import WebsitePlanes from "@/components/canvas/services/WebsitePlanes";
 import NetworkNodes from "@/components/canvas/services/NetworkNodes";
+import CinematicPost from "@/components/canvas/CinematicPost";
 
 export default function ServicesExperience({
   reduced = false,
@@ -25,6 +26,7 @@ export default function ServicesExperience({
       <BrowserAssembly />
       <WebsitePlanes />
       <NetworkNodes />
+      {!reduced && <CinematicPost />}
     </Canvas>
   );
 }

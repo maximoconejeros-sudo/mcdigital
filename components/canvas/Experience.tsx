@@ -1,12 +1,12 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import MSculpture from "@/components/canvas/MSculpture";
 import SceneLighting from "@/components/canvas/SceneLighting";
 import Particles from "@/components/canvas/Particles";
 import CameraRig from "@/components/canvas/CameraRig";
 import FogController from "@/components/canvas/FogController";
+import CinematicPost from "@/components/canvas/CinematicPost";
 
 export default function Experience({ reduced = false }: { reduced?: boolean }) {
   return (
@@ -28,17 +28,7 @@ export default function Experience({ reduced = false }: { reduced?: boolean }) {
       <MSculpture />
       <Particles count={reduced ? 500 : 1800} />
       <CameraRig reduced={reduced} />
-      {!reduced && (
-        <EffectComposer multisampling={0}>
-          <Bloom
-            intensity={0.42}
-            luminanceThreshold={0.72}
-            luminanceSmoothing={0.3}
-            mipmapBlur
-          />
-          <Vignette eskil={false} offset={0.28} darkness={0.62} />
-        </EffectComposer>
-      )}
+      {!reduced && <CinematicPost />}
     </Canvas>
   );
 }

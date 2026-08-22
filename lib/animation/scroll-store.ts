@@ -7,6 +7,8 @@ export const scrollState = {
   progress: 0,
   /** 0..1 progress through the Act II services sequence */
   act2Progress: 0,
+  /** 0..1 progress through the Act III ecosystem sequence */
+  act3Progress: 0,
   /** whether the intro choreography has finished */
   introComplete: false,
 };

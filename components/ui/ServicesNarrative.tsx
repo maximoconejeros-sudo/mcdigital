@@ -51,6 +51,7 @@ export default function ServicesNarrative({
   onActiveChange?: (active: boolean) => void;
 }) {
   const spacer = useRef<HTMLDivElement>(null);
+  const layer = useRef<HTMLDivElement>(null);
   const refs = useRef<ServiceRef[]>([]);
   const wasActive = useRef(false);
 
@@ -66,6 +67,16 @@ export default function ServicesNarrative({
         if (self.isActive !== wasActive.current) {
           wasActive.current = self.isActive;
           onActiveChange?.(self.isActive);
+          // no service block has an exit tween beyond its own room window,
+          // so once Act II is behind us in either direction, hide the
+          // whole layer rather than let the last-active room's copy (or,
+          // walking backward, room 0's) sit parked on top of neighbors.
+          if (layer.current) {
+            layer.current.style.opacity = self.isActive ? "1" : "0";
+            layer.current.style.visibility = self.isActive
+              ? "visible"
+              : "hidden";
+          }
         }
         scrollState.act2Progress = self.progress;
         refs.current.forEach((r, i) => {
@@ -85,7 +96,7 @@ export default function ServicesNarrative({
   return (
     <>
       <div ref={spacer} className={styles.spacer} />
-      <div className={styles.layer}>
+      <div ref={layer} className={styles.layer}>
         {SERVICES.map((s, i) => (
           <div
             key={s.index}
