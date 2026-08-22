@@ -9,6 +9,8 @@ export const scrollState = {
   act2Progress: 0,
   /** 0..1 progress through the Act III ecosystem sequence */
   act3Progress: 0,
+  /** 0..1 progress through the Act V process journey */
+  act5Progress: 0,
   /** whether the intro choreography has finished */
   introComplete: false,
 };
