@@ -1,0 +1,45 @@
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: var(--color-fg);
+  pointer-events: none;
+  z-index: 200;
+  mix-blend-mode: difference;
+  will-change: transform;
+  transition: width 0.35s var(--ease-out), height 0.35s var(--ease-out),
+    margin 0.35s var(--ease-out), opacity 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+}
+
+.cursor.ready {
+  opacity: 1;
+}
+
+.cursor.hover {
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
+  background: var(--color-fg);
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-bg);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.cursor.hover .label {
+  opacity: 1;
+}

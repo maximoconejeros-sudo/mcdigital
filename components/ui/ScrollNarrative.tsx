@@ -1,0 +1,120 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scrollState } from "@/lib/animation/scroll-store";
+import styles from "./ScrollNarrative.module.css";
+
+gsap.registerPlugin(ScrollTrigger);
+
+/**
+ * Owns the ~320vh scroll length for Act I and maps scroll position to a
+ * single 0..1 progress value (read by the WebGL camera rig every frame)
+ * while scrubbing the DOM narrative — hero exit, the two supporting
+ * lines, and the bridge into Scene 02 — on the same timeline so
+ * everything stays perfectly in sync with the scrollbar.
+ */
+export default function ScrollNarrative({ ready }: { ready: boolean }) {
+  const spacer = useRef<HTMLDivElement>(null);
+  const mid = useRef<HTMLSpanElement>(null);
+  const bridge = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (!ready || !spacer.current) return;
+
+    const ctx = gsap.context(() => {
+      const heroFront = gsap.utils.toArray<HTMLElement>("[data-hero-front]");
+      const heroBehind = gsap.utils.toArray<HTMLElement>("[data-hero-behind]");
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: spacer.current,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.6,
+          onUpdate: (self) => {
+            scrollState.progress = self.progress;
+          },
+        },
+        defaults: { ease: "none" },
+      });
+
+      // --- hero exit: 0.10 -> 0.32, combined transform + clip, not opacity-only
+      tl.to(
+        heroFront,
+        {
+          yPercent: -22,
+          scale: 1.1,
+          rotateX: -6,
+          filter: "blur(6px)",
+          autoAlpha: 0,
+          duration: 0.22,
+          ease: "power2.in",
+        },
+        0.1
+      ).to(
+        heroBehind,
+        {
+          scale: 1.5,
+          letterSpacing: "0.04em",
+          autoAlpha: 0,
+          duration: 0.24,
+          ease: "power2.in",
+        },
+        0.1
+      );
+
+      // --- mid copy: 0.44 -> 0.68
+      if (mid.current) {
+        tl.fromTo(
+          mid.current,
+          { clipPath: "inset(0 100% 0 0)" },
+          { clipPath: "inset(0 0% 0 0)", duration: 0.1, ease: "power2.out" },
+          0.44
+        ).to(
+          mid.current,
+          { clipPath: "inset(0 0 0 100%)", duration: 0.08, ease: "power2.in" },
+          0.6
+        );
+      }
+
+      // --- bridge copy: 0.86 -> 1.0
+      if (bridge.current) {
+        tl.fromTo(
+          bridge.current,
+          { clipPath: "inset(0 0 100% 0)", yPercent: 12 },
+          {
+            clipPath: "inset(0 0 0% 0)",
+            yPercent: 0,
+            duration: 0.14,
+            ease: "power2.out",
+          },
+          0.86
+        );
+      }
+    });
+
+    return () => ctx.revert();
+  }, [ready]);
+
+  return (
+    <>
+      <div ref={spacer} className={styles.spacer} />
+      <div className={styles.narrativeLayer}>
+        <p className={styles.midCopy}>
+          <span ref={mid}>We don&rsquo;t just build websites.</span>
+        </p>
+        <h2 className={styles.bridgeCopy}>
+          <span ref={bridge}>
+            We build
+            <br />
+            digital
+            <br />
+            experiences.
+          </span>
+        </h2>
+      </div>
+    </>
+  );
+}

@@ -1,0 +1,50 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--color-bg-deep);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: var(--nav-pad);
+  transform-origin: top center;
+  will-change: transform, opacity;
+}
+
+.mark {
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 1vw, 13px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-fg);
+  display: flex;
+  gap: 0.6em;
+}
+
+.markDim {
+  color: var(--color-fg-faint);
+}
+
+.pct {
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 1vw, 13px);
+  letter-spacing: 0.1em;
+  color: var(--color-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.barTrack {
+  position: absolute;
+  left: var(--nav-pad);
+  right: var(--nav-pad);
+  bottom: calc(var(--nav-pad) + 34px);
+  height: 1px;
+  background: var(--color-line);
+}
+
+.barFill {
+  height: 100%;
+  background: var(--color-fg);
+  width: 0%;
+  will-change: width;
+}

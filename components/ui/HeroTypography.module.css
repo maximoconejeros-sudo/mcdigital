@@ -1,0 +1,127 @@
+.behind,
+.front {
+  position: fixed;
+  inset: 0;
+  padding: var(--nav-pad);
+  pointer-events: none;
+}
+
+.behind {
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.front {
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.centerWord {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  font-size: clamp(5rem, 15vw, 15rem);
+  line-height: 0.86;
+  color: var(--color-fg);
+  opacity: 0.94;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: clamp(64px, 9vw, 108px);
+}
+
+.eyebrow {
+  max-width: 220px;
+  text-align: right;
+}
+
+.headlineTop {
+  font-family: var(--font-display);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  font-size: clamp(2.6rem, 6.4vw, 6rem);
+  line-height: 0.94;
+  color: var(--color-fg);
+}
+
+.bottomRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: clamp(48px, 6vw, 72px);
+  gap: 24px;
+}
+
+.bottomLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.headlineBottom {
+  font-family: var(--font-display);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  font-size: clamp(2.6rem, 6.4vw, 6rem);
+  line-height: 0.94;
+  color: var(--color-fg);
+  text-align: right;
+}
+
+.scrollHint {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(28px, 4vw, 44px);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.scrollLine {
+  width: 1px;
+  height: 34px;
+  background: linear-gradient(
+    to bottom,
+    var(--color-fg-dim),
+    transparent
+  );
+  transform-origin: top;
+}
+
+@media (max-width: 760px) {
+  .topRow {
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 84px;
+  }
+  .eyebrow {
+    text-align: left;
+    max-width: 100%;
+  }
+  .bottomRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+  .headlineBottom {
+    text-align: left;
+  }
+  .centerWord {
+    font-size: clamp(3.6rem, 20vw, 6rem);
+  }
+  .scrollHint {
+    display: none;
+  }
+}
