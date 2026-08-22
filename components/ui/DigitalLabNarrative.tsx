@@ -64,12 +64,16 @@ interface Refs {
   worlds: WorldRefs[];
 }
 
-// each world's own active envelope [inStart, inEnd, outStart, outEnd] —
-// the last world has no exit, it settles as the resting frame
+// each world's own active envelope [inStart, inEnd, outStart, outEnd] — the
+// outgoing world's exit band finishes just before the next world's entry
+// band becomes prominent (rather than sharing the identical range), so the
+// two names spend only a brief sliver overlapping instead of crossfading
+// fully on top of each other. The last world has no exit, it settles as
+// the resting frame.
 const WORLD_BANDS: [number, number, number, number][] = [
-  [0.22, 0.3, 0.42, 0.48],
-  [0.42, 0.48, 0.62, 0.68],
-  [0.62, 0.68, 1, 1],
+  [0.22, 0.3, 0.4, 0.46],
+  [0.43, 0.5, 0.6, 0.66],
+  [0.63, 0.7, 1, 1],
 ];
 
 /**
@@ -140,14 +144,18 @@ export default function DigitalLabNarrative({ ready }: { ready: boolean }) {
           const wr = r.worlds[wi];
           if (!wr) return;
           const [inS, inE, outS, outE] = WORLD_BANDS[wi];
-          const t =
-            wi === LAB_WORLDS.length - 1
-              ? bandIn(p, inS, inE)
-              : wordEnvelope(p, inS, inE, outS, outE);
+          const enterT = bandIn(p, inS, inE);
+          const exitT = wi === LAB_WORLDS.length - 1 ? 0 : bandIn(p, outS, outE);
+          const t = Math.min(enterT, 1 - exitT);
           const color = wi === 2 ? "var(--color-graphite-dark)" : world.fg;
           if (wr.root) wr.root.style.opacity = String(t);
           if (wr.name) {
-            wr.name.style.transform = `translateY(${(1 - t) * 20}px)`;
+            // enters rising from below, exits continuing to rise and out —
+            // a directional wipe instead of a static crossfade, so the
+            // outgoing and incoming world names are never sitting on the
+            // same line at once even mid-transition (V8: no text collisions)
+            const offsetY = (1 - enterT) * 60 - exitT * 80;
+            wr.name.style.transform = `translateY(${offsetY}px)`;
             wr.name.style.color = color;
           }
           if (wr.label) wr.label.style.color = world.accent;

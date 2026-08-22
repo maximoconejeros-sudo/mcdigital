@@ -327,6 +327,11 @@ export default function MethodNarrative({ ready }: { ready: boolean }) {
           className={styles.stage}
           style={{ opacity: 0 }}
         >
+          <span className={styles.stageTag}>Sistema — en construcción</span>
+          <span className={styles.stageCorner} aria-hidden />
+          <span className={styles.stageCorner} aria-hidden />
+          <span className={styles.stageCorner} aria-hidden />
+          <span className={styles.stageCorner} aria-hidden />
           {DISCOVER_WORDS.map((word, i) => (
             <span
               key={word}

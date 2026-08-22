@@ -97,17 +97,17 @@ export default function HeroTypography({ play }: { play: boolean }) {
         </div>
 
         <h1 ref={mainRef} className={styles.mainLine} style={{ perspective: 700 }}>
-          <span className="line-mask">
+          <span className={`line-mask ${styles.lineOpen}`}>
             <span data-line style={{ display: "inline-block" }}>
               Transformamos ideas
             </span>
           </span>
-          <span className="line-mask">
+          <span className={`line-mask ${styles.lineHero}`}>
             <span data-line style={{ display: "inline-block" }}>
               en experiencias digitales
             </span>
           </span>
-          <span className="line-mask">
+          <span className={`line-mask ${styles.lineClose}`}>
             <span data-line style={{ display: "inline-block" }}>
               <em className={styles.emphasis}>que hacen crecer</em> negocios.
             </span>

@@ -14,19 +14,21 @@ import { pointerState, scrollState } from "@/lib/animation/scroll-store";
 
 const rotTarget = new THREE.Vector2(0, 0);
 
-// The beam geometry is punched straight through on its local Z axis (the
-// aperture Act I's camera dollies through) — rotation.y near 0 points that
-// hole directly down the camera's sightline and straight into the key
-// light, blowing the frame out white. A fixed yaw offset keeps the sway
-// permanently off that axis instead of drifting through it like Act I's
-// scroll-driven rotation (which has its own "settle" guard for the same
-// reason) would if reused here unbounded.
-const BASE_YAW = Math.PI * 0.32;
+// rotation.y = 0 is the geometry's true front-facing pose (same convention
+// MSculpture settles back to before Act I's aperture dolly) — the object's
+// front face points straight down +Z at a camera sitting on that axis,
+// which is exactly FinalCameraRig's framing. It only blows out white when
+// the camera travels INTO the punched hole along that axis, which this
+// scene's camera never does (it holds well back, z 6.9-7.4), so front-on
+// is safe here. The monogram is allowed a visible turn on entrance but is
+// non-negotiably required to resolve to that exact front-facing pose —
+// this is the site's final brand shot.
+const ENTRY_YAW = Math.PI * 0.22;
 
 /**
  * Act IX's monogram — deliberately independent of scrollState.progress
  * (Act I's rotation clock, which would already be pinned at its settled
- * end value here). Sways gently around an off-axis base orientation and
+ * end value here). Turns elegantly into a front-facing rest pose and
  * materializes — scale and opacity both ease in — as the particle field
  * converges around it, driven by scrollState.act9Progress.
  */
@@ -45,10 +47,19 @@ export default function FinalSculpture() {
   useFrame((state, delta) => {
     if (!group.current) return;
     const t = state.clock.elapsedTime;
+    const p = scrollState.act9Progress;
 
-    const idleY = BASE_YAW + Math.sin(t * 0.11) * 0.16;
-    rotTarget.x = pointerState.y * 0.1;
-    rotTarget.y = pointerState.x * 0.14;
+    // resolves to exactly 0 well before the scene finishes revealing, then
+    // holds — the visitor gets an elegant turn on the way in, never a
+    // sideways or 3/4 monogram at rest
+    const settle = THREE.MathUtils.smoothstep(p, 0.12, 0.5);
+    const residual = 1 - settle;
+
+    const idleY = ENTRY_YAW * residual + Math.sin(t * 0.11) * 0.03 * residual;
+    // pointer parallax is real but capped small, and fades further as it
+    // settles, so cursor movement can never rotate the final shot off-axis
+    rotTarget.x = pointerState.y * 0.05 * (0.3 + residual * 0.7);
+    rotTarget.y = pointerState.x * 0.06 * (0.3 + residual * 0.7);
 
     group.current.rotation.y = THREE.MathUtils.damp(
       group.current.rotation.y,
@@ -62,8 +73,6 @@ export default function FinalSculpture() {
       2.2,
       delta
     );
-
-    const p = scrollState.act9Progress;
     // ramps up faster than the old black-background curve: against the
     // warm-white/champagne frame, a long stretch at partial opacity reads
     // as pale/washed-out gray instead of a glow, so it needs to reach a

@@ -132,7 +132,10 @@ export default function ExpertiseNarrative({ ready }: { ready: boolean }) {
           el.style.transform = `scale(${0.94 + t * 0.06})`;
         });
 
-        const gridT = bandIn(p, 0.18, 0.25);
+        // present from the very start of the act (not just once ATTENTION
+        // arrives) so the opening "start with an idea" beat already has
+        // structural texture instead of sitting on flat warm-white
+        const gridT = bandIn(p, 0.0, 0.06);
         if (r.gridLines) r.gridLines.style.opacity = String(gridT * 0.5);
 
         const navT = bandIn(p, 0.2, 0.25);

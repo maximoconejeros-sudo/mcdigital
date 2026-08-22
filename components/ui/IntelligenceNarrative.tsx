@@ -90,15 +90,15 @@ export default function IntelligenceNarrative({
         const p = self.progress;
         const r = refs.current;
 
-        const badgeT = bandIn(p, 0.03, 0.08);
+        const badgeT = bandIn(p, 0.0, 0.04);
         if (r.badge) r.badge.style.opacity = String(badgeT);
 
         const recedeT = bandIn(p, 0.85, 1);
 
         const convBands: [number, number][][] = [
           [
-            [0.06, 0.12],
-            [0.14, 0.2],
+            [0.01, 0.07],
+            [0.1, 0.16],
           ],
           [
             [0.22, 0.28],

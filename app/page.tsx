@@ -9,6 +9,7 @@ import FinalExperience from "@/components/canvas/FinalExperience";
 import CanvasErrorBoundary from "@/components/canvas/CanvasErrorBoundary";
 import Navigation from "@/components/ui/Navigation";
 import CustomCursor from "@/components/ui/CustomCursor";
+import HeroBackdrop from "@/components/ui/HeroBackdrop";
 import HeroTypography from "@/components/ui/HeroTypography";
 import ScrollNarrative from "@/components/ui/ScrollNarrative";
 import ExpertiseNarrative from "@/components/ui/ExpertiseNarrative";
@@ -57,6 +58,7 @@ export default function Home() {
       {!ready && <Loader onComplete={() => setReady(true)} />}
 
       <CanvasErrorBoundary fallback={<StaticFallback />}>
+        <HeroBackdrop />
         <div style={{ position: "fixed", inset: 0, zIndex: 20 }}>
           {act1Active && <Experience reduced={reduced} />}
           {act9Active && <FinalExperience reduced={reduced} />}

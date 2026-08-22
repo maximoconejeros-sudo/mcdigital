@@ -36,10 +36,12 @@ const MOMENT_OFFSET = [
 
 interface MomentRefs {
   root: HTMLDivElement | null;
+  bgWord: HTMLDivElement | null;
   word: HTMLDivElement | null;
   copy: HTMLParagraphElement | null;
   cta: HTMLAnchorElement | null;
   recap: HTMLSpanElement | null;
+  counter: HTMLSpanElement | null;
 }
 
 interface Refs {
@@ -48,6 +50,8 @@ interface Refs {
   moments: MomentRefs[];
   grow: HTMLDivElement | null;
 }
+
+const MOMENT_LABEL = ["01", "02", "03"];
 
 const MOMENT_BANDS: [number, number, number, number][] = [
   [0.28, 0.36, 0.42, 0.46],
@@ -74,10 +78,12 @@ export default function WhyItMattersNarrative({
     openB: null,
     moments: MOMENTS.map(() => ({
       root: null,
+      bgWord: null,
       word: null,
       copy: null,
       cta: null,
       recap: null,
+      counter: null,
     })),
     grow: null,
   });
@@ -133,12 +139,22 @@ export default function WhyItMattersNarrative({
               mr.word.style.transform = `translateX(${off.x * (1 - settle)}px) rotate(${off.rotate * (1 - settle)}deg)`;
             }
           }
+          // a huge, blurred, low-contrast echo of the same word fills the
+          // background — depth + texture behind the crisp foreground word,
+          // instead of empty warm-white (V8: oversized cropped typography)
+          if (mr.bgWord) {
+            mr.bgWord.style.opacity = String(t * 0.14);
+            mr.bgWord.style.transform = `scale(${0.92 + settle * 0.1}) translateX(${(1 - settle) * -40}px)`;
+          }
           if (mr.copy) mr.copy.style.opacity = String(bandIn(p, inS + 0.02, inE + 0.02));
           if (mr.cta && mi === 2) {
             const ctaT = bandIn(p, 0.68, 0.74);
             mr.cta.style.opacity = String(ctaT);
             mr.cta.style.pointerEvents = ctaT > 0.5 ? "auto" : "none";
           }
+          // running counter, bottom-left — a second area of activity so the
+          // viewport is never just one centered headline on blank warm-white
+          if (mr.counter) mr.counter.style.opacity = String(t);
 
           // recap sliver — the moment's word shrinks into the vertical
           // stack just before GROW takes over
@@ -161,6 +177,14 @@ export default function WhyItMattersNarrative({
     <>
       <div ref={spacer} className={styles.spacer} />
       <div ref={layer} className={styles.layer} style={{ opacity: 0 }}>
+        <div className={styles.gridLines} aria-hidden>
+          <span />
+          <span />
+          <span />
+        </div>
+
+        <div className={styles.metaLabel}>Por qué importa</div>
+
         <div
           ref={(el) => {
             refs.current.openA = el;
@@ -198,6 +222,16 @@ export default function WhyItMattersNarrative({
           >
             <div
               ref={(el) => {
+                refs.current.moments[mi].bgWord = el;
+              }}
+              className={styles.bgWord}
+              aria-hidden
+              style={{ opacity: 0 }}
+            >
+              {moment.word}
+            </div>
+            <div
+              ref={(el) => {
                 refs.current.moments[mi].word = el;
               }}
               className={styles.momentWord}
@@ -226,6 +260,15 @@ export default function WhyItMattersNarrative({
                 Hablemos ↗
               </a>
             )}
+            <span
+              ref={(el) => {
+                refs.current.moments[mi].counter = el;
+              }}
+              className={styles.momentCounter}
+              style={{ opacity: 0 }}
+            >
+              {MOMENT_LABEL[mi]} / 03
+            </span>
           </div>
         ))}
 
