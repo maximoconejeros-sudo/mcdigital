@@ -14,6 +14,7 @@ import HeroTypography from "@/components/ui/HeroTypography";
 import ScrollNarrative from "@/components/ui/ScrollNarrative";
 import ServicesNarrative from "@/components/ui/ServicesNarrative";
 import EcosystemNarrative from "@/components/ui/EcosystemNarrative";
+import NumbersNarrative from "@/components/ui/NumbersNarrative";
 import StaticFallback from "@/components/ui/StaticFallback";
 
 export default function Home() {
@@ -64,6 +65,7 @@ export default function Home() {
         <ScrollNarrative ready={ready} onActiveChange={setAct1Active} />
         <ServicesNarrative ready={ready} onActiveChange={setAct2Active} />
         <EcosystemNarrative ready={ready} onActiveChange={setAct3Active} />
+        <NumbersNarrative ready={ready} />
       </CanvasErrorBoundary>
 
       <Navigation play={ready} />
