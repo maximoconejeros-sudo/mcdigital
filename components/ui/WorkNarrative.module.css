@@ -1,0 +1,139 @@
+.spacer {
+  position: relative;
+  height: 520vh;
+  width: 100%;
+  background: var(--color-bg-deep);
+}
+
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  background: var(--color-bg-deep);
+  overflow: hidden;
+}
+
+.actLabel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  opacity: 0;
+}
+
+.actLabel span {
+  display: block;
+}
+
+.actLabel .big {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  font-size: clamp(3rem, 9vw, 8rem);
+  color: var(--color-fg);
+  line-height: 0.92;
+  margin-top: 14px;
+}
+
+.project {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel {
+  position: relative;
+  width: min(64vw, 920px);
+  aspect-ratio: 16 / 10;
+  border-radius: 2px;
+  border: 1px solid rgba(200, 155, 60, 0.5);
+  background: linear-gradient(
+    150deg,
+    rgba(201, 155, 60, 0.16),
+    rgba(5, 5, 5, 0.94) 60%
+  );
+  overflow: hidden;
+  will-change: transform, opacity;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panelMark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22vw;
+  color: rgba(244, 242, 236, 0.05);
+  user-select: none;
+}
+
+.panelLabel {
+  position: absolute;
+  top: 24px;
+  left: 30px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-fg-dim);
+}
+
+.meta {
+  position: absolute;
+  left: var(--nav-pad);
+  bottom: clamp(80px, 12vh, 130px);
+  will-change: opacity, transform;
+}
+
+.metaIndex {
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 1vw, 13px);
+  letter-spacing: 0.18em;
+  color: var(--color-accent);
+  margin-bottom: 12px;
+  display: block;
+}
+
+.metaClient {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  font-size: clamp(1.8rem, 4vw, 3.4rem);
+  color: var(--color-fg);
+  line-height: 1;
+}
+
+.metaRow {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+}
+
+.metaRow span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-fg-dim);
+}
+
+@media (max-width: 760px) {
+  .panel {
+    width: 84vw;
+  }
+  .metaClient {
+    font-size: clamp(1.5rem, 8vw, 2.2rem);
+  }
+  .meta {
+    bottom: clamp(60px, 10vh, 90px);
+  }
+}

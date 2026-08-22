@@ -18,6 +18,7 @@ import EcosystemNarrative from "@/components/ui/EcosystemNarrative";
 import NumbersNarrative from "@/components/ui/NumbersNarrative";
 import ProcessNarrative from "@/components/ui/ProcessNarrative";
 import PhilosophyNarrative from "@/components/ui/PhilosophyNarrative";
+import WorkNarrative from "@/components/ui/WorkNarrative";
 import StaticFallback from "@/components/ui/StaticFallback";
 
 export default function Home() {
@@ -73,6 +74,7 @@ export default function Home() {
         <NumbersNarrative ready={ready} />
         <ProcessNarrative ready={ready} onActiveChange={setAct5Active} />
         <PhilosophyNarrative ready={ready} />
+        <WorkNarrative ready={ready} />
       </CanvasErrorBoundary>
 
       <Navigation play={ready} />
