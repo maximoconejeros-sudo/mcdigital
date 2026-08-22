@@ -15,10 +15,18 @@ gsap.registerPlugin(ScrollTrigger);
  * lines, and the bridge into Scene 02 — on the same timeline so
  * everything stays perfectly in sync with the scrollbar.
  */
-export default function ScrollNarrative({ ready }: { ready: boolean }) {
+export default function ScrollNarrative({
+  ready,
+  onActiveChange,
+}: {
+  ready: boolean;
+  onActiveChange?: (active: boolean) => void;
+}) {
   const spacer = useRef<HTMLDivElement>(null);
+  const narrativeLayer = useRef<HTMLDivElement>(null);
   const mid = useRef<HTMLSpanElement>(null);
   const bridge = useRef<HTMLSpanElement>(null);
+  const wasActive = useRef(true);
 
   useEffect(() => {
     if (!ready || !spacer.current) return;
@@ -35,6 +43,19 @@ export default function ScrollNarrative({ ready }: { ready: boolean }) {
           scrub: 0.6,
           onUpdate: (self) => {
             scrollState.progress = self.progress;
+            if (self.isActive !== wasActive.current) {
+              wasActive.current = self.isActive;
+              onActiveChange?.(self.isActive);
+              // the bridge copy's reveal has no matching exit tween — once
+              // Act I is behind us (in either scroll direction), hide the
+              // whole layer so it doesn't sit parked on top of Act II.
+              if (narrativeLayer.current) {
+                narrativeLayer.current.style.opacity = self.isActive ? "1" : "0";
+                narrativeLayer.current.style.visibility = self.isActive
+                  ? "visible"
+                  : "hidden";
+              }
+            }
           },
         },
         defaults: { ease: "none" },
@@ -96,12 +117,12 @@ export default function ScrollNarrative({ ready }: { ready: boolean }) {
     });
 
     return () => ctx.revert();
-  }, [ready]);
+  }, [ready, onActiveChange]);
 
   return (
     <>
       <div ref={spacer} className={styles.spacer} />
-      <div className={styles.narrativeLayer}>
+      <div ref={narrativeLayer} className={styles.narrativeLayer}>
         <p className={styles.midCopy}>
           <span ref={mid}>We don&rsquo;t just build websites.</span>
         </p>

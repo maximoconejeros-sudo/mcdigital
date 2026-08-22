@@ -4,6 +4,7 @@ import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { createMGeometries } from "@/lib/webgl/geometry";
+import { createGoldMaterial } from "@/lib/webgl/materials";
 import { pointerState, scrollState } from "@/lib/animation/scroll-store";
 
 const rotTarget = new THREE.Vector2(0, 0);
@@ -11,24 +12,7 @@ const rotTarget = new THREE.Vector2(0, 0);
 export default function MSculpture() {
   const group = useRef<THREE.Group>(null);
   const { bodyGeo, beamGeo, ringGeo } = useMemo(() => createMGeometries(), []);
-
-  // Champagne / brushed gold — physically based so brightness and hue
-  // variation come from lighting and reflection, not a flat fill color.
-  const material = useMemo(
-    () =>
-      new THREE.MeshPhysicalMaterial({
-        color: new THREE.Color("#C89B3C"),
-        metalness: 1,
-        roughness: 0.32,
-        envMapIntensity: 2.1,
-        clearcoat: 0.3,
-        clearcoatRoughness: 0.28,
-        sheen: 0.16,
-        sheenColor: new THREE.Color("#ffe3ab"),
-        sheenRoughness: 0.42,
-      }),
-    []
-  );
+  const material = useMemo(() => createGoldMaterial(), []);
 
   useFrame((state, delta) => {
     if (!group.current) return;
