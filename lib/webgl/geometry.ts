@@ -1,141 +1,107 @@
 import * as THREE from "three";
+import {
+  C_GLYPH_COMMANDS,
+  C_GLYPH_WIDTH,
+  M_GLYPH_COMMANDS,
+  M_GLYPH_WIDTH,
+  GLYPH_CAP_HEIGHT,
+  type GlyphCommand,
+} from "@/lib/webgl/mc-glyph-paths";
 
-function roundedRectPath(
-  cx: number,
-  cy: number,
-  w: number,
-  h: number,
-  r: number
-): THREE.Path {
-  const x0 = cx - w / 2;
-  const y0 = cy - h / 2;
-  const x1 = cx + w / 2;
-  const y1 = cy + h / 2;
-  const p = new THREE.Path();
-  p.moveTo(x0 + r, y0);
-  p.lineTo(x1 - r, y0);
-  p.quadraticCurveTo(x1, y0, x1, y0 + r);
-  p.lineTo(x1, y1 - r);
-  p.quadraticCurveTo(x1, y1, x1 - r, y1);
-  p.lineTo(x0 + r, y1);
-  p.quadraticCurveTo(x0, y1, x0, y1 - r);
-  p.lineTo(x0, y0 + r);
-  p.quadraticCurveTo(x0, y0, x0 + r, y0);
-  p.closePath();
-  return p;
-}
-
-/**
- * A partial annulus (ring with a gap) traced as one continuous boundary —
- * the architectural "C" that wraps the M to complete the MC monogram.
- * The gap is centered on `gapCenterRad`; `gapRad` is its angular width.
- * Points are sampled manually (not via Shape.absarc) so the winding
- * direction of the outer/inner arcs is unambiguous and always produces a
- * clean open annulus rather than a closed ring.
- */
-function createRingArcShape(
-  outerR: number,
-  innerR: number,
-  gapCenterRad: number,
-  gapRad: number,
-  segments = 96
-): THREE.Shape {
-  const start = gapCenterRad + gapRad / 2;
-  const sweep = Math.PI * 2 - gapRad;
-
+/** Replays a baked glyph command list (see mc-glyph-paths.ts) onto a
+ * THREE.Shape — a direct one-to-one mapping from the font's own moveTo /
+ * lineTo / cubic / quadratic / close commands, so the letterform is the
+ * real typeface outline, not a hand-approximated silhouette. */
+function buildGlyphShape(commands: GlyphCommand[]): THREE.Shape {
   const shape = new THREE.Shape();
-
-  for (let i = 0; i <= segments; i++) {
-    const a = start + (sweep * i) / segments;
-    const x = outerR * Math.cos(a);
-    const y = outerR * Math.sin(a);
-    if (i === 0) shape.moveTo(x, y);
-    else shape.lineTo(x, y);
+  for (const c of commands) {
+    switch (c.type) {
+      case "M":
+        shape.moveTo(c.x!, c.y!);
+        break;
+      case "L":
+        shape.lineTo(c.x!, c.y!);
+        break;
+      case "Q":
+        shape.quadraticCurveTo(c.x1!, c.y1!, c.x!, c.y!);
+        break;
+      case "C":
+        shape.bezierCurveTo(c.x1!, c.y1!, c.x2!, c.y2!, c.x!, c.y!);
+        break;
+      case "Z":
+        shape.closePath();
+        break;
+    }
   }
-
-  for (let i = 0; i <= segments; i++) {
-    const a = start + sweep - (sweep * i) / segments;
-    shape.lineTo(innerR * Math.cos(a), innerR * Math.sin(a));
-  }
-
-  shape.closePath();
   return shape;
 }
 
 /**
- * The MC Digital signature object: an abstract sculptural monogram — the M
- * (two monolithic legs joined by a chevron crossing, bridged at mid-height
- * by a gate beam punched with a real through-hole — the aperture the
- * camera dollies through during the Act I scroll sequence) with the C
- * traced as an architectural ring wrapping around it, open toward camera
- * right so the frontal silhouette reads as "MC".
+ * The MC Digital signature object, rebuilt from the real serif reference:
+ * an elegant serif M and serif C (Playfair Display Bold's actual glyph
+ * outlines — see mc-glyph-paths.ts), extruded as premium metal rather than
+ * an abstract architectural silhouette. The C overlaps the right portion
+ * of the M, matching the reference monogram's proportions. Both letters
+ * are centered as one composite so the whole group can be scaled/rotated
+ * uniformly by callers.
  */
-export function createMGeometries() {
-  const body = new THREE.Shape();
-  body.moveTo(-1.05, -1.2);
-  body.lineTo(-1.05, 1.2);
-  body.lineTo(-0.6, 1.2);
-  body.lineTo(0, 0.7);
-  body.lineTo(0.6, 1.2);
-  body.lineTo(1.05, 1.2);
-  body.lineTo(1.05, -1.2);
-  body.lineTo(-1.05, -1.2);
-  body.closePath();
+export function createMCGeometries() {
+  const depth = 0.34;
+  const bevelThickness = 0.024;
+  const bevelSize = 0.022;
 
-  const bodyDepth = 0.56;
-  const bodyGeo = new THREE.ExtrudeGeometry(body, {
-    depth: bodyDepth,
+  const mShape = buildGlyphShape(M_GLYPH_COMMANDS);
+  const mGeo = new THREE.ExtrudeGeometry(mShape, {
+    depth,
     bevelEnabled: true,
-    bevelThickness: 0.026,
-    bevelSize: 0.026,
+    bevelThickness,
+    bevelSize,
     bevelSegments: 4,
-    curveSegments: 6,
+    curveSegments: 10,
   });
-  bodyGeo.translate(0, 0, -bodyDepth / 2);
-  bodyGeo.computeVertexNormals();
+  mGeo.translate(0, 0, -depth / 2);
+  mGeo.computeVertexNormals();
 
-  const beamOuter = new THREE.Shape();
-  const bw = 2.14;
-  const bh = 0.6;
-  beamOuter.moveTo(-bw / 2, -bh / 2);
-  beamOuter.lineTo(bw / 2, -bh / 2);
-  beamOuter.lineTo(bw / 2, bh / 2);
-  beamOuter.lineTo(-bw / 2, bh / 2);
-  beamOuter.closePath();
-  beamOuter.holes.push(roundedRectPath(0, 0, 0.86, 0.4, 0.07));
-
-  const beamDepth = 0.62;
-  const beamGeo = new THREE.ExtrudeGeometry(beamOuter, {
-    depth: beamDepth,
+  const cShape = buildGlyphShape(C_GLYPH_COMMANDS);
+  const cGeo = new THREE.ExtrudeGeometry(cShape, {
+    depth,
     bevelEnabled: true,
-    bevelThickness: 0.022,
-    bevelSize: 0.022,
-    bevelSegments: 3,
-    curveSegments: 6,
+    bevelThickness,
+    bevelSize,
+    bevelSegments: 4,
+    curveSegments: 10,
   });
-  beamGeo.translate(0, -0.16, -beamDepth / 2);
-  beamGeo.computeVertexNormals();
+  cGeo.translate(0, 0, -depth / 2);
+  cGeo.computeVertexNormals();
 
-  const ringShape = createRingArcShape(
-    1.66,
-    1.42,
-    0,
-    THREE.MathUtils.degToRad(84)
-  );
-  const ringDepth = 0.5;
-  const ringGeo = new THREE.ExtrudeGeometry(ringShape, {
-    depth: ringDepth,
-    bevelEnabled: true,
-    bevelThickness: 0.022,
-    bevelSize: 0.022,
-    bevelSegments: 3,
-    curveSegments: 32,
-  });
-  ringGeo.translate(0.06, -0.05, -ringDepth / 2);
-  ringGeo.computeVertexNormals();
+  // The C sits to the right of the M, its left arc overlapping into the
+  // M's right leg — the overlap fraction is tuned against the reference
+  // image, not a typesetting kern. A wider overlap buries the gap between
+  // them; this leaves a real pocket of negative space near the top where
+  // the C's inner curve clears the M's right serif, for the camera to
+  // travel through.
+  const overlap = 1.0;
+  const cOffsetX = M_GLYPH_WIDTH - overlap;
+  const totalWidth = Math.max(M_GLYPH_WIDTH, cOffsetX + C_GLYPH_WIDTH);
+  const centerX = totalWidth / 2;
 
-  return { bodyGeo, beamGeo, ringGeo };
+  mGeo.translate(-centerX, -GLYPH_CAP_HEIGHT / 2, 0);
+  cGeo.translate(cOffsetX - centerX, -GLYPH_CAP_HEIGHT / 2, 0);
+
+  // Two side-by-side letters read much wider than the old single-glyph
+  // silhouette the camera path/framing was tuned for — scale the whole
+  // composite down (about the origin, after centering) rather than
+  // re-deriving every downstream distance.
+  const fit = 0.78;
+  mGeo.scale(fit, fit, fit);
+  cGeo.scale(fit, fit, fit);
+
+  return { mGeo, cGeo };
 }
 
-/** World-space center of the aperture the camera flies through. */
-export const APERTURE_TARGET = new THREE.Vector3(0, -0.16, 0);
+/** World-space center of the negative-space gap between the M and C the
+ * camera dollies through during the Act I scroll sequence — sits in the
+ * open pocket where the C's inner curve clears the M's right leg, roughly
+ * two-thirds up the cap height. Tuned against the real render, not derived
+ * analytically from the glyph paths. */
+export const APERTURE_TARGET = new THREE.Vector3(0.27, 0.27, 0);

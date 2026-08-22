@@ -8,7 +8,7 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { createMGeometries } from "@/lib/webgl/geometry";
+import { createMCGeometries } from "@/lib/webgl/geometry";
 import { createGoldMaterial } from "@/lib/webgl/materials";
 import { pointerState, scrollState } from "@/lib/animation/scroll-store";
 
@@ -32,7 +32,7 @@ const BASE_YAW = Math.PI * 0.32;
  */
 export default function FinalSculpture() {
   const group = useRef<THREE.Group>(null);
-  const { bodyGeo, beamGeo, ringGeo } = useMemo(() => createMGeometries(), []);
+  const { mGeo, cGeo } = useMemo(() => createMCGeometries(), []);
   const material = useMemo(() => {
     const mat = createGoldMaterial();
     mat.transparent = true;
@@ -80,9 +80,8 @@ export default function FinalSculpture() {
 
   return (
     <group ref={group} position={[0, 0, -1.6]}>
-      <mesh geometry={bodyGeo} material={material} castShadow receiveShadow />
-      <mesh geometry={beamGeo} material={material} castShadow receiveShadow />
-      <mesh geometry={ringGeo} material={material} castShadow receiveShadow />
+      <mesh geometry={mGeo} material={material} castShadow receiveShadow />
+      <mesh geometry={cGeo} material={material} castShadow receiveShadow />
     </group>
   );
 }
