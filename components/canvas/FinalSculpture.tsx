@@ -40,7 +40,7 @@ export default function FinalSculpture() {
     return mat;
   }, []);
 
-  const scaleRef = useRef(0.46);
+  const scaleRef = useRef(0.5);
 
   useFrame((state, delta) => {
     if (!group.current) return;
@@ -68,7 +68,7 @@ export default function FinalSculpture() {
 
     scaleRef.current = THREE.MathUtils.damp(
       scaleRef.current,
-      THREE.MathUtils.lerp(0.46, 0.62, reveal),
+      THREE.MathUtils.lerp(0.5, 0.86, reveal),
       2.4,
       delta
     );
@@ -79,7 +79,9 @@ export default function FinalSculpture() {
   });
 
   return (
-    <group ref={group} position={[0, 0, -1.6]}>
+    // pushed right and back — huge, cropped off the right edge, sitting in
+    // background depth behind the copy rather than centered under it
+    <group ref={group} position={[1.5, -0.15, -1.9]}>
       <mesh geometry={mGeo} material={material} castShadow receiveShadow />
       <mesh geometry={cGeo} material={material} castShadow receiveShadow />
     </group>

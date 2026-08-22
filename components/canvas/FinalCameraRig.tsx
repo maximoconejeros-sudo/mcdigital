@@ -27,7 +27,9 @@ export default function FinalCameraRig({ reduced = false }: { reduced?: boolean 
     camera.position.x = THREE.MathUtils.damp(camera.position.x, parallaxX, 2.4, delta);
     camera.position.y = THREE.MathUtils.damp(camera.position.y, parallaxY, 2.4, delta);
     camera.position.z = z.current;
-    camera.lookAt(0, -0.05, 0);
+    // look slightly left of center so the (now right-shifted) monogram
+    // reads as cropped off the right edge, not centered in frame
+    camera.lookAt(0.55, -0.08, 0);
   });
 
   return null;

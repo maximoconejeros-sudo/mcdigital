@@ -2,7 +2,7 @@
   position: relative;
   height: 320vh;
   width: 100%;
-  background: var(--color-bg-deep);
+  background: linear-gradient(160deg, var(--color-warm-white) 0%, #ece4d2 100%);
 }
 
 .layer {
@@ -12,16 +12,18 @@
   pointer-events: none;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  text-align: center;
+  text-align: left;
   overflow: hidden;
   padding: 0 var(--nav-pad);
+  max-width: 62%;
 }
 
 .label {
   will-change: opacity, transform;
   margin-bottom: clamp(14px, 2vw, 22px);
+  color: var(--color-gold);
 }
 
 .headline {
@@ -29,18 +31,18 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: -0.02em;
-  font-size: clamp(2.2rem, 6.4vw, 5.6rem);
+  font-size: clamp(2.2rem, 6vw, 5rem);
   line-height: 0.98;
-  color: var(--color-fg);
+  color: var(--color-graphite-dark);
   will-change: opacity, transform;
 }
 
 .subtext {
   margin-top: clamp(16px, 2.6vw, 26px);
-  max-width: 44ch;
+  max-width: 40ch;
   font-family: var(--font-display);
   font-size: clamp(15px, 1.3vw, 19px);
-  color: var(--color-fg-dim);
+  color: var(--color-graphite);
   will-change: opacity, transform;
 }
 
@@ -68,16 +70,16 @@
 }
 
 .ctaBase {
-  color: var(--color-fg);
+  color: var(--color-graphite-dark);
 }
 
 .ctaGold {
   position: absolute;
   inset: 0;
-  color: var(--color-accent);
+  color: var(--color-gold);
   clip-path: inset(0 100% 0 0);
   transition: clip-path 0.65s var(--ease-out);
-  filter: drop-shadow(0 0 18px rgba(200, 155, 60, 0.5));
+  filter: drop-shadow(0 0 18px rgba(200, 155, 60, 0.35));
 }
 
 .cta:hover .ctaGold,
@@ -99,7 +101,7 @@
   font-size: clamp(11px, 0.95vw, 13px);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-fg-dim);
+  color: var(--color-graphite);
   padding-bottom: 4px;
   border-bottom: 1px solid transparent;
   transition: color 0.3s ease, border-color 0.3s ease;
@@ -107,11 +109,14 @@
 
 .contactRow a:hover,
 .contactRow a:focus-visible {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
+  color: var(--color-gold);
+  border-color: var(--color-gold);
 }
 
-@media (max-width: 760px) {
+@media (max-width: 860px) {
+  .layer {
+    max-width: 100%;
+  }
   .headline {
     font-size: clamp(1.9rem, 8vw, 3rem);
   }
@@ -125,6 +130,7 @@
   }
   .contactRow {
     flex-direction: column;
+    align-items: flex-start;
     gap: 16px;
   }
 }

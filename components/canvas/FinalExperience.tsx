@@ -13,9 +13,14 @@ export default function FinalExperience({ reduced = false }: { reduced?: boolean
       dpr={reduced ? [1, 1.25] : [1, 1.75]}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       camera={{ position: [0, 0, 7.4], fov: 30, near: 0.05, far: 30 }}
-      onCreated={({ gl }) => gl.setClearColor(0x000000, 0)}
+      // opaque warm clear, not transparent-over-black-body: this is the
+      // closing act's actual background paint, matching the DOM layer's
+      // warm-white/champagne gradient (V7: never return to black here)
+      onCreated={({ gl }) => gl.setClearColor(0xeee5d3, 1)}
     >
-      <fogExp2 attach="fog" args={["#000000", 0.05]} />
+      {/* warm, not black — the closing act settles on champagne/warm-white,
+          never the deep-black fog earlier acts use */}
+      <fogExp2 attach="fog" args={["#e9e2d1", 0.045]} />
       <SceneLighting />
       <FinalSculpture />
       <FinalParticles count={reduced ? 300 : 850} />

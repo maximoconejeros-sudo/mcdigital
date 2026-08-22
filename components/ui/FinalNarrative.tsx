@@ -7,6 +7,8 @@ import { scrollState } from "@/lib/animation/scroll-store";
 import { CONTACT } from "@/lib/content/contact";
 import styles from "./FinalNarrative.module.css";
 
+// only real, confirmed contact channels render here — see lib/content/contact.ts
+
 gsap.registerPlugin(ScrollTrigger);
 
 const smooth = (t: number) => t * t * (3 - 2 * t);
@@ -23,12 +25,13 @@ interface Refs {
 }
 
 /**
- * Act IX — the final CTA. Darkness returns, the particle field converges
- * back into the monogram (WebGL side, see FinalExperience), and the copy
- * stacks in on top of it in the same continuous-progress envelope style as
- * every earlier act. Being the last section, its layer is never re-hidden
- * once revealed — there's no next act for it to hand off to, so it just
- * holds as the page's resting frame.
+ * Act VII — Contact. Gold lines reconstruct into the MC monogram (WebGL
+ * side, see FinalExperience/FinalSculpture), huge and cropped off the
+ * right edge, sitting in background depth behind the copy — never a
+ * return to black; the frame stays warm-white/champagne, text graphite.
+ * Being the last section, its layer is never re-hidden once revealed —
+ * there's no next act for it to hand off to, so it just holds as the
+ * page's resting frame.
  */
 export default function FinalNarrative({
   ready,
@@ -75,6 +78,7 @@ export default function FinalNarrative({
 
         const p = self.progress;
         scrollState.act9Progress = p;
+        if (shouldShow) scrollState.navTheme = "light";
         const r = refs.current;
 
         const labelT = bandIn(p, 0.04, 0.14);
@@ -127,7 +131,7 @@ export default function FinalNarrative({
           className={styles.label}
           style={{ opacity: 0 }}
         >
-          <span className="label">Let&rsquo;s build.</span>
+          <span className="label">Tu próxima experiencia digital puede empezar aquí</span>
         </div>
 
         <h2
@@ -137,9 +141,9 @@ export default function FinalNarrative({
           className={styles.headline}
           style={{ opacity: 0 }}
         >
-          Make your business
+          Hagamos algo
           <br />
-          work smarter.
+          inolvidable.
         </h2>
 
         <p
@@ -149,7 +153,8 @@ export default function FinalNarrative({
           className={styles.subtext}
           style={{ opacity: 0 }}
         >
-          ¿Listo para llevar tu negocio al siguiente nivel?
+          Cuéntanos sobre tu proyecto. Te respondemos directamente, sin
+          formularios eternos.
         </p>
 
         <a
@@ -157,7 +162,7 @@ export default function FinalNarrative({
             refs.current.cta = el;
           }}
           className={styles.cta}
-          href={CONTACT.whatsapp}
+          href={CONTACT.instagram}
           target="_blank"
           rel="noopener noreferrer"
           data-cursor="Escríbenos"
@@ -165,9 +170,9 @@ export default function FinalNarrative({
         >
           <span className={styles.ctaText}>
             <span className={styles.ctaBase} aria-hidden>
-              ESCRÍBENOS&nbsp;↗
+              HABLEMOS&nbsp;↗
             </span>
-            <span className={styles.ctaGold}>ESCRÍBENOS&nbsp;↗</span>
+            <span className={styles.ctaGold}>HABLEMOS&nbsp;↗</span>
           </span>
         </a>
 
@@ -179,14 +184,6 @@ export default function FinalNarrative({
           style={{ opacity: 0, pointerEvents: "none" }}
         >
           <a
-            href={CONTACT.whatsapp}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-cursor
-          >
-            WhatsApp
-          </a>
-          <a
             href={CONTACT.instagram}
             target="_blank"
             rel="noopener noreferrer"
@@ -194,8 +191,8 @@ export default function FinalNarrative({
           >
             {CONTACT.instagramHandle}
           </a>
-          <a href={`mailto:${CONTACT.email}`} data-cursor>
-            {CONTACT.email}
+          <a href="#top" data-cursor>
+            Volver arriba ↑
           </a>
         </div>
       </div>

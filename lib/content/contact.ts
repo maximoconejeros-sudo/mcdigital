@@ -1,10 +1,11 @@
-// TODO: swap these two for the real WhatsApp number and inbox before
-// launch — the brief was explicit not to invent contact info, so these
-// are clearly-marked placeholders, not real details. Instagram was given
-// directly in the brief and is real.
+// Confirmed-real contact channels only. Instagram was given directly in
+// the brief and is real. WhatsApp is still a placeholder number pending
+// the client's real one — CONTACT_WHATSAPP_IS_REAL stays false, and no
+// WhatsApp CTA is rendered on the page, until it's swapped in here.
 export const CONTACT = {
-  whatsapp: "https://wa.me/56900000000",
   instagram: "https://instagram.com/mcdigital.cl",
   instagramHandle: "@MCDIGITAL.CL",
-  email: "hola@mcdigital.cl",
+  whatsapp: "https://wa.me/56900000000",
 };
+
+export const CONTACT_WHATSAPP_IS_REAL = false;
