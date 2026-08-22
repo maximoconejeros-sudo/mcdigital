@@ -5,14 +5,13 @@ import { useLenis } from "@/lib/animation/lenis";
 import { hasWebGL } from "@/lib/webgl/detect";
 import Loader from "@/components/scenes/Loader";
 import Experience from "@/components/canvas/Experience";
-import ServicesExperience from "@/components/canvas/ServicesExperience";
 import FinalExperience from "@/components/canvas/FinalExperience";
 import CanvasErrorBoundary from "@/components/canvas/CanvasErrorBoundary";
 import Navigation from "@/components/ui/Navigation";
 import CustomCursor from "@/components/ui/CustomCursor";
 import HeroTypography from "@/components/ui/HeroTypography";
 import ScrollNarrative from "@/components/ui/ScrollNarrative";
-import ServicesNarrative from "@/components/ui/ServicesNarrative";
+import ExpertiseNarrative from "@/components/ui/ExpertiseNarrative";
 import PhilosophyNarrative from "@/components/ui/PhilosophyNarrative";
 import WorkNarrative from "@/components/ui/WorkNarrative";
 import FinalNarrative from "@/components/ui/FinalNarrative";
@@ -30,7 +29,6 @@ export default function Home() {
   // onUpdate and reports the edge up, so there's no separate observer to
   // keep in sync.
   const [act1Active, setAct1Active] = useState(true);
-  const [act2Active, setAct2Active] = useState(false);
   const [act9Active, setAct9Active] = useState(false);
 
   useEffect(() => {
@@ -59,12 +57,11 @@ export default function Home() {
       <CanvasErrorBoundary fallback={<StaticFallback />}>
         <div style={{ position: "fixed", inset: 0, zIndex: 20 }}>
           {act1Active && <Experience reduced={reduced} />}
-          {act2Active && <ServicesExperience reduced={reduced} />}
           {act9Active && <FinalExperience reduced={reduced} />}
         </div>
         <HeroTypography play={ready} />
         <ScrollNarrative ready={ready} onActiveChange={setAct1Active} />
-        <ServicesNarrative ready={ready} onActiveChange={setAct2Active} />
+        <ExpertiseNarrative ready={ready} />
         <PhilosophyNarrative ready={ready} />
         <WorkNarrative ready={ready} />
       </CanvasErrorBoundary>

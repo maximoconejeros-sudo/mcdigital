@@ -5,8 +5,6 @@
 export const scrollState = {
   /** 0..1 progress through the pinned Act I sequence */
   progress: 0,
-  /** 0..1 progress through the Act II services sequence */
-  act2Progress: 0,
   /** 0..1 progress through the Act IX final CTA (particle convergence) */
   act9Progress: 0,
   /** whether the intro choreography has finished */

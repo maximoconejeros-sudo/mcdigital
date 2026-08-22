@@ -1,0 +1,225 @@
+.spacer {
+  position: relative;
+  height: 420vh;
+  width: 100%;
+  background: var(--color-warm-white);
+}
+
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  background: var(--color-warm-white);
+  overflow: hidden;
+}
+
+.opening {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 var(--nav-pad);
+}
+
+.openLabel {
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 0.95vw, 13px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  margin-bottom: clamp(18px, 3vw, 30px);
+  will-change: opacity;
+}
+
+.openHeadline {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  font-size: clamp(3rem, 8.6vw, 8rem);
+  line-height: 0.94;
+  color: var(--color-graphite-dark);
+  will-change: opacity, transform;
+}
+
+.openSub {
+  margin-top: clamp(20px, 3vw, 32px);
+  max-width: 46ch;
+  font-family: var(--font-display);
+  font-size: clamp(15px, 1.3vw, 19px);
+  line-height: 1.5;
+  color: var(--color-graphite);
+  will-change: opacity;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(90px, 12vh, 140px) var(--nav-pad);
+}
+
+.serviceLabel {
+  position: absolute;
+  top: clamp(90px, 13vh, 150px);
+  left: var(--nav-pad);
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  will-change: opacity, transform;
+}
+
+.serviceIndex {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--color-gold);
+}
+
+.serviceName {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: clamp(13px, 1vw, 15px);
+  color: var(--color-graphite-dark);
+}
+
+.serviceCopy {
+  position: absolute;
+  top: 28px;
+  left: 0;
+  max-width: 32ch;
+  font-family: var(--font-display);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-graphite);
+}
+
+.mockFrame {
+  position: relative;
+  width: min(78vw, 980px);
+  aspect-ratio: 16 / 10;
+  background: var(--color-soft-white);
+  border: 1px solid rgba(9, 9, 9, 0.08);
+  border-radius: 14px;
+  box-shadow: 0 40px 90px -30px rgba(20, 18, 10, 0.35),
+    0 10px 30px -10px rgba(20, 18, 10, 0.18);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  will-change: opacity, transform;
+}
+
+.mockNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(16px, 2.2vw, 26px) clamp(20px, 3vw, 34px);
+  border-bottom: 1px solid rgba(9, 9, 9, 0.08);
+  will-change: opacity;
+}
+
+.mockBrand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-size: clamp(13px, 1.1vw, 16px);
+  color: var(--color-graphite-dark);
+}
+
+.mockNavLinks {
+  display: flex;
+  gap: clamp(16px, 2vw, 28px);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-graphite);
+}
+
+.mockBody {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: clamp(20px, 3vw, 40px) clamp(24px, 3.6vw, 48px);
+}
+
+.mockHeadline {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  font-size: clamp(1.6rem, 3.4vw, 3.1rem);
+  line-height: 1.02;
+  color: var(--color-graphite-dark);
+  will-change: opacity, transform;
+}
+
+.mockCta {
+  display: inline-block;
+  width: max-content;
+  margin-top: clamp(18px, 2.6vw, 28px);
+  padding: clamp(10px, 1.3vw, 14px) clamp(22px, 2.6vw, 30px);
+  background: var(--color-gold);
+  color: var(--color-black);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(12px, 1vw, 14px);
+  letter-spacing: 0.02em;
+  border-radius: 999px;
+  will-change: opacity, transform;
+}
+
+.mockImage {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 42%;
+  background: linear-gradient(
+    150deg,
+    var(--color-champagne-gold) 0%,
+    var(--color-gold) 45%,
+    var(--color-graphite-dark) 130%
+  );
+  clip-path: polygon(18% 0, 100% 0, 100% 100%, 0% 100%);
+  will-change: opacity, transform;
+}
+
+@media (max-width: 860px) {
+  .mockFrame {
+    width: 92vw;
+    aspect-ratio: 3 / 4;
+  }
+  .mockNavLinks {
+    display: none;
+  }
+  .mockBody {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .mockHeadline {
+    font-size: clamp(1.6rem, 7vw, 2.4rem);
+  }
+  .mockImage {
+    width: 100%;
+    height: 34%;
+    top: auto;
+    bottom: 0;
+    clip-path: polygon(0 22%, 100% 0, 100% 100%, 0 100%);
+  }
+  .serviceCopy {
+    display: none;
+  }
+}
