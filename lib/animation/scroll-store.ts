@@ -11,6 +11,8 @@ export const scrollState = {
   act3Progress: 0,
   /** 0..1 progress through the Act V process journey */
   act5Progress: 0,
+  /** 0..1 progress through the Act IX final CTA (particle convergence) */
+  act9Progress: 0,
   /** whether the intro choreography has finished */
   introComplete: false,
 };

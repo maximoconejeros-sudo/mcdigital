@@ -8,6 +8,7 @@ import Experience from "@/components/canvas/Experience";
 import ServicesExperience from "@/components/canvas/ServicesExperience";
 import EcosystemExperience from "@/components/canvas/EcosystemExperience";
 import ProcessExperience from "@/components/canvas/ProcessExperience";
+import FinalExperience from "@/components/canvas/FinalExperience";
 import CanvasErrorBoundary from "@/components/canvas/CanvasErrorBoundary";
 import Navigation from "@/components/ui/Navigation";
 import CustomCursor from "@/components/ui/CustomCursor";
@@ -20,6 +21,7 @@ import ProcessNarrative from "@/components/ui/ProcessNarrative";
 import PhilosophyNarrative from "@/components/ui/PhilosophyNarrative";
 import WorkNarrative from "@/components/ui/WorkNarrative";
 import FAQSection from "@/components/ui/FAQSection";
+import FinalNarrative from "@/components/ui/FinalNarrative";
 import StaticFallback from "@/components/ui/StaticFallback";
 
 export default function Home() {
@@ -37,6 +39,7 @@ export default function Home() {
   const [act2Active, setAct2Active] = useState(false);
   const [act3Active, setAct3Active] = useState(false);
   const [act5Active, setAct5Active] = useState(false);
+  const [act9Active, setAct9Active] = useState(false);
 
   useEffect(() => {
     // WebGL support can only be probed client-side; gate the state flip
@@ -67,6 +70,7 @@ export default function Home() {
           {act2Active && <ServicesExperience reduced={reduced} />}
           {act3Active && <EcosystemExperience reduced={reduced} />}
           {act5Active && <ProcessExperience reduced={reduced} />}
+          {act9Active && <FinalExperience reduced={reduced} />}
         </div>
         <HeroTypography play={ready} />
         <ScrollNarrative ready={ready} onActiveChange={setAct1Active} />
@@ -79,6 +83,8 @@ export default function Home() {
       </CanvasErrorBoundary>
 
       <FAQSection />
+
+      <FinalNarrative ready={ready} onActiveChange={setAct9Active} />
 
       <Navigation play={ready} />
       <CustomCursor />

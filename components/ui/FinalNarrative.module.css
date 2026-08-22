@@ -1,0 +1,130 @@
+.spacer {
+  position: relative;
+  height: 320vh;
+  width: 100%;
+  background: var(--color-bg-deep);
+}
+
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  padding: 0 var(--nav-pad);
+}
+
+.label {
+  will-change: opacity, transform;
+  margin-bottom: clamp(14px, 2vw, 22px);
+}
+
+.headline {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  font-size: clamp(2.2rem, 6.4vw, 5.6rem);
+  line-height: 0.98;
+  color: var(--color-fg);
+  will-change: opacity, transform;
+}
+
+.subtext {
+  margin-top: clamp(16px, 2.6vw, 26px);
+  max-width: 44ch;
+  font-family: var(--font-display);
+  font-size: clamp(15px, 1.3vw, 19px);
+  color: var(--color-fg-dim);
+  will-change: opacity, transform;
+}
+
+.cta {
+  margin-top: clamp(40px, 7vh, 76px);
+  pointer-events: auto;
+  will-change: opacity, transform;
+}
+
+.ctaText {
+  position: relative;
+  display: inline-block;
+}
+
+.ctaBase,
+.ctaGold {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  font-size: clamp(2.6rem, 8.6vw, 6.6rem);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.ctaBase {
+  color: var(--color-fg);
+}
+
+.ctaGold {
+  position: absolute;
+  inset: 0;
+  color: var(--color-accent);
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.65s var(--ease-out);
+  filter: drop-shadow(0 0 18px rgba(200, 155, 60, 0.5));
+}
+
+.cta:hover .ctaGold,
+.cta:focus-visible .ctaGold {
+  clip-path: inset(0 0 0 0);
+}
+
+.contactRow {
+  margin-top: clamp(36px, 6vh, 60px);
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 3vw, 40px);
+  pointer-events: auto;
+  will-change: opacity, transform;
+}
+
+.contactRow a {
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 0.95vw, 13px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-fg-dim);
+  padding-bottom: 4px;
+  border-bottom: 1px solid transparent;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.contactRow a:hover,
+.contactRow a:focus-visible {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+@media (max-width: 760px) {
+  .headline {
+    font-size: clamp(1.9rem, 8vw, 3rem);
+  }
+  .subtext {
+    max-width: 30ch;
+  }
+  .ctaBase,
+  .ctaGold {
+    font-size: clamp(1.9rem, 11vw, 3.4rem);
+    white-space: normal;
+  }
+  .contactRow {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
