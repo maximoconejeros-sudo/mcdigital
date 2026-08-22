@@ -10,23 +10,22 @@ const rotTarget = new THREE.Vector2(0, 0);
 
 export default function MSculpture() {
   const group = useRef<THREE.Group>(null);
-  const { bodyGeo, beamGeo } = useMemo(() => createMGeometries(), []);
+  const { bodyGeo, beamGeo, ringGeo } = useMemo(() => createMGeometries(), []);
 
+  // Champagne / brushed gold — physically based so brightness and hue
+  // variation come from lighting and reflection, not a flat fill color.
   const material = useMemo(
     () =>
       new THREE.MeshPhysicalMaterial({
-        color: new THREE.Color("#131315"),
+        color: new THREE.Color("#C89B3C"),
         metalness: 1,
-        roughness: 0.13,
-        envMapIntensity: 2.6,
-        clearcoat: 0.4,
-        clearcoatRoughness: 0.1,
-        iridescence: 0.14,
-        iridescenceIOR: 1.25,
-        iridescenceThicknessRange: [110, 380],
-        sheen: 0.18,
-        sheenColor: new THREE.Color("#c9a869"),
-        sheenRoughness: 0.5,
+        roughness: 0.32,
+        envMapIntensity: 2.1,
+        clearcoat: 0.3,
+        clearcoatRoughness: 0.28,
+        sheen: 0.16,
+        sheenColor: new THREE.Color("#ffe3ab"),
+        sheenRoughness: 0.42,
       }),
     []
   );
@@ -34,26 +33,33 @@ export default function MSculpture() {
   useFrame((state, delta) => {
     if (!group.current) return;
     const t = state.clock.elapsedTime;
+    const p = scrollState.progress;
 
     // idle drift, always present, very slow
     const idleY = t * 0.045;
 
     // subtle scroll-driven turn — the sculpture opens toward the camera
-    const scrollY = scrollState.progress * 0.5;
+    const scrollY = p * 0.5;
 
     // weighted mouse parallax, lerped — never attached raw to the cursor
     rotTarget.x = pointerState.y * 0.12;
     rotTarget.y = pointerState.x * 0.16;
 
+    // the camera dollies straight through the aperture on the object's
+    // local Z axis — settle rotation back to 0 heading into that window so
+    // the hole stays lined up with the fixed camera path instead of
+    // rotating a solid gold face into the lens at point-blank range.
+    const settle = 1 - THREE.MathUtils.smoothstep(p, 0.52, 0.7);
+
     group.current.rotation.y = THREE.MathUtils.damp(
       group.current.rotation.y,
-      idleY + scrollY + rotTarget.y,
+      (idleY + scrollY + rotTarget.y) * settle,
       2.2,
       delta
     );
     group.current.rotation.x = THREE.MathUtils.damp(
       group.current.rotation.x,
-      rotTarget.x * 0.6,
+      rotTarget.x * 0.6 * settle,
       2.2,
       delta
     );
@@ -63,6 +69,7 @@ export default function MSculpture() {
     <group ref={group} position={[0, 0, 0]}>
       <mesh geometry={bodyGeo} material={material} castShadow receiveShadow />
       <mesh geometry={beamGeo} material={material} castShadow receiveShadow />
+      <mesh geometry={ringGeo} material={material} castShadow receiveShadow />
     </group>
   );
 }

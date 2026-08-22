@@ -5,8 +5,8 @@ export default function StaticFallback() {
   return (
     <div className={styles.wrap}>
       <div className={styles.top}>
-        <span className="label">MDIGITAL®</span>
-        <span className="label">Design — Development — AI</span>
+        <span className="label">MC DIGITAL®</span>
+        <span className="label">Web / AI / Digital systems</span>
       </div>
 
       <div className={styles.center}>
@@ -20,7 +20,7 @@ export default function StaticFallback() {
       </div>
 
       <div className={styles.bottom}>
-        <span className="label">Independent digital studio</span>
+        <span className="label">Digital growth agency</span>
         <span className="label">Santiago — Miami</span>
       </div>
     </div>

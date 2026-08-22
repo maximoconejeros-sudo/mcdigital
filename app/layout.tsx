@@ -17,9 +17,9 @@ const mono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MDigital® — Independent Digital Studio",
+  title: "MC Digital® — Digital Growth Agency",
   description:
-    "MDigital is an independent digital studio crafting design, development and AI-driven digital experiences. Santiago — Miami.",
+    "MC Digital is a digital growth agency building landing pages, complete websites, and WhatsApp AI agents designed around your business. Santiago — Miami.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -21,6 +21,12 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
+    const finish = () => {
+      if (finished.current) return;
+      finished.current = true;
+      onComplete();
+    };
+
     const tween = gsap.to(counted.current, {
       v: 100,
       duration: reduceMotion ? 0.4 : 2.4,
@@ -31,19 +37,17 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
         if (fill.current) fill.current.style.width = `${val}%`;
       },
       onComplete: () => {
-        if (finished.current) return;
-        finished.current = true;
         gsap.delayedCall(reduceMotion ? 0.05 : 0.45, reveal);
       },
     });
 
     function reveal() {
-      if (!root.current) {
-        onComplete();
+      if (finished.current || !root.current) {
+        finish();
         return;
       }
       gsap
-        .timeline({ onComplete })
+        .timeline({ onComplete: finish })
         .to(root.current.querySelectorAll(`.${styles.mark}, .${styles.pct}`), {
           opacity: 0,
           y: -8,
@@ -61,8 +65,22 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
         );
     }
 
+    // Native timer, independent of GSAP's rAF-driven ticker — guarantees
+    // the site never stays hidden behind the preloader even if the ticker
+    // stalls under heavy main-thread contention (e.g. slow WebGL init on
+    // a constrained device). The brief is explicit: the site must never
+    // become unusable because the 3D scene is struggling.
+    const failsafe = window.setTimeout(() => {
+      tween.kill();
+      setDisplay(100);
+      if (fill.current) fill.current.style.width = "100%";
+      if (root.current) root.current.style.display = "none";
+      finish();
+    }, 7000);
+
     return () => {
       tween.kill();
+      window.clearTimeout(failsafe);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -70,7 +88,7 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
   return (
     <div ref={root} className={styles.overlay}>
       <div className={styles.mark}>
-        <span>MDIGITAL®</span>
+        <span>MC DIGITAL®</span>
       </div>
       <div className={styles.barTrack}>
         <div ref={fill} className={styles.barFill} />

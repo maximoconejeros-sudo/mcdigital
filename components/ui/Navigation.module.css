@@ -7,7 +7,10 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  mix-blend-mode: difference;
+  /* a soft shadow (not a blend-mode invert) keeps text legible over both
+     the dark environment and bright moments — the invert trick fought
+     with the true-gold "MC" mark, so it goes here instead */
+  text-shadow: 0 1px 16px rgba(0, 0, 0, 0.7);
 }
 
 .brand {
@@ -18,6 +21,10 @@
   color: var(--color-fg);
   overflow: hidden;
   display: block;
+}
+
+.brandMC {
+  color: var(--color-accent);
 }
 
 .links {

@@ -96,14 +96,14 @@ export default function HeroTypography({ play }: { play: boolean }) {
             data-hero-front
             style={{ opacity: 0 }}
           >
-            Independent digital studio
+            Digital growth agency
           </p>
         </div>
 
         <div className={styles.bottomRow}>
           <div className={styles.bottomLeft} data-hero-front>
             <p className="label" style={{ opacity: 0 }}>
-              Design — Development — AI
+              Web / AI / Digital systems
             </p>
             <p className="label" style={{ opacity: 0 }}>
               Santiago — Miami

@@ -28,7 +28,7 @@ export default function Navigation({ play }: { play: boolean }) {
     <nav ref={root} className={styles.nav} aria-label="Primary">
       <a href="#top" className={styles.brand} data-cursor>
         <span data-nav-item style={{ display: "inline-block" }}>
-          MDIGITAL®
+          <span className={styles.brandMC}>MC</span> DIGITAL®
         </span>
       </a>
       <ul className={styles.links}>
