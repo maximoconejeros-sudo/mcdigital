@@ -19,6 +19,7 @@ import NumbersNarrative from "@/components/ui/NumbersNarrative";
 import ProcessNarrative from "@/components/ui/ProcessNarrative";
 import PhilosophyNarrative from "@/components/ui/PhilosophyNarrative";
 import WorkNarrative from "@/components/ui/WorkNarrative";
+import FAQSection from "@/components/ui/FAQSection";
 import StaticFallback from "@/components/ui/StaticFallback";
 
 export default function Home() {
@@ -76,6 +77,8 @@ export default function Home() {
         <PhilosophyNarrative ready={ready} />
         <WorkNarrative ready={ready} />
       </CanvasErrorBoundary>
+
+      <FAQSection />
 
       <Navigation play={ready} />
       <CustomCursor />

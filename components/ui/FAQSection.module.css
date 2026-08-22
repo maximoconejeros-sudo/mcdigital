@@ -1,0 +1,156 @@
+.section {
+  position: relative;
+  z-index: 30;
+  background: var(--color-bg-deep);
+  padding: clamp(90px, 14vh, 160px) var(--nav-pad);
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+}
+
+.grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+  gap: clamp(40px, 6vw, 100px);
+}
+
+.intro {
+  position: sticky;
+  top: clamp(90px, 14vh, 160px);
+}
+
+.introLabel {
+  margin-bottom: 18px;
+  display: block;
+}
+
+.introHeading {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  font-size: clamp(2.6rem, 5.6vw, 5.2rem);
+  line-height: 0.94;
+  color: var(--color-fg);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  border-top: 1px solid var(--color-line);
+}
+
+.item:last-child {
+  border-bottom: 1px solid var(--color-line);
+}
+
+.trigger {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: clamp(16px, 2.4vw, 32px);
+  padding: clamp(20px, 3vw, 30px) 0;
+  text-align: left;
+  position: relative;
+  transition: transform 0.4s var(--ease-out);
+}
+
+.trigger:hover,
+.trigger:focus-visible {
+  transform: translateX(10px);
+}
+
+.triggerIndex {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--color-accent);
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-out);
+  min-width: 2ch;
+}
+
+.trigger:hover .triggerIndex,
+.trigger:focus-visible .triggerIndex,
+.itemOpen .triggerIndex {
+  opacity: 1;
+}
+
+.triggerQuestion {
+  flex: 1;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.1rem, 1.8vw, 1.55rem);
+  color: var(--color-fg);
+  line-height: 1.3;
+}
+
+.triggerLine {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1px;
+  width: 100%;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s var(--ease-out);
+}
+
+.trigger:hover .triggerLine,
+.trigger:focus-visible .triggerLine {
+  transform: scaleX(1);
+}
+
+.plus {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  color: var(--color-fg-dim);
+  transition: transform 0.4s var(--ease-out), color 0.3s ease;
+  line-height: 1;
+}
+
+.itemOpen .plus {
+  transform: rotate(45deg);
+  color: var(--color-accent);
+}
+
+.answerWrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s var(--ease-in-out);
+}
+
+.itemOpen .answerWrap {
+  grid-template-rows: 1fr;
+}
+
+.answerInner {
+  overflow: hidden;
+}
+
+.answer {
+  max-width: 62ch;
+  padding: 0 0 clamp(22px, 3vw, 34px) calc(2ch + clamp(16px, 2.4vw, 32px));
+  font-family: var(--font-display);
+  font-size: clamp(14px, 1.15vw, 17px);
+  line-height: 1.6;
+  color: var(--color-fg-dim);
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .intro {
+    position: static;
+  }
+  .answer {
+    padding-left: 0;
+  }
+}
