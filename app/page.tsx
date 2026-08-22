@@ -6,8 +6,6 @@ import { hasWebGL } from "@/lib/webgl/detect";
 import Loader from "@/components/scenes/Loader";
 import Experience from "@/components/canvas/Experience";
 import ServicesExperience from "@/components/canvas/ServicesExperience";
-import EcosystemExperience from "@/components/canvas/EcosystemExperience";
-import ProcessExperience from "@/components/canvas/ProcessExperience";
 import FinalExperience from "@/components/canvas/FinalExperience";
 import CanvasErrorBoundary from "@/components/canvas/CanvasErrorBoundary";
 import Navigation from "@/components/ui/Navigation";
@@ -15,12 +13,8 @@ import CustomCursor from "@/components/ui/CustomCursor";
 import HeroTypography from "@/components/ui/HeroTypography";
 import ScrollNarrative from "@/components/ui/ScrollNarrative";
 import ServicesNarrative from "@/components/ui/ServicesNarrative";
-import EcosystemNarrative from "@/components/ui/EcosystemNarrative";
-import NumbersNarrative from "@/components/ui/NumbersNarrative";
-import ProcessNarrative from "@/components/ui/ProcessNarrative";
 import PhilosophyNarrative from "@/components/ui/PhilosophyNarrative";
 import WorkNarrative from "@/components/ui/WorkNarrative";
-import FAQSection from "@/components/ui/FAQSection";
 import FinalNarrative from "@/components/ui/FinalNarrative";
 import StaticFallback from "@/components/ui/StaticFallback";
 
@@ -37,8 +31,6 @@ export default function Home() {
   // keep in sync.
   const [act1Active, setAct1Active] = useState(true);
   const [act2Active, setAct2Active] = useState(false);
-  const [act3Active, setAct3Active] = useState(false);
-  const [act5Active, setAct5Active] = useState(false);
   const [act9Active, setAct9Active] = useState(false);
 
   useEffect(() => {
@@ -68,21 +60,14 @@ export default function Home() {
         <div style={{ position: "fixed", inset: 0, zIndex: 20 }}>
           {act1Active && <Experience reduced={reduced} />}
           {act2Active && <ServicesExperience reduced={reduced} />}
-          {act3Active && <EcosystemExperience reduced={reduced} />}
-          {act5Active && <ProcessExperience reduced={reduced} />}
           {act9Active && <FinalExperience reduced={reduced} />}
         </div>
         <HeroTypography play={ready} />
         <ScrollNarrative ready={ready} onActiveChange={setAct1Active} />
         <ServicesNarrative ready={ready} onActiveChange={setAct2Active} />
-        <EcosystemNarrative ready={ready} onActiveChange={setAct3Active} />
-        <NumbersNarrative ready={ready} />
-        <ProcessNarrative ready={ready} onActiveChange={setAct5Active} />
         <PhilosophyNarrative ready={ready} />
         <WorkNarrative ready={ready} />
       </CanvasErrorBoundary>
-
-      <FAQSection />
 
       <FinalNarrative ready={ready} onActiveChange={setAct9Active} />
 
