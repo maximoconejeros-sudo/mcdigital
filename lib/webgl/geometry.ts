@@ -36,6 +36,16 @@ function buildGlyphShape(commands: GlyphCommand[]): THREE.Shape {
   return shape;
 }
 
+// Shared composite layout — how the M and C are positioned/scaled relative
+// to each other — used both when building the extruded meshes and when
+// deriving APERTURE_TARGET, so the two can never drift out of sync.
+const OVERLAP = 1.0;
+const C_OFFSET_X = M_GLYPH_WIDTH - OVERLAP;
+const TOTAL_WIDTH = Math.max(M_GLYPH_WIDTH, C_OFFSET_X + C_GLYPH_WIDTH);
+const CENTER_X = TOTAL_WIDTH / 2;
+const FIT = 0.78; // two side-by-side letters read wider than the old
+// single-glyph silhouette the camera path/framing was tuned for
+
 /**
  * The MC Digital signature object, rebuilt from the real serif reference:
  * an elegant serif M and serif C (Playfair Display Bold's actual glyph
@@ -76,32 +86,29 @@ export function createMCGeometries() {
 
   // The C sits to the right of the M, its left arc overlapping into the
   // M's right leg — the overlap fraction is tuned against the reference
-  // image, not a typesetting kern. A wider overlap buries the gap between
-  // them; this leaves a real pocket of negative space near the top where
-  // the C's inner curve clears the M's right serif, for the camera to
-  // travel through.
-  const overlap = 1.0;
-  const cOffsetX = M_GLYPH_WIDTH - overlap;
-  const totalWidth = Math.max(M_GLYPH_WIDTH, cOffsetX + C_GLYPH_WIDTH);
-  const centerX = totalWidth / 2;
+  // image, not a typesetting kern.
+  mGeo.translate(-CENTER_X, -GLYPH_CAP_HEIGHT / 2, 0);
+  cGeo.translate(C_OFFSET_X - CENTER_X, -GLYPH_CAP_HEIGHT / 2, 0);
 
-  mGeo.translate(-centerX, -GLYPH_CAP_HEIGHT / 2, 0);
-  cGeo.translate(cOffsetX - centerX, -GLYPH_CAP_HEIGHT / 2, 0);
-
-  // Two side-by-side letters read much wider than the old single-glyph
-  // silhouette the camera path/framing was tuned for — scale the whole
-  // composite down (about the origin, after centering) rather than
-  // re-deriving every downstream distance.
-  const fit = 0.78;
-  mGeo.scale(fit, fit, fit);
-  cGeo.scale(fit, fit, fit);
+  mGeo.scale(FIT, FIT, FIT);
+  cGeo.scale(FIT, FIT, FIT);
 
   return { mGeo, cGeo };
 }
 
-/** World-space center of the negative-space gap between the M and C the
- * camera dollies through during the Act I scroll sequence — sits in the
- * open pocket where the C's inner curve clears the M's right leg, roughly
- * two-thirds up the cap height. Tuned against the real render, not derived
- * analytically from the glyph paths. */
-export const APERTURE_TARGET = new THREE.Vector3(0.27, 0.27, 0);
+/**
+ * World-space center of the negative-space gap the camera dollies through
+ * during the Act I scroll sequence. Rather than the ambiguous boundary
+ * between the M and C (two separate overlapping volumes — hard to
+ * guarantee real clearance through), this targets the M's own open V
+ * counter: the wide wedge between its two inner diagonal strokes, well
+ * clear of both letters' solid material. The vertex of that V sits at
+ * roughly local (1.5, 0.64) in M_GLYPH_COMMANDS (pre-center, pre-scale);
+ * this aims higher into the wedge where it's already wide open.
+ */
+const NOTCH_LOCAL = { x: 1.48, y: 1.85 };
+export const APERTURE_TARGET = new THREE.Vector3(
+  (NOTCH_LOCAL.x - CENTER_X) * FIT,
+  (NOTCH_LOCAL.y - GLYPH_CAP_HEIGHT / 2) * FIT,
+  0
+);

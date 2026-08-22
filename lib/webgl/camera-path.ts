@@ -7,16 +7,23 @@ export interface CameraKeyframe {
   fov: number;
 }
 
-// Act I camera path — hero framing, dolly toward the sculpture, pass
-// through its aperture, emerge into the bridge toward Scene 02.
+// Act I camera path — hero framing, dolly toward the sculpture, thread
+// the negative-space wedge inside the M's own V counter (APERTURE_TARGET,
+// see geometry.ts — a real, generously open gap, unlike the ambiguous
+// boundary between two overlapping separate letterforms), emerge into the
+// bridge toward Scene 02. Position and look-at both drift laterally
+// toward the target (x ~ -0.39, y ~ 0.51) as the camera gets close, so it
+// approaches the wedge on-axis instead of swinging across the object at
+// the last second.
 export const CAMERA_PATH: CameraKeyframe[] = [
-  { t: 0, pos: [0, 0, 6.4], look: [0, 0, 0], fov: 32 },
-  { t: 0.2, pos: [0, 0, 5.7], look: [0, 0, 0], fov: 32 },
-  { t: 0.45, pos: [0, -0.03, 3.0], look: [0, -0.05, 0], fov: 30 },
-  { t: 0.65, pos: [0, -0.1, 1.05], look: [0, -0.16, 0], fov: 26.5 },
-  { t: 0.76, pos: [0, -0.16, -0.05], look: [0, -0.16, -1.2], fov: 23 },
-  { t: 0.88, pos: [0, -0.16, -1.7], look: [0, -0.14, -4.5], fov: 29 },
-  { t: 1, pos: [0, -0.08, -3.3], look: [0, -0.04, -8], fov: 34 },
+  { t: 0, pos: [0, 0, 6.4], look: [0, 0.15, 0], fov: 32 },
+  { t: 0.2, pos: [0, 0.05, 5.6], look: [-0.1, 0.25, 0], fov: 32 },
+  { t: 0.4, pos: [-0.22, 0.28, 3.3], look: [-0.3, 0.42, 0], fov: 28 },
+  { t: 0.58, pos: [-0.34, 0.46, 1.4], look: [-0.39, 0.51, 0], fov: 22 },
+  { t: 0.68, pos: [-0.38, 0.5, 0.35], look: [-0.39, 0.51, -1], fov: 18 },
+  { t: 0.78, pos: [-0.38, 0.48, -1.2], look: [-0.35, 0.4, -4.5], fov: 26 },
+  { t: 0.9, pos: [-0.2, 0.3, -2.6], look: [-0.1, 0.15, -7], fov: 32 },
+  { t: 1, pos: [0, 0.1, -3.3], look: [0, 0.02, -8], fov: 34 },
 ];
 
 const smooth = (t: number) => t * t * (3 - 2 * t);
