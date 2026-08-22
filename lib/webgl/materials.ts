@@ -1,17 +1,19 @@
 import * as THREE from "three";
 
 /** The signature champagne gold — shared by the monogram and every UI
- * accent across the scroll acts so the metal reads as one material. */
+ * accent across the scroll acts so the metal reads as one material.
+ * Deliberately less saturated than a straight "gold" hex — brushed
+ * luxury metal, not orange metallic plastic. */
 export function createGoldMaterial() {
   return new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color("#C89B3C"),
+    color: new THREE.Color("#C6AC74"),
     metalness: 1,
-    roughness: 0.32,
-    envMapIntensity: 2.1,
+    roughness: 0.34,
+    envMapIntensity: 1.9,
     clearcoat: 0.3,
     clearcoatRoughness: 0.28,
-    sheen: 0.16,
-    sheenColor: new THREE.Color("#ffe3ab"),
+    sheen: 0.14,
+    sheenColor: new THREE.Color("#f4e8ce"),
     sheenRoughness: 0.42,
   });
 }

@@ -4,11 +4,12 @@ export interface MethodStep {
 }
 
 export const METHOD_INTRO_LABEL = "Método";
-export const METHOD_HEADLINE = [
-  "De una idea",
-  "a un sistema digital",
-  "listo para crecer.",
-];
+// V9: the section's meaning was missing — this three-part statement (small
+// claim -> large statement -> gold serif emphasis) says explicitly what
+// the construction sequence that follows is demonstrating.
+export const METHOD_STATEMENT_SMALL = "No diseñamos piezas sueltas.";
+export const METHOD_STATEMENT_MAIN = ["Construimos", "sistemas digitales"];
+export const METHOD_STATEMENT_EMPHASIS = "que trabajan juntos.";
 
 export const METHOD_STEPS: MethodStep[] = [
   { key: "DISCOVER", label: "Descubrir" },

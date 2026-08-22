@@ -31,20 +31,57 @@ interface Refs {
   badge: HTMLDivElement | null;
   conversations: ConvRefs[];
   steps: (HTMLSpanElement | null)[];
+  arrows: (HTMLSpanElement | null)[];
   whatsappSub: HTMLParagraphElement | null;
   headline: HTMLHeadingElement | null;
   sub: HTMLParagraphElement | null;
 }
 
+// each conversation gets its own dominance window [riseStart, riseEnd,
+// recedeStart, recedeEnd] — sequential, not simultaneous: only one is ever
+// at full scale/opacity/focus at a time. After its window it settles to a
+// dim, blurred, smaller "background" state (never fully gone) rather than
+// disappearing, until the final outward push clears the stage entirely.
+const DOM_BANDS: [number, number, number, number][] = [
+  [0.02, 0.08, 0.16, 0.22],
+  [0.22, 0.28, 0.4, 0.46],
+  [0.4, 0.46, 0.62, 0.68],
+];
+const LINE_BANDS: [number, number][][] = [
+  [
+    [0.02, 0.07],
+    [0.1, 0.15],
+  ],
+  [
+    [0.22, 0.27],
+    [0.3, 0.35],
+  ],
+  [
+    [0.4, 0.45],
+    [0.48, 0.53],
+  ],
+];
+// where each receded conversation drifts once the final push clears the
+// stage for the headline — conv0 further upper-left, conv1 upper-right,
+// conv2 lower-left, per V9's explicit exit directions
+const OUTWARD = [
+  { x: -70, y: -50 },
+  { x: 70, y: -40 },
+  { x: -50, y: 55 },
+];
+const RECEDE_FLOOR = 0.3;
+
 /**
- * Act III — "Intelligence." The digital environment becomes alive:
- * conversations exist as pure kinetic typography at different depths
- * (scale + blur, no chat-bubble UI, no WhatsApp green), each revealing
- * line by line as the user scrolls. One conversation carries the
- * WhatsApp-automation beat — a small label plus a message -> qualification
- * -> response -> action sequence rendered as plain words, not a flowchart.
- * Near the end everything recedes slightly (camera "leaving") while the
- * conversations keep animating behind — the business keeps working.
+ * Act III — "Intelligence." The digital environment becomes alive: three
+ * conversations take turns being the dominant, sharp, full-scale focus —
+ * never simultaneously competing — each settling into a smaller, blurred,
+ * dimmed "background" state (not gone) once its turn passes. A gold pulse
+ * on each MC AI line stands in for "response sent" (no particles, no
+ * network graphic). The WhatsApp automation flow (mensaje -> calificación
+ * -> respuesta -> acción) appears attached to the third conversation as it
+ * holds focus. Before the closing statement reveals, all three are pushed
+ * further outward and dimmed well below reading contrast, so the headline
+ * always has a completely clean zone — no text or conversation behind it.
  */
 export default function IntelligenceNarrative({
   ready,
@@ -61,6 +98,7 @@ export default function IntelligenceNarrative({
       label: null,
     })),
     steps: WHATSAPP_STEPS.map(() => null),
+    arrows: WHATSAPP_STEPS.map(() => null),
     whatsappSub: null,
     headline: null,
     sub: null,
@@ -93,66 +131,77 @@ export default function IntelligenceNarrative({
         const badgeT = bandIn(p, 0.0, 0.04);
         if (r.badge) r.badge.style.opacity = String(badgeT);
 
-        const recedeT = bandIn(p, 0.85, 1);
+        // final outward push — clears the whole stage before the headline,
+        // per V9: no conversation may still be legible behind the statement
+        const pushT = bandIn(p, 0.72, 0.8);
+        const endRecedeT = bandIn(p, 0.85, 1);
 
-        const convBands: [number, number][][] = [
-          [
-            [0.01, 0.07],
-            [0.1, 0.16],
-          ],
-          [
-            [0.22, 0.28],
-            [0.3, 0.36],
-          ],
-          [
-            [0.4, 0.46],
-            [0.48, 0.54],
-          ],
-        ];
         CONVERSATIONS.forEach((conv, ci) => {
           const cr = r.conversations[ci];
           if (!cr) return;
-          const bands = convBands[ci];
-          let rootOpacity = 0;
+          const [inS, inE, outS, outE] = DOM_BANDS[ci];
+          const lineBands = LINE_BANDS[ci];
+
+          const rise = bandIn(p, inS, inE);
+          const fall = bandIn(p, outS, outE);
+          // 1 while this conversation holds focus, settling to a dim
+          // RECEDE_FLOOR afterward rather than vanishing
+          const opacity = rise * (1 - fall * (1 - RECEDE_FLOOR)) * (1 - pushT * 0.5) * (1 - endRecedeT * 0.4);
+          // 1 only during this conversation's own dominant hold — drives
+          // sharpness/scale so exactly one conversation is ever in focus
+          const dominance = rise * (1 - fall);
+
           cr.lines.forEach((el, li) => {
             if (!el) return;
-            const [s, e] = bands[li];
+            const [s, e] = lineBands[li];
             const t = bandIn(p, s, e);
             el.style.opacity = String(t);
             el.style.transform = `translateY(${(1 - t) * 10}px)`;
-            rootOpacity = Math.max(rootOpacity, t);
           });
-          if (cr.label) cr.label.style.opacity = String(bandIn(p, bands[0][0], bands[0][1]));
+          if (cr.label) cr.label.style.opacity = String(bandIn(p, lineBands[0][0], lineBands[0][1]));
+
           if (cr.root) {
-            const scale = conv.style.scale * (1 - recedeT * 0.12);
-            cr.root.style.transform = `scale(${scale})`;
-            cr.root.style.opacity = String(rootOpacity * (1 - recedeT * 0.35));
+            const scale = gsap.utils.interpolate(conv.style.scale, 1, dominance) * (1 - endRecedeT * 0.1);
+            const blur = conv.style.blur * (1 - dominance);
+            const drift = -22 * fall; // settles slightly left/back once its turn passes
+            const outX = OUTWARD[ci].x * pushT;
+            const outY = OUTWARD[ci].y * pushT;
+            cr.root.style.transform = `translate(${drift + outX}px, ${outY}px) scale(${scale})`;
+            cr.root.style.filter = blur > 0.01 ? `blur(${blur}px)` : "none";
+            cr.root.style.opacity = String(opacity);
           }
         });
 
+        // the process flow is attached to conversation 3 (WhatsApp) as it
+        // holds focus — each arrow only appears once both steps around it
+        // are visible, so it always reads as a real connected sequence
         const stepStart = 0.56;
-        const stepWidth = 0.035;
+        const stepWidth = 0.03;
         WHATSAPP_STEPS.forEach((_, i) => {
           const el = r.steps[i];
-          if (!el) return;
           const s = stepStart + i * stepWidth;
           const t = bandIn(p, s, s + stepWidth);
-          el.style.opacity = String(t);
+          if (el) el.style.opacity = String(t);
+          const arrow = r.arrows[i];
+          if (arrow) {
+            const next = bandIn(p, s + stepWidth, s + stepWidth * 2);
+            arrow.style.opacity = String(Math.min(t, next + 0.15));
+          }
         });
 
-        const whatsappSubT = bandIn(p, 0.7, 0.76);
+        const whatsappSubT = bandIn(p, 0.68, 0.74);
         if (r.whatsappSub) {
-          r.whatsappSub.style.opacity = String(whatsappSubT);
+          r.whatsappSub.style.opacity = String(whatsappSubT * (1 - pushT));
           r.whatsappSub.style.transform = `translateY(${(1 - whatsappSubT) * 10}px)`;
         }
 
-        const headlineT = bandIn(p, 0.78, 0.88);
+        const headlineT = bandIn(p, 0.8, 0.9);
         if (r.headline) {
           r.headline.style.opacity = String(headlineT);
           r.headline.style.transform = `translateY(${(1 - headlineT) * 16}px)`;
         }
 
-        const subT = bandIn(p, 0.84, 0.92);
+        const subT = bandIn(p, 0.86, 0.93);
         if (r.sub) {
           r.sub.style.opacity = String(subT);
           r.sub.style.transform = `translateY(${(1 - subT) * 10}px)`;
@@ -167,6 +216,15 @@ export default function IntelligenceNarrative({
     <>
       <div ref={spacer} className={styles.spacer} />
       <div ref={layer} className={styles.layer} style={{ opacity: 0 }}>
+        <div className={styles.bgGrid} aria-hidden>
+          <span />
+          <span />
+          <span />
+        </div>
+        <div className={styles.bgWord} aria-hidden>
+          Conecta
+        </div>
+
         <div ref={(el) => { refs.current.badge = el; }} className={styles.badge} style={{ opacity: 0 }}>
           <span className={styles.badgeDot} />
           Active / 24H
@@ -228,7 +286,14 @@ export default function IntelligenceNarrative({
                 {step}
               </span>
               {i < WHATSAPP_STEPS.length - 1 && (
-                <span className={styles.stepArrow} aria-hidden>
+                <span
+                  ref={(el) => {
+                    refs.current.arrows[i] = el;
+                  }}
+                  className={styles.stepArrow}
+                  style={{ opacity: 0 }}
+                  aria-hidden
+                >
                   →
                 </span>
               )}

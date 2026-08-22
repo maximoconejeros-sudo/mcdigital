@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLenis } from "@/lib/animation/lenis";
+import { scrollState } from "@/lib/animation/scroll-store";
 import { hasWebGL } from "@/lib/webgl/detect";
 import Loader from "@/components/scenes/Loader";
 import Experience from "@/components/canvas/Experience";
@@ -18,6 +19,7 @@ import DigitalLabNarrative from "@/components/ui/DigitalLabNarrative";
 import WhyItMattersNarrative from "@/components/ui/WhyItMattersNarrative";
 import MethodNarrative from "@/components/ui/MethodNarrative";
 import FinalNarrative from "@/components/ui/FinalNarrative";
+import SiteFooter from "@/components/ui/SiteFooter";
 import StaticFallback from "@/components/ui/StaticFallback";
 
 export default function Home() {
@@ -33,6 +35,25 @@ export default function Home() {
   // keep in sync.
   const [act1Active, setAct1Active] = useState(true);
   const [act9Active, setAct9Active] = useState(false);
+  const canvasWrapRef = useRef<HTMLDivElement>(null);
+
+  // the Act IX Canvas lives here, outside FinalNarrative's own DOM layer —
+  // it polls act9FadeT itself so the 3D monogram actually fades out for
+  // the footer handoff, not just the surrounding text (same rAF-polling
+  // pattern as Navigation.tsx, to avoid a re-render every scroll frame)
+  useEffect(() => {
+    let raf = 0;
+    let last = -1;
+    const loop = () => {
+      if (canvasWrapRef.current && scrollState.act9FadeT !== last) {
+        last = scrollState.act9FadeT;
+        canvasWrapRef.current.style.opacity = String(1 - last);
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   useEffect(() => {
     // WebGL support can only be probed client-side; gate the state flip
@@ -59,7 +80,7 @@ export default function Home() {
 
       <CanvasErrorBoundary fallback={<StaticFallback />}>
         <HeroBackdrop />
-        <div style={{ position: "fixed", inset: 0, zIndex: 20 }}>
+        <div ref={canvasWrapRef} style={{ position: "fixed", inset: 0, zIndex: 20 }}>
           {act1Active && <Experience reduced={reduced} />}
           {act9Active && <FinalExperience reduced={reduced} />}
         </div>
@@ -73,6 +94,7 @@ export default function Home() {
       </CanvasErrorBoundary>
 
       <FinalNarrative ready={ready} onActiveChange={setAct9Active} />
+      <SiteFooter />
 
       <Navigation play={ready} />
       <CustomCursor />

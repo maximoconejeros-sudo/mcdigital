@@ -127,7 +127,12 @@
 
 .webWordStack {
   position: relative;
-  min-height: clamp(3.4rem, 9vw, 6.4rem);
+  /* generous enough to fit "Todo un mundo digital." at two lines at its
+   * largest clamp size — .webWord is absolutely positioned inside here for
+   * the crossfade, so it contributes no height of its own; too small a
+   * reservation let the wrapped second line overflow straight into the
+   * paragraph below it */
+  min-height: clamp(5rem, 13vw, 11.5rem);
   width: 100%;
   margin-top: clamp(32px, 5vw, 56px);
 }
@@ -178,6 +183,7 @@
   top: 0;
   bottom: 0;
   width: 60%;
+  overflow: hidden;
   background: linear-gradient(
     155deg,
     var(--color-champagne-gold) 0%,
@@ -185,6 +191,67 @@
     var(--color-graphite-dark) 135%
   );
   will-change: opacity, clip-path;
+}
+
+/* art-directed placeholder texture standing in for real photography —
+ * grain + a diagonal reflection streak so it reads as an intentional
+ * composition, not a flat unfinished rectangle. Swap for the real image
+ * tagged by data-asset once supplied. */
+.imagePanel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(9, 9, 9, 0.35) 1px, transparent 1px);
+  background-size: 3px 3px;
+  opacity: 0.15;
+  mix-blend-mode: overlay;
+}
+
+.imagePanel::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: -30%;
+  width: 55%;
+  height: 160%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 245, 220, 0.28) 45%,
+    transparent 60%
+  );
+  transform: rotate(8deg);
+}
+
+.imageLabel {
+  position: absolute;
+  left: 6%;
+  bottom: 6%;
+  z-index: 1;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(9, 9, 9, 0.5);
+}
+
+.stepLabelStack {
+  position: relative;
+  height: 14px;
+  margin-bottom: clamp(8px, 1.2vw, 14px);
+}
+
+.stepLabel {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  white-space: nowrap;
+  will-change: opacity;
 }
 
 .footer {

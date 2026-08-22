@@ -29,11 +29,14 @@ const wordEnvelope = (
   outEnd: number
 ) => Math.min(bandIn(p, inStart, inEnd), 1 - bandIn(p, outStart, outEnd));
 
+const WORD_STEP_LABELS = ["01 / ATENCIÓN", "02 / INTERÉS", "03 / ACCIÓN"];
+
 interface Refs {
   openPhrase: HTMLDivElement | null;
   cursorDot: HTMLDivElement | null;
   baseline: HTMLDivElement | null;
   words: (HTMLDivElement | null)[];
+  stepLabels: (HTMLSpanElement | null)[];
   gridLines: HTMLDivElement | null;
   navRow: HTMLDivElement | null;
   imagePanel: HTMLDivElement | null;
@@ -65,6 +68,7 @@ export default function ExpertiseNarrative({ ready }: { ready: boolean }) {
     cursorDot: null,
     baseline: null,
     words: [null, null, null],
+    stepLabels: [null, null, null],
     gridLines: null,
     navRow: null,
     imagePanel: null,
@@ -123,13 +127,16 @@ export default function ExpertiseNarrative({ ready }: { ready: boolean }) {
         ];
         wordBands.forEach(([inS, inE, outS, outE], i) => {
           const el = r.words[i];
-          if (!el) return;
           const t =
             i === wordBands.length - 1
               ? bandIn(p, inS, inE)
               : wordEnvelope(p, inS, inE, outS, outE);
-          el.style.opacity = String(t);
-          el.style.transform = `scale(${0.94 + t * 0.06})`;
+          if (el) {
+            el.style.opacity = String(t);
+            el.style.transform = `scale(${0.94 + t * 0.06})`;
+          }
+          const label = r.stepLabels[i];
+          if (label) label.style.opacity = String(t);
         });
 
         // present from the very start of the act (not just once ATTENTION
@@ -283,6 +290,20 @@ export default function ExpertiseNarrative({ ready }: { ready: boolean }) {
           />
 
           <div className={styles.wordStack}>
+            <div className={styles.stepLabelStack}>
+              {WORD_STEP_LABELS.map((label, i) => (
+                <span
+                  key={label}
+                  ref={(el) => {
+                    refs.current.stepLabels[i] = el;
+                  }}
+                  className={styles.stepLabel}
+                  style={{ opacity: 0 }}
+                >
+                  {label}
+                </span>
+              ))}
+            </div>
             {CANVAS_WORDS.map((word, i) => (
               <div
                 key={word}
@@ -337,7 +358,10 @@ export default function ExpertiseNarrative({ ready }: { ready: boolean }) {
           }}
           className={styles.imagePanel}
           style={{ opacity: 0 }}
-        />
+          data-asset="web-editorial-01"
+        >
+          <span className={styles.imageLabel}>Web Editorial — 01</span>
+        </div>
 
         <div
           ref={(el) => {

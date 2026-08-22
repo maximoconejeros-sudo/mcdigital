@@ -249,6 +249,7 @@ export default function DigitalLabNarrative({ ready }: { ready: boolean }) {
               }}
               className={styles.worldImage}
               style={{ background: world.gradient }}
+              data-asset={world.imageSlot.replace(/\.\w+$/, "")}
             />
           </div>
         ))}

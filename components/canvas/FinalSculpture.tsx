@@ -43,11 +43,13 @@ export default function FinalSculpture() {
   }, []);
 
   const scaleRef = useRef(0.5);
+  const posRef = useRef(new THREE.Vector3(1.5, -0.15, -1.9));
 
   useFrame((state, delta) => {
     if (!group.current) return;
     const t = state.clock.elapsedTime;
     const p = scrollState.act9Progress;
+    const brandT = scrollState.act9BrandT;
 
     // resolves to exactly 0 well before the scene finishes revealing, then
     // holds — the visitor gets an elegant turn on the way in, never a
@@ -87,11 +89,22 @@ export default function FinalSculpture() {
     );
     group.current.scale.setScalar(scaleRef.current);
     material.opacity = THREE.MathUtils.damp(material.opacity, reveal * 0.96, 2.4, delta);
+
+    // closing brand moment: drifts from its cropped, right-of-frame
+    // position back to dead center as the camera pulls away — the final
+    // brand shot, not a permanently off-center composition
+    const targetX = THREE.MathUtils.lerp(1.5, 0, brandT);
+    const targetY = THREE.MathUtils.lerp(-0.15, 0, brandT);
+    posRef.current.x = THREE.MathUtils.damp(posRef.current.x, targetX, 2, delta);
+    posRef.current.y = THREE.MathUtils.damp(posRef.current.y, targetY, 2, delta);
+    group.current.position.x = posRef.current.x;
+    group.current.position.y = posRef.current.y;
   });
 
   return (
     // pushed right and back — huge, cropped off the right edge, sitting in
-    // background depth behind the copy rather than centered under it
+    // background depth behind the copy rather than centered under it — the
+    // JS above drifts it back to center for the closing brand moment
     <group ref={group} position={[1.5, -0.15, -1.9]}>
       <mesh geometry={mGeo} material={material} castShadow receiveShadow />
       <mesh geometry={cGeo} material={material} castShadow receiveShadow />

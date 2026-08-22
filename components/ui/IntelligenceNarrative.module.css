@@ -10,8 +10,50 @@
   inset: 0;
   z-index: 20;
   pointer-events: none;
-  background: var(--color-graphite-dark);
+  background: radial-gradient(ellipse 90% 80% at 50% 42%, #2c2c28 0%, var(--color-graphite-dark) 72%);
   overflow: hidden;
+}
+
+.bgWord {
+  position: absolute;
+  z-index: 0;
+  top: 46%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  font-size: clamp(10rem, 34vw, 30rem);
+  line-height: 1;
+  color: rgba(225, 196, 122, 0.045);
+  pointer-events: none;
+}
+
+.bgGrid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bgGrid span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(225, 196, 122, 0.05);
+}
+
+.bgGrid span:nth-child(1) {
+  left: 25%;
+}
+.bgGrid span:nth-child(2) {
+  left: 50%;
+}
+.bgGrid span:nth-child(3) {
+  left: 75%;
 }
 
 .badge {
@@ -72,7 +114,35 @@
 }
 
 .lineAI .who {
+  position: relative;
   color: var(--color-champagne-gold);
+}
+
+/* the "response sent" cue V9 asks for — a subtle gold pulse, not particles
+ * or a network graphic */
+.lineAI .who::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 7px);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-champagne-gold);
+  transform: translateY(-50%);
+  animation: aiPulse 2.4s ease-out infinite;
+}
+
+@keyframes aiPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(225, 196, 122, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 9px rgba(225, 196, 122, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(225, 196, 122, 0);
+  }
 }
 
 .text {
@@ -115,6 +185,7 @@
 .stepArrow {
   color: var(--color-graphite-light);
   font-size: 11px;
+  will-change: opacity;
 }
 
 .whatsappSub {
@@ -163,7 +234,7 @@
 
 .sub {
   margin-top: clamp(16px, 2.4vw, 26px);
-  max-width: 46ch;
+  max-width: min(46ch, 520px);
   font-family: var(--font-display);
   font-size: clamp(14px, 1.15vw, 17px);
   line-height: 1.5;

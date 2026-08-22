@@ -3,7 +3,6 @@
 import { Canvas } from "@react-three/fiber";
 import SceneLighting from "@/components/canvas/SceneLighting";
 import FinalSculpture from "@/components/canvas/FinalSculpture";
-import FinalParticles from "@/components/canvas/FinalParticles";
 import FinalCameraRig from "@/components/canvas/FinalCameraRig";
 import CinematicPost from "@/components/canvas/CinematicPost";
 
@@ -23,7 +22,6 @@ export default function FinalExperience({ reduced = false }: { reduced?: boolean
       <fogExp2 attach="fog" args={["#e9e2d1", 0.045]} />
       <SceneLighting />
       <FinalSculpture />
-      <FinalParticles count={reduced ? 300 : 850} />
       <FinalCameraRig reduced={reduced} />
       {!reduced && <CinematicPost />}
     </Canvas>

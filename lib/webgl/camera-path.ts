@@ -21,8 +21,8 @@ export const CAMERA_PATH: CameraKeyframe[] = [
   // spills past the right edge — not a centered logo shot. This bleeds
   // into the existing aperture-aligned framing by t=0.4 rather than
   // cutting to it.
-  { t: 0, pos: [0.32, -0.05, 6.1], look: [0.6, 0.1, 0], fov: 30 },
-  { t: 0.2, pos: [0.12, 0.02, 5.5], look: [0.22, 0.22, 0], fov: 30 },
+  { t: 0, pos: [0.32, -0.05, 6.1], look: [0.15, 0.1, 0], fov: 30 },
+  { t: 0.2, pos: [0.12, 0.02, 5.5], look: [0.02, 0.22, 0], fov: 30 },
   { t: 0.4, pos: [-0.22, 0.28, 3.3], look: [-0.3, 0.42, 0], fov: 28 },
   { t: 0.58, pos: [-0.34, 0.46, 1.4], look: [-0.39, 0.51, 0], fov: 22 },
   { t: 0.68, pos: [-0.38, 0.5, 0.35], look: [-0.39, 0.51, -1], fov: 18 },

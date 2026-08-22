@@ -46,7 +46,7 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: -0.01em;
-  line-height: 0.96;
+  line-height: 1.05;
   color: var(--color-fg);
 }
 
@@ -56,18 +56,22 @@
 
 /* deliberate scale hierarchy, not three identical lines: the middle
  * statement carries the most weight, the opening and closing lines frame
- * it smaller */
+ * it smaller. Each carries its own top margin (instead of relying only on
+ * line-height) so "que hacen crecer negocios." never crowds the line
+ * above it now that the sizes differ. */
 .lineOpen {
   font-size: clamp(1.8rem, 4vw, 3.4rem);
   font-weight: 500;
 }
 
 .lineHero {
+  margin-top: clamp(4px, 0.6vw, 10px);
   font-size: clamp(3.2rem, 7.2vw, 6.6rem);
   font-weight: 600;
 }
 
 .lineClose {
+  margin-top: clamp(6px, 1vw, 14px);
   font-size: clamp(2.4rem, 5vw, 4.6rem);
 }
 
@@ -81,7 +85,7 @@
 }
 
 .spanishSub {
-  margin-top: clamp(20px, 3vw, 32px);
+  margin-top: clamp(28px, 3vw, 36px);
   max-width: 42ch;
   font-family: var(--font-display);
   font-size: clamp(14px, 1.1vw, 17px);

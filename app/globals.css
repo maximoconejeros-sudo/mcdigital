@@ -44,6 +44,10 @@ body {
   max-width: 100vw;
   overflow-x: hidden;
   background: var(--color-bg);
+  /* the footer is now the true end of the document with zero trailing
+   * space — this stops elastic overscroll bounce (Safari/iOS rubber-band)
+   * from revealing anything behind it at the very top/bottom edge */
+  overscroll-behavior-y: none;
 }
 
 html {

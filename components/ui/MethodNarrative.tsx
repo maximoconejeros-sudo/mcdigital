@@ -6,12 +6,15 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { scrollState } from "@/lib/animation/scroll-store";
 import {
   METHOD_INTRO_LABEL,
-  METHOD_HEADLINE,
+  METHOD_STATEMENT_SMALL,
+  METHOD_STATEMENT_MAIN,
+  METHOD_STATEMENT_EMPHASIS,
   METHOD_STEPS,
   DISCOVER_WORDS,
   HUMAN_MOMENT_LABEL,
   HUMAN_MOMENT_HEADLINE,
   HUMAN_MOMENT_COPY,
+  HUMAN_MOMENT_IMAGE_SLOT,
 } from "@/lib/content/method";
 import styles from "./MethodNarrative.module.css";
 
@@ -97,11 +100,15 @@ const STEP_BANDS: [number, number][] = [
 
 interface Refs {
   introLabel: HTMLDivElement | null;
-  introHeadline: HTMLDivElement | null;
+  introSmall: HTMLDivElement | null;
+  introMain: HTMLDivElement | null;
+  introEmphasis: HTMLDivElement | null;
   rail: HTMLDivElement | null;
   railItems: (HTMLSpanElement | null)[];
   stage: HTMLDivElement | null;
   words: (HTMLSpanElement | null)[];
+  guideV: HTMLDivElement | null;
+  guideH: HTMLDivElement | null;
   designPanel: HTMLDivElement | null;
   blocks: (HTMLDivElement | null)[];
   bubble: HTMLDivElement | null;
@@ -127,11 +134,15 @@ export default function MethodNarrative({ ready }: { ready: boolean }) {
   const layer = useRef<HTMLDivElement>(null);
   const refs = useRef<Refs>({
     introLabel: null,
-    introHeadline: null,
+    introSmall: null,
+    introMain: null,
+    introEmphasis: null,
     rail: null,
     railItems: METHOD_STEPS.map(() => null),
     stage: null,
     words: DISCOVER_WORDS.map(() => null),
+    guideV: null,
+    guideH: null,
     designPanel: null,
     blocks: BLOCK_TO.map(() => null),
     bubble: null,
@@ -169,12 +180,25 @@ export default function MethodNarrative({ ready }: { ready: boolean }) {
 
         if (layer.current) layer.current.style.background = sampleBg(p);
 
-        // intro
-        const introT = wordEnvelope(p, 0.0, 0.04, 0.08, 0.1);
+        // intro — three-part statement (small claim -> large statement ->
+        // gold serif emphasis), staggered, so the section states its own
+        // meaning before the construction sequence begins
+        const introT = wordEnvelope(p, 0.0, 0.03, 0.08, 0.1);
         if (r.introLabel) r.introLabel.style.opacity = String(introT);
-        if (r.introHeadline) {
-          r.introHeadline.style.opacity = String(introT);
-          r.introHeadline.style.transform = `translateY(${(1 - introT) * 16}px)`;
+        const smallT = wordEnvelope(p, 0.0, 0.03, 0.08, 0.1);
+        if (r.introSmall) {
+          r.introSmall.style.opacity = String(smallT);
+          r.introSmall.style.transform = `translateY(${(1 - smallT) * 14}px)`;
+        }
+        const mainT = wordEnvelope(p, 0.015, 0.045, 0.08, 0.1);
+        if (r.introMain) {
+          r.introMain.style.opacity = String(mainT);
+          r.introMain.style.transform = `translateY(${(1 - mainT) * 16}px)`;
+        }
+        const emphT = wordEnvelope(p, 0.03, 0.06, 0.08, 0.1);
+        if (r.introEmphasis) {
+          r.introEmphasis.style.opacity = String(emphT);
+          r.introEmphasis.style.transform = `translateY(${(1 - emphT) * 14}px)`;
         }
 
         // rail — visible from just after intro until the human moment
@@ -189,18 +213,17 @@ export default function MethodNarrative({ ready }: { ready: boolean }) {
           el.style.opacity = String(0.55 + active * 0.45);
         });
 
-        // stage container — visible discover..evolve, launches (scales) mid-way
+        // stage — an invisible positioning area, not a visible card: no
+        // border/fill of its own, just launches (scales) mid-way
         const stageT = wordEnvelope(p, 0.09, 0.13, 0.76, 0.8);
         if (r.stage) {
           r.stage.style.opacity = String(stageT);
           const launch = bandIn(p, 0.58, 0.68);
           const scale = 1 + launch * 0.55;
-          r.stage.style.transform = `scale(${scale})`;
-          const chrome = 1 - bandIn(p, 0.6, 0.68);
-          r.stage.style.borderColor = `rgba(200,160,74,${0.35 * chrome})`;
+          r.stage.style.transform = `translateY(-50%) scale(${scale})`;
         }
 
-        // DISCOVER -> DEFINE: words scatter in, then settle to a list
+        // DISCOVER -> DEFINE: words scatter in, then settle onto a grid
         const wordsInT = bandIn(p, 0.1, 0.14);
         const organizeT = bandIn(p, 0.2, 0.29);
         const wordsOutT = 1 - bandIn(p, 0.29, 0.33);
@@ -217,6 +240,19 @@ export default function MethodNarrative({ ready }: { ready: boolean }) {
           el.style.transform = `rotate(${rotate}deg)`;
           el.style.opacity = String(wordsInT * wordsOutT);
         });
+
+        // DEFINE: a vertical guide + horizontal baseline appear — the
+        // "common grid" the scattered fragments are organizing onto,
+        // standing in for the container this section used to be
+        const guideT = wordEnvelope(p, 0.18, 0.24, 0.3, 0.35);
+        if (r.guideV) {
+          r.guideV.style.opacity = String(guideT * 0.6);
+          r.guideV.style.transform = `scaleY(${guideT})`;
+        }
+        if (r.guideH) {
+          r.guideH.style.opacity = String(guideT * 0.6);
+          r.guideH.style.transform = `scaleX(${guideT})`;
+        }
 
         // DESIGN: headline + image hierarchy crossfades in
         const designT = wordEnvelope(p, 0.3, 0.35, 0.39, 0.42);
@@ -291,19 +327,36 @@ export default function MethodNarrative({ ready }: { ready: boolean }) {
         >
           {METHOD_INTRO_LABEL}
         </div>
-        <div
-          ref={(el) => {
-            refs.current.introHeadline = el;
-          }}
-          className={styles.introHeadline}
-          style={{ opacity: 0 }}
-        >
-          {METHOD_HEADLINE.map((line) => (
-            <span key={line}>
-              {line}
-              <br />
-            </span>
-          ))}
+        <div className={styles.introBlock}>
+          <div
+            ref={(el) => {
+              refs.current.introSmall = el;
+            }}
+            className={styles.introSmall}
+            style={{ opacity: 0 }}
+          >
+            {METHOD_STATEMENT_SMALL}
+          </div>
+          <div
+            ref={(el) => {
+              refs.current.introMain = el;
+            }}
+            className={styles.introMain}
+            style={{ opacity: 0 }}
+          >
+            {METHOD_STATEMENT_MAIN[0]}
+            <br />
+            {METHOD_STATEMENT_MAIN[1]}
+          </div>
+          <div
+            ref={(el) => {
+              refs.current.introEmphasis = el;
+            }}
+            className={styles.introEmphasis}
+            style={{ opacity: 0 }}
+          >
+            {METHOD_STATEMENT_EMPHASIS}
+          </div>
         </div>
 
         <div ref={(el) => { refs.current.rail = el; }} className={styles.rail} style={{ opacity: 0 }}>
@@ -327,11 +380,20 @@ export default function MethodNarrative({ ready }: { ready: boolean }) {
           className={styles.stage}
           style={{ opacity: 0 }}
         >
-          <span className={styles.stageTag}>Sistema — en construcción</span>
-          <span className={styles.stageCorner} aria-hidden />
-          <span className={styles.stageCorner} aria-hidden />
-          <span className={styles.stageCorner} aria-hidden />
-          <span className={styles.stageCorner} aria-hidden />
+          <div
+            ref={(el) => {
+              refs.current.guideV = el;
+            }}
+            className={styles.guideV}
+            aria-hidden
+          />
+          <div
+            ref={(el) => {
+              refs.current.guideH = el;
+            }}
+            className={styles.guideH}
+            aria-hidden
+          />
           {DISCOVER_WORDS.map((word, i) => (
             <span
               key={word}
@@ -378,8 +440,14 @@ export default function MethodNarrative({ ready }: { ready: boolean }) {
             className={styles.bubble}
             style={{ opacity: 0 }}
           >
-            <span className={styles.bubbleWho}>MC AI</span>
-            <span className={styles.bubbleText}>Conversación activa.</span>
+            <div className={styles.bubbleLine}>
+              <span className={styles.bubbleWhoClient}>Cliente</span>
+              <span className={styles.bubbleText}>Hola.</span>
+            </div>
+            <div className={styles.bubbleLine}>
+              <span className={styles.bubbleWho}>MC AI</span>
+              <span className={styles.bubbleText}>¿Cómo puedo ayudarte?</span>
+            </div>
           </div>
 
           {DOTS.map((pos, i) => (
@@ -401,6 +469,7 @@ export default function MethodNarrative({ ready }: { ready: boolean }) {
             }}
             className={styles.humanImage}
             style={{ opacity: 0 }}
+            data-asset={HUMAN_MOMENT_IMAGE_SLOT.replace(/\.\w+$/, "")}
           />
           <div className={styles.humanText}>
             <div

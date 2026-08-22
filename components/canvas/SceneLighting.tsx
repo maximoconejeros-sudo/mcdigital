@@ -42,11 +42,12 @@ export default function SceneLighting() {
             scale={[2.5, 5, 1]}
             target={[0, 0, 0]}
           />
-          {/* gold rim from behind — the accent glancing edge */}
+          {/* champagne rim from behind — the accent glancing edge, tuned
+              less saturated/orange than a straight gold hex */}
           <Lightformer
             form="rect"
-            intensity={5.5}
-            color="#c89b3c"
+            intensity={4.6}
+            color="#cdb583"
             position={[0.6, 0.8, -4.5]}
             scale={[2.4, 3.2, 1]}
             target={[0, 0, 0]}

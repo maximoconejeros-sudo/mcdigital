@@ -1,8 +1,8 @@
 .spacer {
   position: relative;
-  height: 320vh;
+  height: 620vh;
   width: 100%;
-  background: linear-gradient(160deg, var(--color-warm-white) 0%, #ece4d2 100%);
+  background: linear-gradient(160deg, var(--color-warm-white) 0%, #f7f3ea 100%);
 }
 
 .layer {
@@ -18,6 +18,36 @@
   overflow: hidden;
   padding: 0 var(--nav-pad);
   max-width: 62%;
+}
+
+/* replaces the old particle field — sophisticated, very subtle, warm
+ * champagne. Shifts slightly toward center as the brand moment approaches
+ * (driven by JS transform: translateX), tracking the monogram's own drift. */
+.glow {
+  position: fixed;
+  top: 50%;
+  left: 68%;
+  width: min(70vw, 900px);
+  height: min(70vw, 900px);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200, 160, 74, 0.16) 0%, rgba(200, 160, 74, 0.05) 45%, transparent 72%);
+  pointer-events: none;
+  will-change: transform;
+}
+
+.shadow {
+  position: fixed;
+  top: 68%;
+  left: 68%;
+  width: min(30vw, 420px);
+  height: min(6vw, 70px);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(90, 74, 40, 0.16) 0%, transparent 75%);
+  filter: blur(4px);
+  pointer-events: none;
+  will-change: transform;
 }
 
 .label {
@@ -111,6 +141,71 @@
 .contactRow a:focus-visible {
   color: var(--color-gold);
   border-color: var(--color-gold);
+}
+
+/* the closing brand moment — fixed + centered across the full viewport,
+ * deliberately escaping .layer's own 62%-wide left-aligned column */
+.brandBlock {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+
+.brandName {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: clamp(13px, 1.1vw, 16px);
+  letter-spacing: 0.14em;
+  color: var(--color-gold);
+  will-change: opacity, transform;
+}
+
+.brandSub {
+  margin-top: clamp(6px, 1vw, 10px);
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 0.9vw, 13px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-graphite);
+  will-change: opacity;
+}
+
+.brandLocation {
+  margin-top: clamp(20px, 3vw, 32px);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+  color: var(--color-graphite-dark);
+  will-change: opacity;
+}
+
+.brandServices {
+  margin-top: clamp(10px, 1.6vw, 16px);
+  font-family: var(--font-mono);
+  font-size: clamp(10px, 0.85vw, 12px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-graphite-light);
+  will-change: opacity;
+}
+
+.goldLine {
+  position: fixed;
+  left: 50%;
+  bottom: 12%;
+  width: min(240px, 30vw);
+  height: 1px;
+  background: var(--color-gold);
+  transform: translateX(-50%) scaleX(0);
+  transform-origin: center;
+  opacity: 0;
+  will-change: opacity, transform;
 }
 
 @media (max-width: 860px) {

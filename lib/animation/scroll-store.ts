@@ -5,8 +5,14 @@
 export const scrollState = {
   /** 0..1 progress through the pinned Act I sequence */
   progress: 0,
-  /** 0..1 progress through the Act IX final CTA (particle convergence) */
+  /** 0..1 progress through the Act IX final CTA (monogram reveal) */
   act9Progress: 0,
+  /** 0..1 progress through the closing brand moment — MC recentering,
+   * camera pulling back — after the CTA content has cleared */
+  act9BrandT: 0,
+  /** 0..1 — final handoff fade to the footer; 1 means the whole Act IX
+   * Canvas + DOM layer should be fully invisible (footer showing through) */
+  act9FadeT: 0,
   /** whether the intro choreography has finished */
   introComplete: false,
   /** which color environment is currently on screen, for the nav to match:
