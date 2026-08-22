@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Space_Mono } from "next/font/google";
+import { Playfair_Display, Space_Grotesk, Space_Mono } from "next/font/google";
 import "./globals.css";
 
 const display = Space_Grotesk({
@@ -16,6 +16,17 @@ const mono = Space_Mono({
   display: "swap",
 });
 
+// The editorial serif voice — the same family the MC monogram's own
+// letterforms are built from (see mc-glyph-paths.ts), used sparingly for
+// single-word emotional emphasis, never for full passages.
+const serif = Playfair_Display({
+  variable: "--font-serif",
+  subsets: ["latin"],
+  weight: ["600"],
+  style: ["italic"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "MC Digital® — Digital Growth Agency",
   description:
@@ -24,7 +35,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${display.variable} ${mono.variable}`}>
+    <html
+      lang="en"
+      className={`${display.variable} ${mono.variable} ${serif.variable}`}
+    >
       <body>{children}</body>
     </html>
   );

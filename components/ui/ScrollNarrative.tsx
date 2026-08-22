@@ -33,13 +33,19 @@ export default function ScrollNarrative({
 
     const ctx = gsap.context(() => {
       const heroFront = gsap.utils.toArray<HTMLElement>("[data-hero-front]");
-      const heroBehind = gsap.utils.toArray<HTMLElement>("[data-hero-behind]");
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: spacer.current,
           start: "top top",
-          end: "bottom bottom",
+          // "bottom bottom" ends the active range one viewport height
+          // early (at spacerHeight - viewportHeight) for an unpinned
+          // scrub trigger, leaving a dead zone before the next act's own
+          // "top top" trigger (at scrollY = spacerHeight) ever fires —
+          // both layers sit hidden in that gap, exposing the raw
+          // document background as a hard seam. "bottom top" ends
+          // exactly at spacerHeight, handing off with zero gap.
+          end: "bottom top",
           scrub: 0.6,
           onUpdate: (self) => {
             scrollState.progress = self.progress;
@@ -71,16 +77,6 @@ export default function ScrollNarrative({
           filter: "blur(6px)",
           autoAlpha: 0,
           duration: 0.22,
-          ease: "power2.in",
-        },
-        0.1
-      ).to(
-        heroBehind,
-        {
-          scale: 1.5,
-          letterSpacing: "0.04em",
-          autoAlpha: 0,
-          duration: 0.24,
           ease: "power2.in",
         },
         0.1

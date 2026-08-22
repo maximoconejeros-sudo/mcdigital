@@ -39,6 +39,12 @@ export function useLenis() {
 
     ScrollTrigger.defaults({ markers: false });
 
+    // Web font swaps (next/font's display:"swap") can land after
+    // ScrollTrigger has already pinned pixel-based start/end positions,
+    // shifting document height and desyncing every trigger below the
+    // shifted content — refresh once fonts actually settle.
+    document.fonts.ready.then(() => ScrollTrigger.refresh());
+
     return () => {
       gsap.ticker.remove(tick);
       lenis.destroy();

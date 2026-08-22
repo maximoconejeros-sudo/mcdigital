@@ -19,15 +19,17 @@ export default function MSculpture() {
     const t = state.clock.elapsedTime;
     const p = scrollState.progress;
 
-    // idle drift, always present, very slow
-    const idleY = t * 0.045;
-
-    // subtle scroll-driven turn — the sculpture opens toward the camera
-    const scrollY = p * 0.5;
+    // Per the brief: "light reacts more than object rotates" — the object
+    // itself stays close to still, with only a hint of idle drift and
+    // scroll-driven turn (an order of magnitude softer than before);
+    // PointerKeyLight carries the actual mouse response as a moving
+    // highlight across the gold instead.
+    const idleY = t * 0.012;
+    const scrollY = p * 0.14;
 
     // weighted mouse parallax, lerped — never attached raw to the cursor
-    rotTarget.x = pointerState.y * 0.12;
-    rotTarget.y = pointerState.x * 0.16;
+    rotTarget.x = pointerState.y * 0.035;
+    rotTarget.y = pointerState.x * 0.045;
 
     // the camera dollies straight through the aperture on the object's
     // local Z axis — settle rotation back to 0 heading into that window so
