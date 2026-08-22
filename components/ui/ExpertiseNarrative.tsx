@@ -3,11 +3,15 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scrollState } from "@/lib/animation/scroll-store";
 import {
   CANVAS_CTA,
   CANVAS_NAV,
   CANVAS_WORDS,
   CLOSING_COPY,
+  WEB_WORDS,
+  WEB_COPY,
+  WEB_NAV_EXTRA,
 } from "@/lib/content/expertise";
 import styles from "./ExpertiseNarrative.module.css";
 
@@ -35,18 +39,23 @@ interface Refs {
   imagePanel: HTMLDivElement | null;
   closing: HTMLParagraphElement | null;
   cta: HTMLAnchorElement | null;
+  webWords: (HTMLDivElement | null)[];
+  webCopy: HTMLParagraphElement | null;
+  navExtra: (HTMLDivElement | null)[];
+  panel2: HTMLDivElement | null;
 }
 
 /**
  * Act II — "The Transformation." No numbered section, no browser-frame
- * mockup: the brief is explicit that the website IS the environment here,
- * typography and UI appearing directly in the world rather than inside a
- * card. Sequence: "Start with an idea" -> a literal empty canvas (cursor,
- * baseline, first word) -> that first word cycles Attention -> Interest
- * -> Action while the composition around it gets richer (grid, nav,
- * image), ending on the service's one line of explanation and a plain-text
- * CTA. This is the milestone's stopping point — Web Experiences, AI, and
- * everything after is a follow-up pass.
+ * mockup: the impact comes from typography, layout and a real interface
+ * composition being watched into existence directly in the viewport.
+ *
+ * Two beats share this one spacer: BUILD (Start with an idea -> a literal
+ * empty canvas -> Attention/Interest/Action, demonstrating Landing Pages)
+ * hands off into WEB EXPANSION (the single page becomes "a whole digital
+ * world," navigation multiplying and the visual growing well past its
+ * first shape, demonstrating Web Experiences) — one continuous
+ * transformation rather than two stacked sections.
  */
 export default function ExpertiseNarrative({ ready }: { ready: boolean }) {
   const spacer = useRef<HTMLDivElement>(null);
@@ -61,6 +70,10 @@ export default function ExpertiseNarrative({ ready }: { ready: boolean }) {
     imagePanel: null,
     closing: null,
     cta: null,
+    webWords: [null, null],
+    webCopy: null,
+    navExtra: [null, null],
+    panel2: null,
   });
   const wasActive = useRef(false);
 
@@ -76,6 +89,7 @@ export default function ExpertiseNarrative({ ready }: { ready: boolean }) {
       end: "bottom top",
       scrub: 0.6,
       onUpdate: (self) => {
+        if (self.isActive) scrollState.navTheme = "light";
         if (self.isActive !== wasActive.current) {
           wasActive.current = self.isActive;
           if (layer.current) {
@@ -89,23 +103,23 @@ export default function ExpertiseNarrative({ ready }: { ready: boolean }) {
         const p = self.progress;
         const r = refs.current;
 
-        const openT = wordEnvelope(p, 0.02, 0.09, 0.12, 0.18);
+        // --- BUILD: Start with an idea -> empty canvas -> Attention/Interest/Action
+        const openT = wordEnvelope(p, 0.01, 0.06, 0.08, 0.11);
         if (r.openPhrase) {
           r.openPhrase.style.opacity = String(openT);
           r.openPhrase.style.transform = `translateY(${(1 - openT) * 12}px)`;
         }
 
-        const cursorT = wordEnvelope(p, 0.15, 0.2, 0.27, 0.32);
+        const cursorT = wordEnvelope(p, 0.1, 0.13, 0.17, 0.2);
         if (r.cursorDot) r.cursorDot.style.opacity = String(cursorT);
 
-        const baseT = bandIn(p, 0.19, 0.26);
+        const baseT = bandIn(p, 0.12, 0.16);
         if (r.baseline) r.baseline.style.transform = `scaleX(${baseT})`;
 
-        // Attention -> Interest -> Action, crossfading in the same spot
         const wordBands: [number, number, number, number][] = [
-          [0.23, 0.3, 0.38, 0.44],
-          [0.38, 0.44, 0.6, 0.66],
-          [0.6, 0.66, 1, 1],
+          [0.15, 0.19, 0.24, 0.28],
+          [0.24, 0.28, 0.38, 0.42],
+          [0.38, 0.42, 1, 1],
         ];
         wordBands.forEach(([inS, inE, outS, outE], i) => {
           const el = r.words[i];
@@ -118,31 +132,79 @@ export default function ExpertiseNarrative({ ready }: { ready: boolean }) {
           el.style.transform = `scale(${0.94 + t * 0.06})`;
         });
 
-        const gridT = bandIn(p, 0.28, 0.4);
+        const gridT = bandIn(p, 0.18, 0.25);
         if (r.gridLines) r.gridLines.style.opacity = String(gridT * 0.5);
 
-        const navT = bandIn(p, 0.32, 0.4);
+        const navT = bandIn(p, 0.2, 0.25);
         if (r.navRow) {
           r.navRow.style.opacity = String(navT);
           r.navRow.style.transform = `translateY(${(1 - navT) * -10}px)`;
         }
 
-        const imageT = bandIn(p, 0.44, 0.58);
+        const imageT = bandIn(p, 0.28, 0.37);
         if (r.imagePanel) {
           r.imagePanel.style.opacity = String(imageT);
-          r.imagePanel.style.clipPath = `polygon(${100 - imageT * 42}% 0, 100% 0, 100% 100%, ${100 - imageT * 30}% 100%)`;
+        }
+        // the panel keeps growing through the web-expansion beat too — one
+        // continuous shape, not a reset — so it's computed across the
+        // whole 0.28-0.95 span rather than settling at 0.37
+        const imageGrowT = bandIn(p, 0.28, 0.95);
+        if (r.imagePanel) {
+          r.imagePanel.style.clipPath = `polygon(${100 - imageGrowT * 62}% 0, 100% 0, 100% 100%, ${100 - imageGrowT * 46}% 100%)`;
         }
 
-        const closingT = bandIn(p, 0.78, 0.88);
+        const closingT = wordEnvelope(p, 0.4, 0.46, 0.58, 0.63);
         if (r.closing) {
           r.closing.style.opacity = String(closingT);
           r.closing.style.transform = `translateY(${(1 - closingT) * 10}px)`;
         }
 
-        const ctaT = bandIn(p, 0.82, 0.92);
+        const ctaT = wordEnvelope(p, 0.42, 0.5, 0.58, 0.63);
         if (r.cta) {
           r.cta.style.opacity = String(ctaT);
           r.cta.style.pointerEvents = ctaT > 0.5 ? "auto" : "none";
+        }
+
+        // --- WEB EXPANSION: one page becomes a whole digital world
+        const webWordBands: [number, number, number, number][] = [
+          [0.6, 0.65, 0.73, 0.77],
+          [0.73, 0.77, 1, 1],
+        ];
+        webWordBands.forEach(([inS, inE, outS, outE], i) => {
+          const el = r.webWords[i];
+          if (!el) return;
+          const t =
+            i === webWordBands.length - 1
+              ? bandIn(p, inS, inE)
+              : wordEnvelope(p, inS, inE, outS, outE);
+          el.style.opacity = String(t);
+          el.style.transform = `translateY(${(1 - t) * 16}px)`;
+        });
+
+        const webCopyT = bandIn(p, 0.78, 0.85);
+        if (r.webCopy) {
+          r.webCopy.style.opacity = String(webCopyT);
+          r.webCopy.style.transform = `translateY(${(1 - webCopyT) * 10}px)`;
+        }
+
+        // navigation "duplicating" — extra rows entering at different
+        // positions as the single page becomes a spatial site
+        const navExtraBands: [number, number][] = [
+          [0.64, 0.7],
+          [0.7, 0.76],
+        ];
+        navExtraBands.forEach(([s, e], i) => {
+          const el = r.navExtra[i];
+          if (!el) return;
+          const t = bandIn(p, s, e);
+          el.style.opacity = String(t * 0.7);
+          el.style.transform = `translateX(${(1 - t) * (i % 2 === 0 ? 16 : -16)}px)`;
+        });
+
+        const panel2T = bandIn(p, 0.66, 0.8);
+        if (r.panel2) {
+          r.panel2.style.opacity = String(panel2T * 0.8);
+          r.panel2.style.transform = `scaleY(${panel2T})`;
         }
       },
     });
@@ -190,6 +252,24 @@ export default function ExpertiseNarrative({ ready }: { ready: boolean }) {
           ))}
         </div>
 
+        {WEB_NAV_EXTRA.map((row, i) => (
+          <div
+            key={i}
+            ref={(el) => {
+              refs.current.navExtra[i] = el;
+            }}
+            className={styles.navRow}
+            style={{
+              opacity: 0,
+              top: `calc(${68 + i * 40}px)`,
+            }}
+          >
+            {row.map((n) => (
+              <span key={n}>{n}</span>
+            ))}
+          </div>
+        ))}
+
         <div className={styles.canvasStage}>
           <div
             ref={(el) => {
@@ -221,6 +301,31 @@ export default function ExpertiseNarrative({ ready }: { ready: boolean }) {
             className={styles.baseline}
             style={{ transform: "scaleX(0)" }}
           />
+
+          <div className={styles.webWordStack}>
+            {WEB_WORDS.map((word, i) => (
+              <div
+                key={word}
+                ref={(el) => {
+                  refs.current.webWords[i] = el;
+                }}
+                className={styles.webWord}
+                style={{ opacity: 0 }}
+              >
+                {word}
+              </div>
+            ))}
+          </div>
+
+          <p
+            ref={(el) => {
+              refs.current.webCopy = el;
+            }}
+            className={styles.webCopy}
+            style={{ opacity: 0 }}
+          >
+            {WEB_COPY}
+          </p>
         </div>
 
         <div
@@ -229,6 +334,14 @@ export default function ExpertiseNarrative({ ready }: { ready: boolean }) {
           }}
           className={styles.imagePanel}
           style={{ opacity: 0 }}
+        />
+
+        <div
+          ref={(el) => {
+            refs.current.panel2 = el;
+          }}
+          className={styles.panel2}
+          style={{ opacity: 0, transform: "scaleY(0)" }}
         />
 
         <div className={styles.footer}>

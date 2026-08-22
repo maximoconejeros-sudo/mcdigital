@@ -7,10 +7,36 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  /* a soft shadow (not a blend-mode invert) keeps text legible over both
-     the dark environment and bright moments — the invert trick fought
-     with the true-gold "MC" mark, so it goes here instead */
+  transition: color 0.5s ease;
+}
+
+/* dark environment (Hero): white + gold, soft shadow for legibility over
+   the metal/particle field */
+.nav[data-theme="dark"] {
+  color: var(--color-fg);
   text-shadow: 0 1px 16px rgba(0, 0, 0, 0.7);
+}
+.nav[data-theme="dark"] .brandMC {
+  color: var(--color-accent);
+}
+
+/* light environment (Expertise, Digital Lab, Why It Matters, Method,
+   Contact): graphite + gold, no shadow needed on a flat warm-white bg */
+.nav[data-theme="light"] {
+  color: var(--color-graphite-dark);
+  text-shadow: none;
+}
+.nav[data-theme="light"] .brandMC {
+  color: var(--color-gold);
+}
+
+/* graphite environment (Intelligence): white + champagne */
+.nav[data-theme="graphite"] {
+  color: var(--color-soft-white);
+  text-shadow: none;
+}
+.nav[data-theme="graphite"] .brandMC {
+  color: var(--color-champagne-gold);
 }
 
 .brand {
@@ -18,13 +44,13 @@
   font-family: var(--font-mono);
   font-size: clamp(11px, 0.95vw, 13px);
   letter-spacing: 0.14em;
-  color: var(--color-fg);
+  color: inherit;
   overflow: hidden;
   display: block;
 }
 
 .brandMC {
-  color: var(--color-accent);
+  font-weight: 700;
 }
 
 .links {
@@ -39,7 +65,7 @@
   font-size: clamp(10px, 0.78vw, 12px);
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-fg);
+  color: inherit;
   overflow: hidden;
   display: block;
   padding-bottom: 2px;
@@ -61,4 +87,13 @@
 .link:hover::after {
   transform: scaleX(1);
   transform-origin: left;
+}
+
+@media (max-width: 760px) {
+  .links {
+    gap: 14px;
+  }
+  .link {
+    font-size: 9px;
+  }
 }

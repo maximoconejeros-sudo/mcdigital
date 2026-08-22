@@ -5,15 +5,15 @@ import gsap from "gsap";
 import styles from "./HeroTypography.module.css";
 
 /**
- * Act I ("The Signal") copy. A two-beat statement rather than a generic
- * three-line agency hero: a small, ownable claim appears first and holds,
- * then recedes as the real headline takes over in the same spot — "We
- * make it impossible to ignore," with the emotional word set in the
- * serif voice the MC's own letterforms are built from. Everything sits
- * front-layer (z-30, always in front of the transparent canvas) rather
- * than split behind/in-front of the sculpture — the aggressive crop
- * already gives the object most of the frame, so legibility of this
- * particular line matters more than a depth trick here.
+ * Act I ("The Signal") copy — Spanish-primary per the V7 language system
+ * (major creative statements in Spanish now; English stays only for
+ * metadata like the eyebrow). A two-beat statement: a small ownable claim
+ * appears first and holds, then recedes as the real headline takes over
+ * in the same spot, mixing grotesk with a serif-italic emphasis phrase
+ * for typographic rhythm rather than one uniform uppercase voice.
+ * Everything sits front-layer (z-30, always in front of the transparent
+ * canvas) — the aggressive crop already gives the object most of the
+ * frame, so legibility matters more here than a depth trick.
  */
 export default function HeroTypography({ play }: { play: boolean }) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -48,6 +48,12 @@ export default function HeroTypography({ play }: { play: boolean }) {
           { autoAlpha: 0, y: 10 },
           { autoAlpha: 1, y: 0, duration: 0.9, ease: "power2.out" },
           "-=0.5"
+        )
+        .fromTo(
+          `.${styles.ctaRow}`,
+          { autoAlpha: 0, y: 10 },
+          { autoAlpha: 1, y: 0, duration: 0.8, ease: "power2.out" },
+          "-=0.6"
         )
         .fromTo(
           `.${styles.scrollHint}`,
@@ -85,33 +91,39 @@ export default function HeroTypography({ play }: { play: boolean }) {
 
       <div className={styles.statementBlock}>
         <div ref={smallRef} className={styles.smallStatement} style={{ opacity: 0 }}>
-          Your business
+          Tu negocio
           <br />
-          already exists.
+          ya existe.
         </div>
 
         <h1 ref={mainRef} className={styles.mainLine} style={{ perspective: 700 }}>
           <span className="line-mask">
             <span data-line style={{ display: "inline-block" }}>
-              We make it
+              Transformamos ideas
             </span>
           </span>
           <span className="line-mask">
             <span data-line style={{ display: "inline-block" }}>
-              <em className={styles.emphasis}>impossible</em>
+              en experiencias digitales
             </span>
           </span>
           <span className="line-mask">
             <span data-line style={{ display: "inline-block" }}>
-              to ignore.
+              <em className={styles.emphasis}>que hacen crecer</em> negocios.
             </span>
           </span>
         </h1>
 
         <p className={styles.spanishSub} style={{ opacity: 0 }}>
-          Experiencias web, sistemas digitales e IA diseñados alrededor de tu
-          negocio.
+          Diseñamos experiencias web y sistemas inteligentes que convierten
+          presencia digital en oportunidades reales.
         </p>
+
+        <div className={styles.ctaRow} style={{ opacity: 0 }}>
+          <a href="#servicios" className={styles.ctaSecondary} data-cursor>
+            Hablemos ↗
+          </a>
+        </div>
       </div>
 
       <div className={styles.bottomRow}>
@@ -121,12 +133,12 @@ export default function HeroTypography({ play }: { play: boolean }) {
           </p>
         </div>
 
-        <div className={styles.scrollHint} style={{ opacity: 0 }}>
-          <span className="label">Enter</span>
+        <a href="#servicios" className={styles.scrollHint} style={{ opacity: 0 }} data-cursor>
+          <span className="label">Descubre cómo</span>
           <span className={styles.scrollArrow} aria-hidden>
             ↓
           </span>
-        </div>
+        </a>
       </div>
     </div>
   );

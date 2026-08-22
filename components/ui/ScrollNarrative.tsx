@@ -49,6 +49,10 @@ export default function ScrollNarrative({
           scrub: 0.6,
           onUpdate: (self) => {
             scrollState.progress = self.progress;
+            // matches FogController's color journey: still dark through
+            // most of the crossing, warm white by the time the bridge
+            // copy is readable
+            scrollState.navTheme = self.progress > 0.85 ? "light" : "dark";
             if (self.isActive !== wasActive.current) {
               wasActive.current = self.isActive;
               onActiveChange?.(self.isActive);

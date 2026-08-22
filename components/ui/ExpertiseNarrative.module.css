@@ -1,6 +1,6 @@
 .spacer {
   position: relative;
-  height: 460vh;
+  height: 680vh;
   width: 100%;
   background: var(--color-warm-white);
 }
@@ -122,6 +122,53 @@
   will-change: transform;
 }
 
+.webWordStack {
+  position: relative;
+  min-height: clamp(3.4rem, 9vw, 6.4rem);
+  width: 100%;
+  margin-top: clamp(32px, 5vw, 56px);
+}
+
+.webWord {
+  position: absolute;
+  left: 0;
+  top: 0;
+  max-width: 90%;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  font-size: clamp(2rem, 5.4vw, 4.8rem);
+  line-height: 1.02;
+  color: var(--color-graphite-dark);
+  will-change: opacity, transform;
+}
+
+.webCopy {
+  margin-top: clamp(14px, 2vw, 22px);
+  max-width: 40ch;
+  font-family: var(--font-display);
+  font-size: clamp(14px, 1.1vw, 16px);
+  line-height: 1.5;
+  color: var(--color-graphite);
+  will-change: opacity, transform;
+}
+
+.panel2 {
+  position: absolute;
+  right: 8%;
+  bottom: 6%;
+  width: 22%;
+  height: 46%;
+  background: linear-gradient(
+    200deg,
+    var(--color-graphite-dark) 0%,
+    var(--color-gold) 100%
+  );
+  transform-origin: bottom;
+  will-change: opacity, transform;
+}
+
 .imagePanel {
   position: absolute;
   right: 0;
@@ -202,6 +249,12 @@
   }
   .navRow {
     display: none;
+  }
+  .panel2 {
+    display: none;
+  }
+  .webWord {
+    font-size: clamp(1.7rem, 8vw, 2.6rem);
   }
   .footer {
     max-width: 90vw;

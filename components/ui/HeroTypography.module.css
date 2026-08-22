@@ -73,6 +73,28 @@
   color: var(--color-fg-dim);
 }
 
+.ctaRow {
+  margin-top: clamp(28px, 4vw, 42px);
+  pointer-events: auto;
+}
+
+.ctaSecondary {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: clamp(12px, 0.95vw, 14px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-champagne-gold);
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(225, 196, 122, 0.4);
+  transition: border-color 0.35s ease, opacity 0.35s ease;
+}
+
+.ctaSecondary:hover,
+.ctaSecondary:focus-visible {
+  border-color: var(--color-champagne-gold);
+}
+
 .bottomRow {
   display: flex;
   justify-content: flex-start;
@@ -95,6 +117,7 @@
   flex-direction: column;
   align-items: center;
   gap: 6px;
+  pointer-events: auto;
 }
 
 .scrollArrow {

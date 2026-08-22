@@ -9,6 +9,10 @@ export const scrollState = {
   act9Progress: 0,
   /** whether the intro choreography has finished */
   introComplete: false,
+  /** which color environment is currently on screen, for the nav to match:
+   * white+gold on black, graphite+gold on warm white, white+champagne on
+   * graphite. Each act's own onUpdate sets this while it's active. */
+  navTheme: "dark" as "dark" | "light" | "graphite",
 };
 
 export const pointerState = {

@@ -12,8 +12,7 @@ import CustomCursor from "@/components/ui/CustomCursor";
 import HeroTypography from "@/components/ui/HeroTypography";
 import ScrollNarrative from "@/components/ui/ScrollNarrative";
 import ExpertiseNarrative from "@/components/ui/ExpertiseNarrative";
-import PhilosophyNarrative from "@/components/ui/PhilosophyNarrative";
-import WorkNarrative from "@/components/ui/WorkNarrative";
+import WhyItMattersNarrative from "@/components/ui/WhyItMattersNarrative";
 import FinalNarrative from "@/components/ui/FinalNarrative";
 import StaticFallback from "@/components/ui/StaticFallback";
 
@@ -62,8 +61,7 @@ export default function Home() {
         <HeroTypography play={ready} />
         <ScrollNarrative ready={ready} onActiveChange={setAct1Active} />
         <ExpertiseNarrative ready={ready} />
-        <PhilosophyNarrative ready={ready} />
-        <WorkNarrative ready={ready} />
+        <WhyItMattersNarrative ready={ready} />
       </CanvasErrorBoundary>
 
       <FinalNarrative ready={ready} onActiveChange={setAct9Active} />
