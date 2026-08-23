@@ -15,7 +15,7 @@ export function createGoldMaterial() {
   return new THREE.MeshPhysicalMaterial({
     color: new THREE.Color("#8C6A3C"),
     metalness: 1,
-    roughness: 0.34,
+    roughness: 0.28,
     envMapIntensity: 1.3,
     clearcoat: 0.1,
     clearcoatRoughness: 0.55,

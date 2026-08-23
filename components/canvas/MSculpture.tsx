@@ -77,7 +77,7 @@ export default function MSculpture() {
   const reflectMaterial = useMemo(() => {
     const m = createGoldMaterial();
     m.transparent = true;
-    m.opacity = 0.15;
+    m.opacity = 0.12;
     m.depthWrite = false;
     return m;
   }, []);
