@@ -19,11 +19,6 @@ export const scrollState = {
   act9FadeT: 0,
   /** whether the intro choreography has finished */
   introComplete: false,
-  /** 0..1 — the hero's own cinematic load-in: camera starts an extreme
-   * macro close-up on the gold metal, unrecognizable, then pulls back to
-   * the resting hero frame as the typography stages in. Independent of
-   * scroll; driven once by a GSAP tween when the preloader clears. */
-  heroIntroT: 1,
   /** which color environment is currently on screen, for the nav to match:
    * white+gold on black, graphite+gold on warm white, white+champagne on
    * graphite. Each act's own onUpdate sets this while it's active. */
