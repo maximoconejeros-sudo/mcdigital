@@ -87,32 +87,41 @@ export default function Navigation({ play }: { play: boolean }) {
         </span>
       </a>
 
-      <ul className={styles.links}>
-        {LINKS.map((label) => (
-          <li key={label} className={styles.link}>
-            <a
-              href={`#${label.toLowerCase()}`}
-              data-cursor
-              style={{ display: "block" }}
-            >
-              <span data-nav-item style={{ display: "inline-block" }}>
-                {label}
-              </span>
-            </a>
-          </li>
-        ))}
-      </ul>
+      <div className={styles.navRight}>
+        <ul className={styles.links}>
+          {LINKS.map((label) => (
+            <li key={label} className={styles.link}>
+              <a
+                href={`#${label.toLowerCase()}`}
+                data-cursor
+                style={{ display: "block" }}
+              >
+                <span data-nav-item style={{ display: "inline-block" }}>
+                  {label}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
 
-      <button
-        type="button"
-        className={styles.menuToggle}
-        aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
-        aria-expanded={menuOpen}
-        onClick={() => setMenuOpen((v) => !v)}
-      >
-        <span />
-        <span />
-      </button>
+        <a href="#contacto" className={styles.talkCta} data-cursor>
+          <span data-nav-item style={{ display: "inline-block" }}>
+            Hablemos <span aria-hidden>→</span>
+          </span>
+        </a>
+
+        <button
+          type="button"
+          className={styles.menuToggle}
+          aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((v) => !v)}
+          data-cursor
+        >
+          <span />
+          <span />
+        </button>
+      </div>
 
       <div className={styles.mobilePanel} data-open={menuOpen ? "true" : undefined}>
         <ul>

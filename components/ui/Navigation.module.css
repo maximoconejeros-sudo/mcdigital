@@ -53,8 +53,14 @@
   font-weight: 700;
 }
 
-.links {
+.navRight {
   pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 2.6vw, 36px);
+}
+
+.links {
   display: flex;
   gap: clamp(18px, 2.4vw, 34px);
 }
@@ -104,8 +110,74 @@
   will-change: transform;
 }
 
+/* bordered pill — the reference's "HABLEMOS →" button, never filled/glassy,
+ * just a hairline border that fills solid gold on hover */
+.talkCta {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: clamp(10px, 0.78vw, 12px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: inherit;
+  padding: 10px clamp(16px, 1.6vw, 22px);
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  transition: color 0.35s var(--ease-out), border-color 0.35s var(--ease-out);
+}
+
+.talkCta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--color-gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease-out);
+  z-index: -1;
+}
+
+.talkCta:hover,
+.talkCta:focus-visible {
+  color: var(--color-black);
+  border-color: var(--color-gold);
+}
+
+.talkCta:hover::before,
+.talkCta:focus-visible::before {
+  transform: scaleX(1);
+}
+
+.talkCta span[aria-hidden] {
+  display: inline-block;
+  margin-left: 2px;
+}
+
+/* the reference's circular menu affordance — a hairline ring, always
+ * present (not a mobile-only hamburger), opens the same full-panel menu
+ * at every breakpoint */
 .menuToggle {
-  display: none;
+  pointer-events: auto;
+  position: relative;
+  flex: 0 0 auto;
+  width: clamp(38px, 2.8vw, 44px);
+  height: clamp(38px, 2.8vw, 44px);
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.menuToggle span {
+  display: block;
+  height: 1px;
+  width: 14px;
+  background: currentColor;
+  transition: transform 0.3s var(--ease-out), opacity 0.3s var(--ease-out);
 }
 
 .mobilePanel {
@@ -144,33 +216,19 @@
   color: var(--color-soft-white);
 }
 
+.nav[data-menu-open] .menuToggle span:first-child {
+  transform: translateY(3px) rotate(45deg);
+}
+.nav[data-menu-open] .menuToggle span:last-child {
+  transform: translateY(-3px) rotate(-45deg);
+}
+
 @media (max-width: 760px) {
   .links {
     display: none;
   }
 
-  .menuToggle {
-    pointer-events: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 5px;
-    width: 30px;
-    height: 22px;
-  }
-
-  .menuToggle span {
-    display: block;
-    height: 1px;
-    width: 100%;
-    background: currentColor;
-    transition: transform 0.3s var(--ease-out), opacity 0.3s var(--ease-out);
-  }
-
-  .nav[data-menu-open] .menuToggle span:first-child {
-    transform: translateY(6px) rotate(45deg);
-  }
-  .nav[data-menu-open] .menuToggle span:last-child {
-    transform: translateY(-5px) rotate(-45deg);
+  .talkCta {
+    display: none;
   }
 }

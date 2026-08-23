@@ -81,7 +81,7 @@ export default function Home() {
       <CanvasErrorBoundary fallback={<StaticFallback />}>
         <HeroBackdrop />
         <div ref={canvasWrapRef} style={{ position: "fixed", inset: 0, zIndex: 20 }}>
-          {act1Active && <Experience reduced={reduced} />}
+          {act1Active && <Experience reduced={reduced} play={ready} />}
           {act9Active && <FinalExperience reduced={reduced} />}
         </div>
         <HeroTypography play={ready} />
