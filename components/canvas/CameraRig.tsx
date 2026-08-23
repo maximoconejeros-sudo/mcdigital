@@ -84,12 +84,18 @@ export default function CameraRig({
       desiredPos.lerpVectors(MACRO_POS, desiredPos, introT);
       desiredLook.lerpVectors(MACRO_LOOK, desiredLook, introT);
       targetFov = THREE.MathUtils.lerp(MACRO_FOV, targetFov, introT);
-      camera.position.copy(desiredPos);
-      fov.current = targetFov;
-    } else {
-      camera.position.lerp(desiredPos, 1 - Math.pow(0.001, delta));
-      fov.current = THREE.MathUtils.damp(fov.current, targetFov, 3, delta);
     }
+    // Position and FOV are set directly from the path sample every frame —
+    // no lerp/damp. CAMERA_PATH already supplies its own per-segment
+    // easing (the smooth() ease in sampleCameraPath), so this doesn't
+    // read as less cinematic; what it removes is a second, time-based
+    // layer of smoothing whose output depends on elapsed frame time and
+    // the previous frame's position, not scroll position alone. That
+    // extra layer also had position lagging one frame behind the
+    // look-at target (which was already unlagged below), a mismatch
+    // that got more visible right at a scroll direction reversal.
+    camera.position.copy(desiredPos);
+    fov.current = targetFov;
 
     if (Math.abs(perspective.fov - fov.current) > 0.001) {
       perspective.fov = fov.current;

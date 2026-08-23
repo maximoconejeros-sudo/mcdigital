@@ -21,7 +21,15 @@ export default function Experience({
     <Canvas
       dpr={reduced ? [1, 1.25] : [1, 1.75]}
       gl={{
-        antialias: true,
+        // context-level MSAA (antialias:true) reading into a custom
+        // post-processing pipeline (CinematicPost's EffectComposer, only
+        // mounted when !reduced below) is a known source of compositor
+        // instability in Safari — the two AA passes fight over the same
+        // multisampled backbuffer. Only disable it when the composer is
+        // actually in the pipeline; reduced/mobile skips CinematicPost
+        // entirely, so there's no conflict there and no reason to give up
+        // antialiasing on it.
+        antialias: reduced,
         alpha: true,
         powerPreference: "high-performance",
       }}
