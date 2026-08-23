@@ -3,10 +3,27 @@
   inset: 0;
   z-index: 15;
   overflow: hidden;
+  /* localized warmth around the sculpture's territory (#050505 -> a
+   * near-black warm brown, never a flat swatch) plus a soft edge vignette —
+   * layered so no single ring reads as "a gradient," and the whole thing
+   * still resolves to black at a glance. */
   background:
-    radial-gradient(ellipse 60% 55% at 68% 38%, rgba(200, 160, 74, 0.1), transparent 60%),
+    radial-gradient(ellipse 46% 50% at 70% 42%, rgba(200, 160, 74, 0.06), transparent 60%),
+    radial-gradient(ellipse 70% 60% at 74% 46%, rgba(20, 16, 10, 0.65), transparent 70%),
+    radial-gradient(ellipse 120% 100% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.5) 100%),
     radial-gradient(ellipse 80% 70% at 22% 78%, rgba(30, 26, 18, 0.5), transparent 65%),
     var(--color-black);
+}
+
+.grain {
+  position: absolute;
+  inset: -40%;
+  width: 180%;
+  height: 180%;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
 }
 
 .line {

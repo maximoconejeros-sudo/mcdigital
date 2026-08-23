@@ -28,7 +28,7 @@ export default function SceneLighting() {
               reads, tightened so it no longer washes the shadow facets flat */}
           <Lightformer
             form="rect"
-            intensity={0.32}
+            intensity={0.5}
             color="#f2dfb2"
             position={[0, 0.3, 5.2]}
             scale={[1.6, 1.6, 1]}
@@ -38,8 +38,8 @@ export default function SceneLighting() {
               shadows, not flattened ones */}
           <Lightformer
             form="rect"
-            intensity={0.4}
-            color="#8a7148"
+            intensity={0.6}
+            color="#9a7f52"
             position={[-4, 0.5, 2.4]}
             scale={[1.8, 4, 1]}
             target={[0, 0, 0]}

@@ -9,11 +9,14 @@
   pointer-events: none;
 }
 
-/* the hero's left territory — the MC sculpture owns everything right of
- * ~55vw and is never behind this column */
+/* the hero's left territory — a strict two-zone composition. The MC's own
+ * territory starts around 52vw and is never behind this column; the type
+ * scale below is sized so even the widest single-word line (EXPERIENCIAS)
+ * stays clear of it with real negative space between, not just a
+ * container boundary a long unbreakable word could overflow past. */
 .statementBlock {
   position: relative;
-  max-width: min(43vw, 600px);
+  max-width: min(41vw, 560px);
 }
 
 .eyebrow {
@@ -52,19 +55,19 @@
 }
 
 .lineSmall {
-  font-size: clamp(1.7rem, 3.6vw, 3.1rem);
+  font-size: clamp(1.4rem, 2.9vw, 2.5rem);
   font-weight: 500;
 }
 
 .lineBig {
   margin-top: clamp(0px, 0.15vw, 3px);
-  font-size: clamp(3rem, 6.4vw, 5.9rem);
+  font-size: clamp(2.4rem, 5.1vw, 4.9rem);
   font-weight: 700;
 }
 
 .lineMed {
   margin-top: clamp(2px, 0.4vw, 6px);
-  font-size: clamp(1.9rem, 3.8vw, 3.3rem);
+  font-size: clamp(1.5rem, 3vw, 2.7rem);
 }
 
 .wordGold {
@@ -97,65 +100,33 @@
   pointer-events: auto;
 }
 
-/* bordered pill — never filled/glassy at rest, fills solid gold on hover;
- * matches the nav's own .talkCta treatment for one consistent button voice */
-.ctaPrimary {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
+/* editorial text links, not buttons — a hairline that grows in from the
+ * left on hover and an arrow that nudges 4-6px in its direction of travel */
+.ctaPrimary,
+.ctaGhost {
   position: relative;
-  overflow: hidden;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
   font-family: var(--font-mono);
-  font-size: clamp(11px, 0.85vw, 13px);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-fg);
-  padding: 13px clamp(20px, 1.8vw, 26px);
-  border: 1px solid var(--color-fg-dim);
-  border-radius: 999px;
-  transition: color 0.35s var(--ease-out), border-color 0.35s var(--ease-out);
+  transition: color 0.3s ease;
 }
 
-.ctaPrimary::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--color-gold);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s var(--ease-out);
-  z-index: -1;
+.ctaPrimary {
+  font-size: clamp(13px, 1vw, 15px);
+  color: var(--color-champagne-gold);
+}
+
+.ctaGhost {
+  font-size: clamp(11px, 0.85vw, 13px);
+  color: var(--color-fg-dim);
 }
 
 .ctaPrimary:hover,
 .ctaPrimary:focus-visible {
-  color: var(--color-black);
-  border-color: var(--color-gold);
-}
-
-.ctaPrimary:hover::before,
-.ctaPrimary:focus-visible::before {
-  transform: scaleX(1);
-}
-
-.ctaPrimary span[aria-hidden] {
-  transition: transform 0.35s var(--ease-out);
-}
-
-.ctaPrimary:hover span[aria-hidden] {
-  transform: translateY(3px);
-}
-
-.ctaGhost {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-mono);
-  font-size: clamp(11px, 0.85vw, 13px);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-fg-dim);
-  transition: color 0.3s ease;
+  color: var(--color-fg);
 }
 
 .ctaGhost:hover,
@@ -163,16 +134,34 @@
   color: var(--color-fg);
 }
 
-.playDot {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  border: 1px solid currentColor;
-  border-radius: 50%;
-  font-size: 8px;
-  flex-shrink: 0;
+.ctaLabel span[aria-hidden] {
+  display: inline-block;
+  transition: transform 0.35s var(--ease-out);
+}
+
+.ctaPrimary:hover .ctaLabel span[aria-hidden] {
+  transform: translateX(5px);
+}
+
+.ctaGhost:hover .ctaLabel span[aria-hidden] {
+  transform: translateY(5px);
+}
+
+.ctaLine {
+  display: block;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s var(--ease-out);
+}
+
+.ctaPrimary:hover .ctaLine,
+.ctaPrimary:focus-visible .ctaLine,
+.ctaGhost:hover .ctaLine,
+.ctaGhost:focus-visible .ctaLine {
+  transform: scaleX(1);
 }
 
 /* the reference's right-edge micro system — a vertical section index and

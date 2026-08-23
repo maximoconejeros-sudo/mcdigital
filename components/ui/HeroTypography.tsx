@@ -121,15 +121,17 @@ export default function HeroTypography({ play }: { play: boolean }) {
         </p>
 
         <div className={styles.ctaRow} style={{ opacity: 0 }}>
-          <a href="#servicios" className={styles.ctaPrimary} data-cursor>
-            <span>Descubre cómo</span>
-            <span aria-hidden>↓</span>
-          </a>
-          <a href="#manifiesto" className={styles.ctaGhost} data-cursor>
-            <span className={styles.playDot} aria-hidden>
-              ▶
+          <a href="#contacto" className={styles.ctaPrimary} data-cursor>
+            <span className={styles.ctaLabel}>
+              Hablemos <span aria-hidden>→</span>
             </span>
-            Ver manifiesto
+            <span className={styles.ctaLine} aria-hidden />
+          </a>
+          <a href="#servicios" className={styles.ctaGhost} data-cursor>
+            <span className={styles.ctaLabel}>
+              Explorar <span aria-hidden>↓</span>
+            </span>
+            <span className={styles.ctaLine} aria-hidden />
           </a>
         </div>
       </div>

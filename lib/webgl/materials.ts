@@ -6,15 +6,15 @@ import * as THREE from "three";
  * luxury metal, not orange metallic plastic. */
 export function createGoldMaterial() {
   return new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color("#B69A5C"),
+    color: new THREE.Color("#D2B274"),
     metalness: 1,
-    roughness: 0.24,
-    envMapIntensity: 1.7,
-    clearcoat: 0.35,
-    clearcoatRoughness: 0.2,
-    sheen: 0.06,
+    roughness: 0.2,
+    envMapIntensity: 2.1,
+    clearcoat: 0.4,
+    clearcoatRoughness: 0.16,
+    sheen: 0.1,
     sheenColor: new THREE.Color("#f4e8ce"),
-    sheenRoughness: 0.42,
+    sheenRoughness: 0.38,
   });
 }
 

@@ -35,6 +35,7 @@ export default function HeroBackdrop() {
   return (
     <div ref={root} className={styles.backdrop} aria-hidden>
       <span className={styles.line} />
+      <span className={styles.grain} />
     </div>
   );
 }
