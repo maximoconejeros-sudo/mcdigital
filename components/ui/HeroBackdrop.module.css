@@ -3,6 +3,14 @@
   inset: 0;
   z-index: 15;
   overflow: hidden;
+  /* same persistent-compositing-layer hardening as the canvas wrapper it
+   * sits directly behind (see app/page.tsx) — Safari can drop/recreate a
+   * fixed element's GPU layer during momentum scroll; pinning it up front
+   * avoids that mid-scroll teardown for this layer too. */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
   /* localized warmth around the sculpture's territory (#050505 -> a
    * near-black warm brown, never a flat swatch) plus a soft edge vignette —
    * layered so no single ring reads as "a gradient," and the whole thing

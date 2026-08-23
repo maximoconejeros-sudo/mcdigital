@@ -87,8 +87,30 @@ export default function Home() {
 
       <CanvasErrorBoundary fallback={<StaticFallback />}>
         <HeroBackdrop />
-        <div ref={canvasWrapRef} style={{ position: "fixed", inset: 0, zIndex: 20 }}>
-          <Experience reduced={reduced} />
+        <div
+          ref={canvasWrapRef}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 20,
+            // Safari/WebKit can drop and recreate a fixed-position element's
+            // compositing layer during momentum/rubber-band scrolling,
+            // producing a one-frame blank flash of whatever's behind it —
+            // a documented WebKit quirk, not an application bug, and the
+            // likely cause of the flicker being reported only on Safari/
+            // macOS and specifically around scroll-direction reversal
+            // (where rubber-banding is most likely to occur). Pinning this
+            // wrapper to its own persistent GPU layer up front means
+            // Safari never needs to tear the layer down and rebuild it
+            // mid-scroll. Scoped to this one element — the canvas's own
+            // fixed container — not applied broadly.
+            transform: "translateZ(0)",
+            WebkitTransform: "translateZ(0)",
+            WebkitBackfaceVisibility: "hidden",
+            backfaceVisibility: "hidden",
+          }}
+        >
+          <Experience reduced={reduced} play={ready} />
           {act9Active && <FinalExperience reduced={reduced} />}
         </div>
         <HeroTypography play={ready} />
