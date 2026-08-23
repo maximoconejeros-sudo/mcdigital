@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { pointerState } from "@/lib/animation/scroll-store";
 import styles from "./CustomCursor.module.css";
 
 export default function CustomCursor() {
@@ -9,6 +10,7 @@ export default function CustomCursor() {
   const [moved, setMoved] = useState(false);
   const [hover, setHover] = useState(false);
   const [label, setLabel] = useState("");
+  const [mcHover, setMcHover] = useState(false);
 
   useEffect(() => {
     const fine = window.matchMedia("(pointer: fine)").matches;
@@ -58,11 +60,16 @@ export default function CustomCursor() {
       }
     };
 
+    let lastMcHover = false;
     const loop = () => {
       current.x += (raw.x - current.x) * 0.18;
       current.y += (raw.y - current.y) * 0.18;
       if (dot.current) {
         dot.current.style.transform = `translate3d(${current.x}px, ${current.y}px, 0)`;
+      }
+      if (pointerState.overMC !== lastMcHover) {
+        lastMcHover = pointerState.overMC;
+        setMcHover(lastMcHover);
       }
       raf = requestAnimationFrame(loop);
     };
@@ -83,16 +90,18 @@ export default function CustomCursor() {
 
   if (!enabled) return null;
 
+  const hasLabel = hover && !!label && label !== "true";
+
   return (
     <div
       ref={dot}
       className={`${styles.cursor} ${moved ? styles.ready : ""} ${
         hover ? styles.hover : ""
+      } ${hasLabel ? styles.hasLabel : ""} ${
+        !hover && mcHover ? styles.mcHover : ""
       }`}
     >
-      {label && label !== "true" && (
-        <span className={styles.label}>{label}</span>
-      )}
+      {hasLabel && <span className={styles.label}>{label}</span>}
     </div>
   );
 }

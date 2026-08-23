@@ -2,9 +2,28 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { scrollState } from "@/lib/animation/scroll-store";
 import styles from "./HeroTypography.module.css";
 
 const SECTION_INDEX = ["01", "02", "03", "04", "05", "06", "07", "08"];
+
+// Mirrors MSculpture's own hero-window band fractions (20/45/70% of the
+// ~0.32 visible-scroll window) so the headline's own scroll exit stays in
+// lockstep with the sculpture's scale/offset choreography.
+const B20 = 0.064;
+const B45 = 0.144;
+const B70 = 0.224;
+
+// index into the six [data-line] rows in DOM order: Transformamos, ideas
+// en, EXPERIENCIAS, digitales, que hacen crecer, negocios. — weighted so
+// EXPERIENCIAS is the last headline element to disappear, per the brief.
+const EXIT_WEIGHTS = [0, 0.15, 1, 0.35, 0.55, 0.75];
+
+function smoothstep(x: number, edge0: number, edge1: number) {
+  if (edge0 === edge1) return x < edge0 ? 0 : 1;
+  const t = Math.min(1, Math.max(0, (x - edge0) / (edge1 - edge0)));
+  return t * t * (3 - 2 * t);
+}
 
 /**
  * Act I ("The Signal") copy — rebuilt against HERO_REFERENCE.png. Left
@@ -61,6 +80,45 @@ export default function HeroTypography({ play }: { play: boolean }) {
     return () => ctx.revert();
   }, [play]);
 
+  // The scroll transformation: the statement column drifts up very
+  // slightly as the sculpture starts moving (20-45%), then each headline
+  // row masks itself out (45-70%) — staggered so EXPERIENCIAS is the last
+  // one standing, matching how long the sculpture keeps its own resting
+  // scale before it starts leaving. Reads scrollState.progress directly
+  // (same source MSculpture uses) rather than a second ScrollTrigger.
+  useEffect(() => {
+    if (!play || !rootRef.current || !mainRef.current) return;
+    const statement = rootRef.current.querySelector<HTMLElement>(
+      `.${styles.statementBlock}`
+    );
+    const lines = Array.from(
+      mainRef.current.querySelectorAll<HTMLElement>(".line-mask")
+    );
+
+    let raf = 0;
+    const loop = () => {
+      const p = scrollState.progress;
+      const shiftT = smoothstep(p, B20, B45);
+
+      if (statement) {
+        statement.style.transform = `translateY(${(-shiftT * 2).toFixed(3)}vh)`;
+      }
+
+      lines.forEach((el, i) => {
+        const w = EXIT_WEIGHTS[i] ?? 0.5;
+        const start = B45 + w * (B70 - B45) * 0.55;
+        const end = Math.min(B70, start + (B70 - B45) * 0.45);
+        const localT = smoothstep(p, start, end);
+        el.style.transform = `translateY(${(-localT * 110).toFixed(2)}%)`;
+        el.style.opacity = String(1 - localT);
+      });
+
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [play]);
+
   useEffect(() => {
     if (!play) return;
     let dismissed = false;
@@ -93,7 +151,7 @@ export default function HeroTypography({ play }: { play: boolean }) {
               ideas en
             </span>
           </span>
-          <span className={`line-mask ${styles.lineBig}`}>
+          <span className={`line-mask ${styles.lineBig} ${styles.lineBigLead}`}>
             <span data-line className={styles.wordGold} style={{ display: "inline-block" }}>
               experiencias
             </span>
@@ -121,7 +179,7 @@ export default function HeroTypography({ play }: { play: boolean }) {
         </p>
 
         <div className={styles.ctaRow} style={{ opacity: 0 }}>
-          <a href="#contacto" className={styles.ctaPrimary} data-cursor>
+          <a href="#contacto" className={styles.ctaPrimary} data-cursor="→">
             <span className={styles.ctaLabel}>
               Hablemos <span aria-hidden>→</span>
             </span>
@@ -147,6 +205,11 @@ export default function HeroTypography({ play }: { play: boolean }) {
       <a href="#servicios" className={styles.scrollHint} style={{ opacity: 0 }} data-cursor>
         <span className={styles.scrollHintText}>Desplaza para explorar</span>
       </a>
+
+      <div className={styles.microDetails} aria-hidden>
+        <span>Interactive</span>
+        <span>Web · AI · Automation — 001</span>
+      </div>
     </div>
   );
 }

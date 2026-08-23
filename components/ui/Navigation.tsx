@@ -104,7 +104,7 @@ export default function Navigation({ play }: { play: boolean }) {
           ))}
         </ul>
 
-        <a href="#contacto" className={styles.talkCta} data-cursor>
+        <a href="#contacto" className={styles.talkCta} data-cursor="→">
           <span data-nav-item style={{ display: "inline-block" }}>
             Hablemos <span aria-hidden>→</span>
           </span>

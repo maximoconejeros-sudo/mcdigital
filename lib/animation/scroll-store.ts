@@ -34,6 +34,10 @@ export const pointerState = {
   /** normalized device coords, -1..1, raw (unsmoothed) */
   x: 0,
   y: 0,
+  /** whether the pointer is currently over the MC sculpture mesh — set by
+   * MSculpture's own R3F pointer events, read by CustomCursor to swap in
+   * the gold-outline hover state */
+  overMC: false,
 };
 
 if (typeof window !== "undefined") {

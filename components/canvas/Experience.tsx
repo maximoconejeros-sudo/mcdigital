@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import MSculpture from "@/components/canvas/MSculpture";
 import SceneLighting from "@/components/canvas/SceneLighting";
 import PointerKeyLight from "@/components/canvas/PointerKeyLight";
+import LightSweep from "@/components/canvas/LightSweep";
 import Particles from "@/components/canvas/Particles";
 import CameraRig from "@/components/canvas/CameraRig";
 import FogController from "@/components/canvas/FogController";
@@ -33,6 +34,7 @@ export default function Experience({
       <FogController />
       <SceneLighting />
       <PointerKeyLight />
+      {!reduced && <LightSweep />}
       <MSculpture />
       <Particles count={reduced ? 500 : 1800} />
       <CameraRig reduced={reduced} play={play} />

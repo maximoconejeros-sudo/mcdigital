@@ -19,6 +19,26 @@
   max-width: min(41vw, 560px);
 }
 
+/* a whisper of the sculpture's own gold reaching back into the typography
+ * environment — ties the two halves together without either touching.
+ * Both edges resolve to fully transparent so the div's own bounds never
+ * read as a visible box, just a soft peak in the middle. */
+.statementBlock::after {
+  content: "";
+  position: absolute;
+  top: 8%;
+  right: -10vw;
+  width: 16vw;
+  height: 84%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(201, 157, 69, 0.045) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
 .eyebrow {
   display: flex;
   flex-direction: column;
@@ -65,13 +85,49 @@
   font-weight: 700;
 }
 
+/* EXPERIENCIAS specifically — a touch more breathing room above it than
+ * the uniform rhythm gives the other lines, so it reads as its own
+ * deliberate beat before the eye travels on toward the MC's territory */
+.lineBigLead {
+  margin-top: clamp(6px, 1vw, 14px);
+}
+
 .lineMed {
   margin-top: clamp(2px, 0.4vw, 6px);
-  font-size: clamp(1.5rem, 3vw, 2.7rem);
+  /* slightly less dominant than the display lines around it — editorial,
+   * not competing with NEGOCIOS. for the closing weight */
+  font-size: clamp(1.4rem, 2.6vw, 2.3rem);
 }
 
 .wordGold {
+  position: relative;
+  overflow: hidden;
   color: var(--color-champagne-gold);
+}
+
+/* a single champagne reflection crossing the word once, shortly after it
+ * reveals — not a loop, not a hover state, just one pass of light */
+.wordGold::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(255, 240, 180, 0.55),
+    transparent
+  );
+  animation: wordShimmer 1.4s 1.15s cubic-bezier(0.22, 1, 0.36, 1) 1;
+  pointer-events: none;
+}
+
+@keyframes wordShimmer {
+  to {
+    left: 130%;
+  }
 }
 
 .emphasis {
@@ -143,8 +199,20 @@
   transform: translateX(5px);
 }
 
-.ctaGhost:hover .ctaLabel span[aria-hidden] {
-  transform: translateY(5px);
+/* a tiny continuous bob on Explorar's arrow — the one hint on the page
+ * that it's an interactive surface, not a caption */
+.ctaGhost .ctaLabel span[aria-hidden] {
+  animation: exploreBob 2.2s ease-in-out infinite;
+}
+
+@keyframes exploreBob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(3px);
+  }
 }
 
 .ctaLine {
@@ -199,6 +267,24 @@
   pointer-events: auto;
 }
 
+/* an architectural aside, not a caption — distributed away from the
+ * right-edge index/scroll-hint pairing so it reads as its own quiet detail
+ * rather than piling every micro element into one corner */
+.microDetails {
+  position: absolute;
+  left: clamp(48px, 4vw, 80px);
+  bottom: var(--nav-pad);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-fg-faint);
+  opacity: 0.3;
+}
+
 .scrollHintText {
   display: inline-block;
   writing-mode: vertical-rl;
@@ -237,6 +323,9 @@
   .ctaRow {
     margin-top: 20px;
   }
+  .microDetails {
+    display: none;
+  }
 }
 
 @media (max-width: 760px) {
@@ -260,7 +349,8 @@
     row-gap: 16px;
   }
   .sideIndex,
-  .scrollHint {
+  .scrollHint,
+  .microDetails {
     display: none;
   }
 }

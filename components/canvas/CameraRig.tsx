@@ -50,7 +50,7 @@ export default function CameraRig({
     scrollState.heroIntroT = 0;
     const tween = gsap.to(state, {
       v: 1,
-      duration: reduceMotion ? 0.01 : 1.9,
+      duration: reduceMotion ? 0.01 : 2.6,
       ease: "expo.inOut",
       onUpdate: () => {
         scrollState.heroIntroT = state.v;
@@ -77,7 +77,7 @@ export default function CameraRig({
 
     const introT = scrollState.heroIntroT;
     if (introT < 1) {
-      // the load-in tween already supplies its own easing over ~1.9s — set
+      // the load-in tween already supplies its own easing over ~2.6s — set
       // the blended frame directly rather than layering the scroll rig's
       // exponential smoothing on top, which would turn the authored pull-
       // back into an abrupt snap-then-catch-up instead of one continuous move
