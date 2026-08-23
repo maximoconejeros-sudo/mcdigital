@@ -27,10 +27,10 @@ const rotTarget = new THREE.Vector2(0, 0);
 // The offset, turn and scale all settle back to neutral by progress 0.4,
 // well ahead of the aperture dolly, so that established bridge into Scene
 // 02 (which assumes an axis-aligned, unscaled object) is unaffected.
-const HERO_OFFSET_BASE = 1.55;
-const HERO_OFFSET_MID = 1.85;
-const HERO_OFFSET_FAR = 2.15;
-const HERO_OFFSET_FAR2 = 2.35;
+const HERO_OFFSET_BASE = 1.15;
+const HERO_OFFSET_MID = 1.5;
+const HERO_OFFSET_FAR = 1.85;
+const HERO_OFFSET_FAR2 = 2.1;
 const HERO_TURN = THREE.MathUtils.degToRad(2);
 const HERO_SCALE_MID = 1.06;
 const HERO_SCALE_MAX = 1.22;

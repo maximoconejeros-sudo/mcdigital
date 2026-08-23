@@ -179,18 +179,20 @@ export default function HeroTypography({ play }: { play: boolean }) {
         </p>
 
         <div className={styles.ctaRow} style={{ opacity: 0 }}>
-          <a href="#contacto" className={styles.ctaPrimary} data-cursor="→">
-            <span className={styles.ctaLabel}>
-              Hablemos <span aria-hidden>→</span>
-            </span>
-            <span className={styles.ctaLine} aria-hidden />
+          <a href="#servicios" className={styles.ctaPrimary} data-cursor>
+            Descubre cómo <span aria-hidden>↓</span>
           </a>
-          <a href="#servicios" className={styles.ctaGhost} data-cursor>
-            <span className={styles.ctaLabel}>
-              Explorar <span aria-hidden>↓</span>
+          <a href="#manifiesto" className={styles.ctaGhost} data-cursor>
+            <span className={styles.playRing} aria-hidden>
+              <span className={styles.playIcon} />
             </span>
-            <span className={styles.ctaLine} aria-hidden />
+            Ver manifiesto
           </a>
+        </div>
+
+        <div className={styles.indexMark} aria-hidden>
+          <span className={styles.indexLine} />
+          01
         </div>
       </div>
 
@@ -205,11 +207,6 @@ export default function HeroTypography({ play }: { play: boolean }) {
       <a href="#servicios" className={styles.scrollHint} style={{ opacity: 0 }} data-cursor>
         <span className={styles.scrollHintText}>Desplaza para explorar</span>
       </a>
-
-      <div className={styles.microDetails} aria-hidden>
-        <span>Interactive</span>
-        <span>Web · AI · Automation — 001</span>
-      </div>
     </div>
   );
 }

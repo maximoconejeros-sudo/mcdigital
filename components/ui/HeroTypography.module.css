@@ -156,52 +156,48 @@
   pointer-events: auto;
 }
 
-/* editorial text links, not buttons — a hairline that grows in from the
- * left on hover and an arrow that nudges 4-6px in its direction of travel */
-.ctaPrimary,
-.ctaGhost {
+/* the reference's primary CTA — a hairline-bordered pill, not a filled
+ * button, with a soft gold fill sweeping in on hover */
+.ctaPrimary {
   position: relative;
+  overflow: hidden;
   display: inline-flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  gap: 10px;
+  padding: 13px clamp(20px, 2vw, 28px);
+  border: 1px solid rgba(225, 196, 122, 0.45);
+  border-radius: 999px;
   font-family: var(--font-mono);
+  font-size: clamp(11px, 0.85vw, 13px);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  transition: color 0.3s ease;
-}
-
-.ctaPrimary {
-  font-size: clamp(13px, 1vw, 15px);
   color: var(--color-champagne-gold);
+  transition: color 0.3s ease, border-color 0.3s ease;
 }
 
-.ctaGhost {
-  font-size: clamp(11px, 0.85vw, 13px);
-  color: var(--color-fg-dim);
+.ctaPrimary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(225, 196, 122, 0.14);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease-out);
+  z-index: -1;
 }
 
 .ctaPrimary:hover,
 .ctaPrimary:focus-visible {
-  color: var(--color-fg);
+  border-color: var(--color-champagne-gold);
 }
 
-.ctaGhost:hover,
-.ctaGhost:focus-visible {
-  color: var(--color-fg);
+.ctaPrimary:hover::before,
+.ctaPrimary:focus-visible::before {
+  transform: scaleX(1);
 }
 
-.ctaLabel span[aria-hidden] {
+.ctaPrimary span[aria-hidden] {
   display: inline-block;
-  transition: transform 0.35s var(--ease-out);
-}
-
-.ctaPrimary:hover .ctaLabel span[aria-hidden] {
-  transform: translateX(5px);
-}
-
-/* a tiny continuous bob on Explorar's arrow — the one hint on the page
- * that it's an interactive surface, not a caption */
-.ctaGhost .ctaLabel span[aria-hidden] {
   animation: exploreBob 2.2s ease-in-out infinite;
 }
 
@@ -215,21 +211,49 @@
   }
 }
 
-.ctaLine {
-  display: block;
-  height: 1px;
-  width: 100%;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.45s var(--ease-out);
+/* the secondary manifesto link — a circular play affordance plus label,
+ * both brightening together on hover */
+.ctaGhost {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 0.85vw, 13px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-fg-dim);
+  transition: color 0.3s ease;
 }
 
-.ctaPrimary:hover .ctaLine,
-.ctaPrimary:focus-visible .ctaLine,
-.ctaGhost:hover .ctaLine,
-.ctaGhost:focus-visible .ctaLine {
-  transform: scaleX(1);
+.ctaGhost:hover,
+.ctaGhost:focus-visible {
+  color: var(--color-fg);
+}
+
+.playRing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border: 1px solid rgba(225, 196, 122, 0.45);
+  border-radius: 50%;
+  transition: border-color 0.3s ease;
+}
+
+.ctaGhost:hover .playRing,
+.ctaGhost:focus-visible .playRing {
+  border-color: var(--color-champagne-gold);
+}
+
+.playIcon {
+  width: 0;
+  height: 0;
+  margin-left: 2px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 8px solid var(--color-champagne-gold);
 }
 
 /* the reference's right-edge micro system — a vertical section index and
@@ -267,22 +291,26 @@
   pointer-events: auto;
 }
 
-/* an architectural aside, not a caption — distributed away from the
- * right-edge index/scroll-hint pairing so it reads as its own quiet detail
- * rather than piling every micro element into one corner */
-.microDetails {
-  position: absolute;
-  left: clamp(48px, 4vw, 80px);
-  bottom: var(--nav-pad);
+/* the reference's bottom-left index mark — a thin line plus "01",
+ * distinct from the right-edge vertical 01-08 rail. Sits in normal flow
+ * below the CTA row rather than pinned absolute, so it never collides
+ * with the CTA row at short viewport heights. */
+.indexMark {
+  margin-top: clamp(28px, 4vw, 48px);
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: center;
+  gap: 10px;
   font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.1em;
   color: var(--color-fg-faint);
-  opacity: 0.3;
+}
+
+.indexLine {
+  display: block;
+  width: 22px;
+  height: 1px;
+  background: currentColor;
 }
 
 .scrollHintText {
@@ -323,8 +351,8 @@
   .ctaRow {
     margin-top: 20px;
   }
-  .microDetails {
-    display: none;
+  .indexMark {
+    margin-top: 16px;
   }
 }
 
@@ -349,8 +377,7 @@
     row-gap: 16px;
   }
   .sideIndex,
-  .scrollHint,
-  .microDetails {
+  .scrollHint {
     display: none;
   }
 }
