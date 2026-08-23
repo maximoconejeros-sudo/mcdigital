@@ -51,7 +51,7 @@ export default function HeroTypography({ play }: { play: boolean }) {
           "-=0.55"
         )
         .fromTo(
-          `.${styles.indexMark}, .${styles.sideIndex}, .${styles.scrollHint}`,
+          `.${styles.sideIndex}, .${styles.scrollHint}`,
           { autoAlpha: 0 },
           { autoAlpha: 1, duration: 0.9, stagger: 0.08 },
           "-=0.4"
@@ -132,11 +132,6 @@ export default function HeroTypography({ play }: { play: boolean }) {
             Ver manifiesto
           </a>
         </div>
-      </div>
-
-      <div className={styles.indexMark} style={{ opacity: 0 }}>
-        <span className={styles.indexLine} aria-hidden />
-        <span>01</span>
       </div>
 
       <div className={styles.sideIndex} style={{ opacity: 0 }} aria-hidden>

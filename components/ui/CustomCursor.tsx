@@ -6,6 +6,7 @@ import styles from "./CustomCursor.module.css";
 export default function CustomCursor() {
   const dot = useRef<HTMLDivElement>(null);
   const [enabled, setEnabled] = useState(false);
+  const [moved, setMoved] = useState(false);
   const [hover, setHover] = useState(false);
   const [label, setLabel] = useState("");
 
@@ -26,9 +27,16 @@ export default function CustomCursor() {
     const current = { ...raw };
     let raf = 0;
 
+    let hasMoved = false;
     const onMove = (e: PointerEvent) => {
       raw.x = e.clientX;
       raw.y = e.clientY;
+      if (!hasMoved) {
+        hasMoved = true;
+        current.x = raw.x;
+        current.y = raw.y;
+        setMoved(true);
+      }
     };
 
     const onOver = (e: PointerEvent) => {
@@ -78,7 +86,7 @@ export default function CustomCursor() {
   return (
     <div
       ref={dot}
-      className={`${styles.cursor} ${styles.ready} ${
+      className={`${styles.cursor} ${moved ? styles.ready : ""} ${
         hover ? styles.hover : ""
       }`}
     >

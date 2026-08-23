@@ -8,7 +8,6 @@ import Particles from "@/components/canvas/Particles";
 import CameraRig from "@/components/canvas/CameraRig";
 import FogController from "@/components/canvas/FogController";
 import CinematicPost from "@/components/canvas/CinematicPost";
-import Floor from "@/components/canvas/Floor";
 
 export default function Experience({
   reduced = false,
@@ -35,7 +34,6 @@ export default function Experience({
       <SceneLighting />
       <PointerKeyLight />
       <MSculpture />
-      <Floor />
       <Particles count={reduced ? 500 : 1800} />
       <CameraRig reduced={reduced} play={play} />
       {!reduced && <CinematicPost />}

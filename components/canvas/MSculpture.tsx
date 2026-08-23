@@ -25,9 +25,9 @@ const rotTarget = new THREE.Vector2(0, 0);
 // Both the offset and the turn settle back to neutral by progress 0.4,
 // well ahead of the aperture dolly, so that established bridge into Scene
 // 02 is unaffected by any of this.
-const HERO_OFFSET_BASE = 3.0;
-const HERO_OFFSET_MID = 3.3;
-const HERO_OFFSET_FAR = 3.6;
+const HERO_OFFSET_BASE = 1.55;
+const HERO_OFFSET_MID = 1.8;
+const HERO_OFFSET_FAR = 2.0;
 const HERO_TURN = THREE.MathUtils.degToRad(6);
 
 export default function MSculpture() {

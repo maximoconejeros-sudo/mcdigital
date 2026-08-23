@@ -2,8 +2,10 @@
   position: fixed;
   inset: 0;
   z-index: 30;
-  padding: var(--nav-pad);
-  padding-top: clamp(120px, 14vw, 168px);
+  padding-top: clamp(112px, 13vw, 156px);
+  padding-left: clamp(48px, 4vw, 80px);
+  padding-right: var(--nav-pad);
+  padding-bottom: var(--nav-pad);
   pointer-events: none;
 }
 
@@ -11,7 +13,7 @@
  * ~55vw and is never behind this column */
 .statementBlock {
   position: relative;
-  max-width: min(45vw, 620px);
+  max-width: min(43vw, 600px);
 }
 
 .eyebrow {
@@ -55,13 +57,13 @@
 }
 
 .lineBig {
-  margin-top: clamp(2px, 0.4vw, 6px);
+  margin-top: clamp(0px, 0.15vw, 3px);
   font-size: clamp(3rem, 6.4vw, 5.9rem);
   font-weight: 700;
 }
 
 .lineMed {
-  margin-top: clamp(4px, 0.8vw, 10px);
+  margin-top: clamp(2px, 0.4vw, 6px);
   font-size: clamp(1.9rem, 3.8vw, 3.3rem);
 }
 
@@ -79,16 +81,16 @@
 }
 
 .subtext {
-  margin-top: clamp(24px, 2.8vw, 32px);
-  max-width: 42ch;
+  margin-top: clamp(18px, 2.2vw, 26px);
+  max-width: 430px;
   font-family: var(--font-display);
   font-size: clamp(14px, 1.1vw, 17px);
   line-height: 1.5;
-  color: var(--color-fg-dim);
+  color: rgba(244, 242, 236, 0.72);
 }
 
 .ctaRow {
-  margin-top: clamp(30px, 3.6vw, 42px);
+  margin-top: clamp(26px, 3vw, 36px);
   display: flex;
   align-items: center;
   gap: clamp(20px, 2.4vw, 32px);
@@ -173,42 +175,23 @@
   flex-shrink: 0;
 }
 
-/* bottom-left section index — a hairline + "01", the only place this
- * chapter names itself */
-.indexMark {
-  position: absolute;
-  left: var(--nav-pad);
-  bottom: clamp(40px, 5vw, 60px);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  color: var(--color-fg-dim);
-}
-
-.indexLine {
-  width: 34px;
-  height: 1px;
-  background: var(--color-fg-dim);
-}
-
 /* the reference's right-edge micro system — a vertical section index and
  * a rotated scroll hint, both extremely subtle so they reward attention
- * rather than compete with the headline or the monogram */
+ * rather than compete with the headline or the monogram. Pinned to the
+ * same safe margin the nav itself uses, clear of the MC's territory
+ * regardless of how the sculpture drifts during scroll. */
 .sideIndex {
   position: absolute;
-  right: var(--nav-pad);
+  right: clamp(14px, 1.6vw, 24px);
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(14px, 1.8vw, 22px);
+  gap: clamp(12px, 1.6vw, 18px);
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
+  font-size: 9px;
+  letter-spacing: 0.06em;
 }
 
 .sideIndex span {
@@ -222,8 +205,8 @@
 
 .scrollHint {
   position: absolute;
-  right: calc(var(--nav-pad) + 3px);
-  bottom: clamp(48px, 7vw, 84px);
+  right: clamp(12px, 1.4vw, 20px);
+  bottom: clamp(32px, 5vw, 56px);
   pointer-events: auto;
 }
 
@@ -232,10 +215,39 @@
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.18em;
+  font-size: 9px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-fg-dim);
+  color: var(--color-fg-faint);
+}
+
+/* shorter laptop/desktop viewports (1366x768 and similar) — vw-based
+ * clamps alone don't shrink for a constrained HEIGHT at a wide-ish width,
+ * so the CTA row was pushed below the fold. Tighten the whole vertical
+ * rhythm instead of just the type scale. */
+@media (max-height: 820px) and (min-width: 761px) {
+  .front {
+    padding-top: clamp(72px, 9vw, 104px);
+  }
+  .eyebrow {
+    margin-bottom: 14px;
+  }
+  .lineSmall {
+    font-size: clamp(1.5rem, 3vw, 2.4rem);
+  }
+  .lineBig {
+    font-size: clamp(2.4rem, 5vw, 4.6rem);
+  }
+  .lineMed {
+    font-size: clamp(1.6rem, 3vw, 2.6rem);
+    margin-top: 2px;
+  }
+  .subtext {
+    margin-top: 14px;
+  }
+  .ctaRow {
+    margin-top: 20px;
+  }
 }
 
 @media (max-width: 760px) {
@@ -261,8 +273,5 @@
   .sideIndex,
   .scrollHint {
     display: none;
-  }
-  .indexMark {
-    bottom: clamp(24px, 6vw, 36px);
   }
 }

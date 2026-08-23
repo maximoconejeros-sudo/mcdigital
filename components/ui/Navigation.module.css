@@ -95,6 +95,11 @@
   transform-origin: left;
 }
 
+.link:hover,
+.link:focus-visible {
+  color: var(--color-champagne-gold);
+}
+
 /* thin scroll-progress accent, bottom edge of the viewport — always gold,
  * regardless of theme, so it reads consistently against dark or light acts */
 .progress {
@@ -120,9 +125,9 @@
   font-size: clamp(10px, 0.78vw, 12px);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: inherit;
+  color: var(--color-champagne-gold);
   padding: 10px clamp(16px, 1.6vw, 22px);
-  border: 1px solid currentColor;
+  border: 1px solid rgba(225, 196, 122, 0.5);
   border-radius: 999px;
   transition: color 0.35s var(--ease-out), border-color 0.35s var(--ease-out);
 }
@@ -131,7 +136,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: var(--color-gold);
+  background: rgba(225, 196, 122, 0.16);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.4s var(--ease-out);
@@ -140,8 +145,8 @@
 
 .talkCta:hover,
 .talkCta:focus-visible {
-  color: var(--color-black);
-  border-color: var(--color-gold);
+  color: var(--color-champagne-gold);
+  border-color: var(--color-champagne-gold);
 }
 
 .talkCta:hover::before,
@@ -152,6 +157,11 @@
 .talkCta span[aria-hidden] {
   display: inline-block;
   margin-left: 2px;
+  transition: transform 0.3s var(--ease-out);
+}
+
+.talkCta:hover span[aria-hidden] {
+  transform: translateX(3px);
 }
 
 /* the reference's circular menu affordance — a hairline ring, always
