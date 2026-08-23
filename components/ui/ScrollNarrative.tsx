@@ -15,13 +15,7 @@ gsap.registerPlugin(ScrollTrigger);
  * lines, and the bridge into Scene 02 — on the same timeline so
  * everything stays perfectly in sync with the scrollbar.
  */
-export default function ScrollNarrative({
-  ready,
-  onActiveChange,
-}: {
-  ready: boolean;
-  onActiveChange?: (active: boolean) => void;
-}) {
+export default function ScrollNarrative({ ready }: { ready: boolean }) {
   const spacer = useRef<HTMLDivElement>(null);
   const narrativeLayer = useRef<HTMLDivElement>(null);
   const mid = useRef<HTMLSpanElement>(null);
@@ -55,7 +49,6 @@ export default function ScrollNarrative({
             scrollState.navTheme = self.progress > 0.85 ? "light" : "dark";
             if (self.isActive !== wasActive.current) {
               wasActive.current = self.isActive;
-              onActiveChange?.(self.isActive);
               // the bridge copy's reveal has no matching exit tween — once
               // Act I is behind us (in either scroll direction), hide the
               // whole layer so it doesn't sit parked on top of Act II.
@@ -117,7 +110,7 @@ export default function ScrollNarrative({
     });
 
     return () => ctx.revert();
-  }, [ready, onActiveChange]);
+  }, [ready]);
 
   return (
     <>

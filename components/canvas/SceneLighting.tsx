@@ -28,20 +28,21 @@ export default function SceneLighting() {
             scale={[4, 3, 1]}
             target={[0, 0, 0]}
           />
-          {/* frontal fill — keeps the silhouette legible and the shadow
-              side a warm dark gold rather than crushed black */}
+          {/* frontal fill — just enough that the silhouette always reads;
+              kept low so the shadow side stays a deep bronze, not lifted
+              toward a uniformly-lit read */}
           <Lightformer
             form="rect"
-            intensity={1.5}
+            intensity={0.55}
             color="#f2dfb2"
             position={[0, 0.3, 5.2]}
             scale={[2.8, 2.8, 1]}
             target={[0, 0, 0]}
           />
-          {/* broad warm fill from the left */}
+          {/* broad warm fill from the left, dim */}
           <Lightformer
             form="rect"
-            intensity={1.3}
+            intensity={0.5}
             color="#a88a5c"
             position={[-4, 0.5, 2.4]}
             scale={[2.6, 4.8, 1]}
@@ -78,9 +79,9 @@ export default function SceneLighting() {
         </group>
       </Environment>
 
-      <directionalLight position={[2.6, 3.6, 2.2]} intensity={1} color="#fff3df" />
-      <directionalLight position={[-2.5, 1, -3.5]} intensity={1.3} color="#c89b3c" />
-      <ambientLight intensity={0.14} />
+      <directionalLight position={[2.6, 3.6, 2.2]} intensity={0.85} color="#fff3df" />
+      <directionalLight position={[-2.5, 1, -3.5]} intensity={1} color="#c89b3c" />
+      <ambientLight intensity={0.05} />
     </>
   );
 }

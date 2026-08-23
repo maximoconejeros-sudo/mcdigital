@@ -29,11 +29,18 @@ export default function Home() {
   const [reduced, setReduced] = useState(false);
   const [ready, setReady] = useState(false);
 
-  // Only one act's heavy Canvas is ever mounted at a time — each act's own
-  // ScrollTrigger (already tracking scroll progress) diffs isActive inside
-  // onUpdate and reports the edge up, so there's no separate observer to
-  // keep in sync.
-  const [act1Active, setAct1Active] = useState(true);
+  // Act IX's heavy Canvas mounts only once its own trigger goes active —
+  // it's far enough down the page that this never fires spuriously in
+  // practice. Act I's Canvas used to follow the same pattern, gated by
+  // ScrollTrigger's isActive; that read as "only one heavy Canvas mounted
+  // at a time" but any boundary jitter right at the hero (rubber-band
+  // overscroll, a Lenis smoothing overshoot) flips isActive, and
+  // unmounting/remounting the Canvas there tears down and rebuilds the
+  // entire WebGL scene — camera reset, materials/geometries recreated,
+  // the load-in tween replayed from scratch. That's the flicker/
+  // reconstruct bug scrolling back toward the top. Act I's Canvas is now
+  // always mounted for the page's lifetime; later acts' own opaque layers
+  // already sit above it once scrolled past, so nothing leaks through.
   const [act9Active, setAct9Active] = useState(false);
   const canvasWrapRef = useRef<HTMLDivElement>(null);
 
@@ -81,11 +88,11 @@ export default function Home() {
       <CanvasErrorBoundary fallback={<StaticFallback />}>
         <HeroBackdrop />
         <div ref={canvasWrapRef} style={{ position: "fixed", inset: 0, zIndex: 20 }}>
-          {act1Active && <Experience reduced={reduced} play={ready} />}
+          <Experience reduced={reduced} play={ready} />
           {act9Active && <FinalExperience reduced={reduced} />}
         </div>
         <HeroTypography play={ready} />
-        <ScrollNarrative ready={ready} onActiveChange={setAct1Active} />
+        <ScrollNarrative ready={ready} />
         <ExpertiseNarrative ready={ready} />
         <IntelligenceNarrative ready={ready} />
         <DigitalLabNarrative ready={ready} />

@@ -2,26 +2,28 @@ import * as THREE from "three";
 
 /** The signature champagne gold — shared by the monogram and every UI
  * accent across the scroll acts so the metal reads as one material.
- * Deliberately less saturated than a straight "gold" hex — brushed satin
- * metal, not a glossy chrome/plastic gold. A higher roughness and near-zero
- * clearcoat trade the earlier version's sharp faceted highlights for a
- * broad, soft gradient across each face; anisotropy adds the fine brushed
- * linear grain the reference shows on the C's curve, and the raised
- * envMapIntensity plus the brighter fill rig in SceneLighting keep the
- * shadow side a warm dark gold rather than crushed near-black. */
+ * Deliberately less saturated than a straight "gold" hex, and pulled
+ * toward bronze rather than yellow — dark champagne gold, not bright
+ * yellow/orange plastic. A higher roughness and near-zero clearcoat trade
+ * a glossy chrome read for a broad, soft gradient across each face;
+ * anisotropy adds the fine brushed linear grain visible on a curved edge.
+ * The base sits deliberately dark — the object's own highlights (via the
+ * light rig in SceneLighting, concentrated on edges/rims rather than
+ * flooding the whole surface) are what carry the brightness, not the
+ * material's resting color. */
 export function createGoldMaterial() {
   return new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color("#CDA75F"),
+    color: new THREE.Color("#8C6A3C"),
     metalness: 1,
-    roughness: 0.32,
-    envMapIntensity: 1.75,
+    roughness: 0.34,
+    envMapIntensity: 1.3,
     clearcoat: 0.1,
     clearcoatRoughness: 0.55,
     anisotropy: 0.5,
     anisotropyRotation: Math.PI / 2,
-    sheen: 0.16,
-    sheenColor: new THREE.Color("#F0D28C"),
-    sheenRoughness: 0.4,
+    sheen: 0.12,
+    sheenColor: new THREE.Color("#D9B677"),
+    sheenRoughness: 0.45,
   });
 }
 
