@@ -32,19 +32,19 @@ export default function SceneLighting() {
               side a warm dark gold rather than crushed black */}
           <Lightformer
             form="rect"
-            intensity={0.85}
+            intensity={1.5}
             color="#f2dfb2"
             position={[0, 0.3, 5.2]}
-            scale={[2.4, 2.4, 1]}
+            scale={[2.8, 2.8, 1]}
             target={[0, 0, 0]}
           />
           {/* broad warm fill from the left */}
           <Lightformer
             form="rect"
-            intensity={0.7}
-            color="#9a7f52"
+            intensity={1.3}
+            color="#a88a5c"
             position={[-4, 0.5, 2.4]}
-            scale={[2.4, 4.5, 1]}
+            scale={[2.6, 4.8, 1]}
             target={[0, 0, 0]}
           />
           {/* champagne rim from behind — a soft glancing edge, not a hard
@@ -78,9 +78,9 @@ export default function SceneLighting() {
         </group>
       </Environment>
 
-      <directionalLight position={[2.6, 3.6, 2.2]} intensity={0.9} color="#fff3df" />
-      <directionalLight position={[-2.5, 1, -3.5]} intensity={1.2} color="#c89b3c" />
-      <ambientLight intensity={0.06} />
+      <directionalLight position={[2.6, 3.6, 2.2]} intensity={1} color="#fff3df" />
+      <directionalLight position={[-2.5, 1, -3.5]} intensity={1.3} color="#c89b3c" />
+      <ambientLight intensity={0.14} />
     </>
   );
 }

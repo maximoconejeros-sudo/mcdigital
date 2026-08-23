@@ -55,6 +55,25 @@ export default function MSculpture() {
   const { mGeo, cGeo } = useMemo(() => createMCGeometries(), []);
   const material = useMemo(() => createGoldMaterial(), []);
 
+  // The floor reflection: a genuine mirrored duplicate of the letters
+  // themselves (not a lit plane) — sharing the exact same gold material
+  // so it reads as a warm amber echo of the shapes above it, per the
+  // reference. Nested inside the same group so it tracks every scroll-
+  // driven offset/rotation/scale the resting letters get, and reflected
+  // across the letters' own true bottom edge (read from the geometry's
+  // bounding box rather than a guessed constant).
+  const mirrorY = useMemo(() => {
+    mGeo.computeBoundingBox();
+    return mGeo.boundingBox ? mGeo.boundingBox.min.y * 2 : -1.87;
+  }, [mGeo]);
+  const reflectMaterial = useMemo(() => {
+    const m = createGoldMaterial();
+    m.transparent = true;
+    m.opacity = 0.3;
+    m.depthWrite = false;
+    return m;
+  }, []);
+
   const handlePointerOver = () => {
     pointerState.overMC = true;
   };
@@ -152,6 +171,17 @@ export default function MSculpture() {
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
       />
+
+      {/* the floor reflection — an actual mirrored copy of the letters,
+       * not a lit plane. Reflected across their own true bottom edge, so
+       * it shares their exact (finite, letter-shaped) silhouette rather
+       * than a full-width rectangle — that's what keeps it from ever
+       * showing the hard "horizon line" a large flat floor plane did in
+       * earlier attempts. */}
+      <group position={[0, mirrorY, 0]} scale={[1, -1, 1]}>
+        <mesh geometry={mGeo} material={reflectMaterial} />
+        <mesh geometry={cGeo} material={reflectMaterial} />
+      </group>
     </group>
   );
 }
